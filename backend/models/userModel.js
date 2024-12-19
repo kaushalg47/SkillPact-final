@@ -16,6 +16,16 @@ const userSchema = mongoose.Schema(
       type: String,
       required: true,
     },
+    badges: [
+        {
+          type: mongoose.Schema.ObjectId,
+          ref: 'Badge'
+        }
+    ],
+    company:{
+      type:mongoose.Schema.Types.ObjectId,
+      ref:'Company'
+    }, 
   },
   {
     timestamps: true,

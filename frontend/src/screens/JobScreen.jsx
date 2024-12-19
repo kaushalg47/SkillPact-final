@@ -1,11 +1,14 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useGetJobsQuery } from '../slices/jobsApiSlice';
 import Card from '../components/Card'; // Adjust the path as necessary
+import { useNavigate } from 'react-router-dom';
 
 const JobScreen = () => {
   const { data, error, isLoading } = useGetJobsQuery();
   const [filter, setFilter] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
+
+  const navigate = useNavigate();
 
   if (isLoading) return <div className="text-center mt-5">Loading...</div>;
   if (error) return <div className="text-center mt-5 text-danger">Error: {error.message}</div>;
@@ -28,6 +31,17 @@ const JobScreen = () => {
   });
 
   return (
+    <div className="container">
+      <div className='p-5'>
+          <input
+                    type="text"
+                    id="filter"
+                    className="form-control"
+                    placeholder="Search"
+                    value={filter}
+                    onChange={(e) => setFilter(e.target.value)}
+                  />
+        </div>
       <div className="d-flex vh-100">
         {/* Filter and Sort Panel */}
         <div className="p-3">
@@ -74,7 +88,7 @@ const JobScreen = () => {
                     role={job.role || 'Role Not Specified'}
                     location={job.location || 'Location Not Specified'}
                     company={job.company || 'Company Not Specified'}
-                    onApply={() => console.log(`Applied to ${job.title}`)} // Replace with your apply function
+                    onApply={() => navigate(`/job-info/${job._id}`)} // Replace with your apply function
                   />
                 </div>
               ))}
@@ -84,6 +98,7 @@ const JobScreen = () => {
           )}
         </div>
       </div>
+    </div>
   );
 };
 

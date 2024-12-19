@@ -12,7 +12,7 @@ const router = express.Router();
 router.get('/get-jobs',protect, getJobs);
 router.route('/post-jobs')
       .post(protect, postJobs);
-router.post('/job-info/:id', infoJobs);
-router.post('/admin-jobs',protect, adminJobs);
+router.get('/job-info/:id', infoJobs);
+router.get('/admin-jobs',protect, adminJobs);
 
 export default router;
