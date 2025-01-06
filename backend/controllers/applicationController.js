@@ -7,7 +7,7 @@ import Application from '../models/applicationModel.js';
 //apply for jobs
 const applyApplication = asyncHandler(async (req, res) => {
   try {
-    const userId = req.id; // Retrieved from isAuthenticated middleware
+    const userId = req.user._id; // Retrieved from isAuthenticated middleware
     const jobId = req.params.id;
 
     // Validate job ID
@@ -66,7 +66,7 @@ const applyApplication = asyncHandler(async (req, res) => {
     });
 
     // Add the new application to the job's application array
-    job.application.push(newApplication._id); // Ensure `application` field in Job is an array
+    job.applications.push(newApplication._id); // Ensure `application` field in Job is an array
     await job.save();
 
     return res.status(201).json({
@@ -85,7 +85,7 @@ const applyApplication = asyncHandler(async (req, res) => {
 //see applied jobs for users
 const userAppliations = asyncHandler(async (req, res) => {
   try {
-    const userId = req.id;
+    const userId = req.user._id;
     const application = await Application.find({applicant:userId}).sort({createdAt:-1}).populate({
       path:'job',
       option:{sort:{createdAt:-1}},

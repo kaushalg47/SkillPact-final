@@ -100,7 +100,7 @@ const postJobs = asyncHandler(async (req, res) => {
 
 
 // @desc    fetch job details
-// @route   GET /api/jobs/get-jobs
+// @route   GET /api/jobs/info-jobs/:id
 // @access  Public
 const infoJobs = asyncHandler(async (req, res) => {
   try {
