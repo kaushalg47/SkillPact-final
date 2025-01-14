@@ -83,7 +83,7 @@ const applyApplication = asyncHandler(async (req, res) => {
 });
 
 //see applied jobs for users
-const userAppliations = asyncHandler(async (req, res) => {
+const userApplications = asyncHandler(async (req, res) => { // Typo -> Appliations -> Applications
   try {
     const userId = req.user._id;
     const application = await Application.find({applicant:userId}).sort({createdAt:-1}).populate({
@@ -128,7 +128,7 @@ const registeredApplicants = asyncHandler(async (req, res) => {
       };
       return res.status(200).json({
           job, 
-          succees:true
+          success:true // Typo Succees -> Success
       });
   } catch (error) {
       console.log(error);
@@ -172,7 +172,7 @@ const statusUpdateApplication = asyncHandler(async (req, res) => {
 
 export {
   applyApplication,
-  userAppliations,
+  userApplications, // Typo -> Appliations -> Applications
   registeredApplicants,
   statusUpdateApplication,
 };

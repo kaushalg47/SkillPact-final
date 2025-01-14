@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
 
-const userSchema = mongoose.Schema(
+const userSchema = new mongoose.Schema( // New keyword missing -> Can cause problems
   {
     name: {
       type: String,
