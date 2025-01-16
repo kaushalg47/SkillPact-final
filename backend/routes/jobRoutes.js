@@ -9,10 +9,13 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.get('/get-jobs',protect, getJobs);
-router.route('/post-jobs')
-      .post(protect, postJobs);
-router.get('/job-info/:id', infoJobs);
+// Arranged in logical order
+router.get('/',protect, getJobs);
+router.get('/:id', infoJobs);
+// Pending to be fixed
 router.get('/admin-jobs',protect, adminJobs);
+
+router.route('/')
+      .post(postJobs);
 
 export default router;
