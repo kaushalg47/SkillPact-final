@@ -10,9 +10,8 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// ! Post router missing on "/"
-router.post('/', registerUser);
-
+// Reconfigured /register to register users
+router.post('/register', registerUser);
 router.post('/auth', authUser);
 router.post('/logout', logoutUser);
 router
