@@ -15,6 +15,8 @@ const port = process.env.PORT || 5000;
 connectDB();
 
 const app = express();
+
+// Extra DEV MIDDLEWARE FOR API TESTING
 app.use((req, res, next) => {
   console.log(req.method, req.originalUrl);
   next();
