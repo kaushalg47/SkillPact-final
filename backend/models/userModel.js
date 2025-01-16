@@ -1,27 +1,35 @@
-import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import mongoose from 'mongoose';
 
-const userSchema = new mongoose.Schema( // New keyword missing -> Can cause problems
+// Stronger constraints for database consistency
+const userSchema = new mongoose.Schema(
   {
     name: {
       type: String,
       required: true,
+      trim: true,
+      minlength: [2, 'Name must be at least 2 characters'],
+      maxlength: [100, 'Name cannot exceed 100 characters'],
     },
     email: {
       type: String,
       required: true,
       unique: true,
+      trim: true,
     },
     password: {
       type: String,
       required: true,
     },
-    badges: [
+    badges: {
+      type: [
         {
           type: mongoose.Schema.ObjectId,
-          ref: 'Badge'
-        }
-    ],
+          ref: 'Badge',
+        },
+      ],
+      default: [],
+    },
     company:{
       type:mongoose.Schema.Types.ObjectId,
       ref:'Company'
