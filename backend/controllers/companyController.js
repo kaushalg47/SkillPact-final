@@ -25,13 +25,13 @@ const registerCompany = asyncHandler(async (req, res) => {
     // Create a new company
     company = await Company.create({
       name: companyName,
-      userId: req.id, // Ensure `req.id` is correctly set by isAuthenticated
+      userId: req.user._id, // Use req.user._id instead of req.id
     });
 
     return res.status(201).json({
       message: "Company registered successfully.",
       company,
-      success: true,
+      success: true, 
     });
   } catch (error) {
     console.error("Error registering company:", error);
@@ -44,7 +44,7 @@ const registerCompany = asyncHandler(async (req, res) => {
 
 const userCompany = asyncHandler(async (req, res) => {
   try {
-    const userId = req.id; // logged in user id
+    const userId = req.user._id; // logged in user id
     const companies = await Company.find({ userId });
     if (!companies) {
         return res.status(404).json({
@@ -63,7 +63,7 @@ const userCompany = asyncHandler(async (req, res) => {
 
 const infoCompany = asyncHandler(async (req, res) => {
   try {
-        const companyId = req.params.id;
+        const companyId = req.query.id;  //pass the companyId in the query
         const company = await Company.findById(companyId);
         if (!company) {
             return res.status(404).json({
@@ -87,7 +87,7 @@ const updateCompany = asyncHandler(async (req, res) => {
   
       const updateData = { name, description, website, location};
 
-      const company = await Company.findByIdAndUpdate(req.params.id, updateData, { new: true });
+      const company = await Company.findByIdAndUpdate(req.query.id, updateData, { new: true });  //pass the companyId in the query and the content through the BODY
 
       if (!company) {
           return res.status(404).json({
