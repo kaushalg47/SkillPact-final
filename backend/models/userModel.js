@@ -25,7 +25,7 @@ const userSchema = mongoose.Schema(
     company:{
       type:mongoose.Schema.Types.ObjectId,
       ref:'Company'
-    }, 
+    },
   },
   {
     timestamps: true,
