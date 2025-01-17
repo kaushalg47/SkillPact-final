@@ -25,7 +25,7 @@ const registerCompany = asyncHandler(async (req, res) => {
     // Create a new company
     company = await Company.create({
       name: companyName,
-      userId: req.id, // Ensure `req.id` is correctly set by isAuthenticated
+      userId: req.user._id, // Ensure `req.id` is correctly set by isAuthenticated
     });
 
     return res.status(201).json({
@@ -44,7 +44,7 @@ const registerCompany = asyncHandler(async (req, res) => {
 
 const userCompany = asyncHandler(async (req, res) => {
   try {
-    const userId = req.id; // logged in user id
+    const userId = req.user._id; // logged in user id
     const companies = await Company.find({ userId });
     if (!companies) {
         return res.status(404).json({
