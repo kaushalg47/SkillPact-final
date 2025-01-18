@@ -6,6 +6,7 @@ import {
   adminJobs,
 } from '../controllers/jobController.js';
 import { protect } from '../middleware/authMiddleware.js';
+import approveCompany from '../middleware/companyApproveMiddleware.js';
 
 const router = express.Router();
 
@@ -16,6 +17,7 @@ router.get('/:id', infoJobs);
 router.get('/admin-jobs',protect, adminJobs);
 
 router.route('/')
-      .post(postJobs);
+      .post(protect, approveCompany, postJobs); // Protect the jobs.
+      // Only allow companies with approval to post
 
 export default router;

@@ -1,32 +1,64 @@
 import asyncHandler from 'express-async-handler';
 import Company from '../models/companyModel.js';
+import User from '../models/userModel.js';
 
+// TODO: SCHEMA VALIDATION
 const registerCompany = asyncHandler(async (req, res) => {
   try {
-    const { companyName } = req.body;
+    /*
+    IMP - COMPANY INFO TO BE PASSED AS JS OBJECT
+    companyInfo[name] = <Name>
+    companyInfo[description] = <description>
+    ...
+
+    OR 
+
+    companyInfo = {
+       name: <Name>
+       description: <Description>
+    } 
+    */
+
+    const { companyInfo } = req.body;
+    console.log(companyInfo)
 
     // Validate the company name
-    if (!companyName) {
+    if (!companyInfo) {
       return res.status(400).json({
-        message: "Company name is required.",
+        message: "Company is required.",
         success: false,
       });
     }
 
     // Check if the company already exists
-    let company = await Company.findOne({ name: companyName });
+    let company = await Company.findOne({ name: companyInfo.name });
     if (company) {
       return res.status(400).json({
         message: "You can't register the same company.",
         success: false,
       });
     }
+    
+    // While making company it has to be saved in user's company
+    const userId = req.user._id;
+    const user = await User.findById(userId);
 
-    // Create a new company
-    company = await Company.create({
-      name: companyName,
-      userId: req.user._id, // Use req.user._id instead of req.id
-    });
+    // If company defined then we can't register more than one company
+    if (user.company) {
+      return res.status(400).json({
+        message: "You can't register more than 1 company",
+        success: false,
+      });
+    } else {
+      // Create a new company
+      company = await Company.create({
+        ...companyInfo,
+        userId: req.user._id, // Use req.user._id instead of req.id
+      });
+      
+      user.company = company;
+      await user.save();
+    }
 
     return res.status(201).json({
       message: "Company registered successfully.",
@@ -34,9 +66,9 @@ const registerCompany = asyncHandler(async (req, res) => {
       success: true, 
     });
   } catch (error) {
-    console.error("Error registering company:", error);
+    console.error("Error registering company: ", error);
     return res.status(500).json({
-      message: "Internal server error",
+      message: "Company registration failed",
       success: false,
     });
   }
@@ -46,7 +78,8 @@ const userCompany = asyncHandler(async (req, res) => {
   try {
     const userId = req.user._id; // logged in user id
     const companies = await Company.find({ userId });
-    if (!companies) {
+
+    if (!companies || companies.length == 0) {
         return res.status(404).json({
             message: "Companies not found.",
             success: false
@@ -57,13 +90,17 @@ const userCompany = asyncHandler(async (req, res) => {
         success:true
     })
 } catch (error) {
-    console.log(error);
-}
+    console.log("Error fetching user company", error);
+    return res.status(500).json({
+      message: "Can't fetch company data",
+      success: false,
+    });
+  }
 });
 
 const infoCompany = asyncHandler(async (req, res) => {
   try {
-        const companyId = req.query.id;  //pass the companyId in the query
+        const companyId = req.params.compId;  // Company id is being passed in params not in query
         const company = await Company.findById(companyId);
         if (!company) {
             return res.status(404).json({
@@ -76,18 +113,31 @@ const infoCompany = asyncHandler(async (req, res) => {
             success: true
         })
     } catch (error) {
-        console.log(error);
+      console.log("Error getting company info: ", error);
+      return res.status(500).json({
+        message: "Can't fetch company data",
+        success: false,
+      });
     }
 });
 
 const updateCompany = asyncHandler(async (req, res) => {
   try {
-      const { name, description, website, location } = req.body;
+    /* 
+    COMPANY INFO TO BE PASSED AS JS OBJECT
+    companyInfo[name] = <Name>
+    companyInfo[description] = <description>
+    ...
 
-  
-      const updateData = { name, description, website, location};
+    OR 
 
-      const company = await Company.findByIdAndUpdate(req.query.id, updateData, { new: true });  //pass the companyId in the query and the content through the BODY
+    companyInfo = {
+       name: <Name>
+       description: <Description>
+    } 
+    */
+
+      const company = await Company.findById(req.params.compId); // changed req.params.id to req.params.compId
 
       if (!company) {
           return res.status(404).json({
@@ -95,19 +145,44 @@ const updateCompany = asyncHandler(async (req, res) => {
               success: false
           })
       }
+      
+      if (req.user._id.toString() !== company.userId.toString()) {
+        return res.status(403).json({
+          message: "Cannot update the company, Unauthorized",
+          success: false,
+        })
+      }
+
+      const { companyInfo } = req.body;
+
+      if (!companyInfo) {
+        return res.status(400).json({
+          message: "CompanyInfo is required.",
+          success: false,
+        });
+      }
+      
+      const updatedCompany = await Company.findByIdAndUpdate(req.params.compId, companyInfo, { new: true, runValidators: true });  // Company information should be passed in parameters to maintain consistency
+      // req.params.id -> req.params.compId 
+      // Validations in schema set to true
+      console.log(updatedCompany);
+
       return res.status(200).json({
           message:"Company information updated.",
-          success:true
+          company: updatedCompany,
+          success:true,
       })
 
   } catch (error) {
-      console.log(error);
+    console.log("Company update failed: ", error);
+    return res.status(500).json({
+      message: "Company update failed",
+      success: false,
+    });
   }
 });
 
 export {
-  registerCompany,
-  userCompany,
-  infoCompany,
-  updateCompany,
+  infoCompany, registerCompany, updateCompany, userCompany
 };
+

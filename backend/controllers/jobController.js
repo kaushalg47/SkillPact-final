@@ -1,6 +1,7 @@
 import asyncHandler from 'express-async-handler';
 import Job from '../models/jobModel.js';
 import Badge from '../models/badgeModel.js';
+import User from '../models/userModel.js';
 
 // @desc    Fetch all jobs
 // @route   GET /api/jobs/get-jobs
@@ -56,25 +57,15 @@ const postJobs = asyncHandler(async (req, res) => {
       title,
       description,
       badges,
-
      } = req.body;
-    const userId = req.id;
+
+    const userId = req.user._id;
     console.log(userId);
     if (!userId){
       return res.status(400).json({
         message: "user not logged in",
         success: false
       })
-    };
-    try {
-      if (badges && badges.length > 0) {
-        const badgeDocs = await Badge.find({'_id': {$in:badges}});
-        if (badgeDocs.length !== badges.length) {
-        return res.status(400).json({message: 'some badge'});
-        }
-      }
-    } catch (error) {
-      console.log(error)
     };
 
     if (!title || !description) {
@@ -83,11 +74,34 @@ const postJobs = asyncHandler(async (req, res) => {
         success: false
       })
     };
+
+    const company = (await User.findById(userId)).company; // Finding the user company
+
+    if (!company) {
+      return res.status(400).json({
+        message: "Company not registered for user",
+        success: false,
+      })
+    }
+
+    try {
+      if (badges && badges.length > 0) {
+        const badgeDocs = await Badge.find({'_id': {$in:badges}});
+        if (badgeDocs.length !== badges.length) {
+          return res.status(400).json({message: 'some badge'});
+        }
+      }
+    } catch (error) {
+      console.log(error)
+    };
+
     const job = await Job.create({
       title,
       description,
-      createdby: userId
+      createdby: userId,
+      company, // Company is a required parameter in database
     });
+
     return res.status(201).json({
       message: "New job created successfully",
       job,

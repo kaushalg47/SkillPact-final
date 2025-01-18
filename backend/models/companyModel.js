@@ -29,8 +29,15 @@ const companySchema = new mongoose.Schema({
     userId:{
         type:mongoose.Schema.Types.ObjectId,
         ref:'User',
-        required:true
+        required:true,
+        immutable: true, // Once created company ownership
+    },
+    status:{
+        type:String,
+        enum:['pending', 'accepted', 'rejected'],
+        default:'pending'
     }
+    
 },{timestamps:true})
 
 const Company = mongoose.model('Company', companySchema);
