@@ -79,7 +79,7 @@ const userCompany = asyncHandler(async (req, res) => {
       message: "Can't fetch company data",
       success: false,
     });
-}
+  }
 });
 
 const infoCompany = asyncHandler(async (req, res) => {
@@ -120,7 +120,23 @@ const updateCompany = asyncHandler(async (req, res) => {
        description: <Description>
     } 
     */
-    
+
+      const company = await Company.findById(req.params.id);
+
+      if (!company) {
+          return res.status(404).json({
+              message: "Company not found.",
+              success: false
+          })
+      }
+      
+      if (req.user._id.toString() !== company.userId.toString()) {
+        return res.status(403).json({
+          message: "Cannot update the company, Unauthorized",
+          success: false,
+        })
+      }
+
       const { companyInfo } = req.body;
 
       if (!companyInfo) {
@@ -130,19 +146,13 @@ const updateCompany = asyncHandler(async (req, res) => {
         });
       }
       
-      const company = await Company.findByIdAndUpdate(req.params.id, companyInfo, { new: true, runValidators: true });  // Company information should be passed in parameters to maintain consistency
+      const updatedCompany = await Company.findByIdAndUpdate(req.params.id, companyInfo, { new: true, runValidators: true });  // Company information should be passed in parameters to maintain consistency
       // Validations in schema set to true
-      console.log(company);
+      console.log(updatedCompany);
 
-      if (!company) {
-          return res.status(404).json({
-              message: "Company not found.",
-              success: false
-          })
-      }
       return res.status(200).json({
           message:"Company information updated.",
-          company,
+          company: updatedCompany,
           success:true,
       })
 
