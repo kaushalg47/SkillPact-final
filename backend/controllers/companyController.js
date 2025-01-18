@@ -1,5 +1,6 @@
 import asyncHandler from 'express-async-handler';
 import Company from '../models/companyModel.js';
+import User from '../models/userModel.js';
 
 // TODO: SCHEMA VALIDATION
 const registerCompany = asyncHandler(async (req, res) => {
@@ -37,12 +38,27 @@ const registerCompany = asyncHandler(async (req, res) => {
         success: false,
       });
     }
+    
+    // While making company it has to be saved in user's company
+    const userId = req.user._id;
+    const user = await User.findById(userId);
 
-    // Create a new company
-    company = await Company.create({
-      ...companyInfo,
-      userId: req.user._id, // Use req.user._id instead of req.id
-    });
+    // If company defined then we can't register more than one company
+    if (user.company) {
+      return res.status(400).json({
+        message: "You can't register more than 1 company",
+        success: false,
+      });
+    } else {
+      // Create a new company
+      company = await Company.create({
+        ...companyInfo,
+        userId: req.user._id, // Use req.user._id instead of req.id
+      });
+      
+      user.company = company;
+      await user.save();
+    }
 
     return res.status(201).json({
       message: "Company registered successfully.",
@@ -84,7 +100,7 @@ const userCompany = asyncHandler(async (req, res) => {
 
 const infoCompany = asyncHandler(async (req, res) => {
   try {
-        const companyId = req.params.id;  // Company id is being passed in params not in query
+        const companyId = req.params.compId;  // Company id is being passed in params not in query
         const company = await Company.findById(companyId);
         if (!company) {
             return res.status(404).json({
@@ -121,7 +137,7 @@ const updateCompany = asyncHandler(async (req, res) => {
     } 
     */
 
-      const company = await Company.findById(req.params.id);
+      const company = await Company.findById(req.params.compId); // changed req.params.id to req.params.compId
 
       if (!company) {
           return res.status(404).json({
@@ -146,7 +162,8 @@ const updateCompany = asyncHandler(async (req, res) => {
         });
       }
       
-      const updatedCompany = await Company.findByIdAndUpdate(req.params.id, companyInfo, { new: true, runValidators: true });  // Company information should be passed in parameters to maintain consistency
+      const updatedCompany = await Company.findByIdAndUpdate(req.params.compId, companyInfo, { new: true, runValidators: true });  // Company information should be passed in parameters to maintain consistency
+      // req.params.id -> req.params.compId 
       // Validations in schema set to true
       console.log(updatedCompany);
 

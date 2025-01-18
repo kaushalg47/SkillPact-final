@@ -6,12 +6,13 @@ import {
   updateCompany,
 } from '../controllers/companyController.js';
 import { protect } from '../middleware/authMiddleware.js';
+import approveCompany from '../middleware/companyApproveMiddleware.js';
 
 const router = express.Router();
 
 router.get('/',protect,userCompany)
 router.post('/',protect, registerCompany);
-router.put('/:id',protect, updateCompany);
-router.get('/:id', protect, infoCompany);
+router.put('/:compId',protect, approveCompany, updateCompany); // Added middleware "approveCompany" to block pending company requests
+router.get('/:compId', protect, infoCompany);
 
 export default router;
