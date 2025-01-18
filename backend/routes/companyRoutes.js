@@ -9,9 +9,9 @@ import { protect } from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/reg-company',protect, registerCompany);
-router.get('/user-company',protect,userCompany)
-router.get('/info-company/:id', protect, infoCompany);
-router.post('/update-company',protect, updateCompany);
+router.get('/',protect,userCompany)
+router.post('/',protect, registerCompany);
+router.put('/:id',protect, updateCompany);
+router.get('/:id', protect, infoCompany);
 
 export default router;
