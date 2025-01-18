@@ -58,7 +58,7 @@ const postJobs = asyncHandler(async (req, res) => {
       badges,
 
      } = req.body;
-    const userId = req.id;
+    const userId = req.user._id;
     console.log(userId);
     if (!userId){
       return res.status(400).json({

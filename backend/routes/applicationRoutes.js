@@ -10,8 +10,8 @@ import { protect } from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 router.post('/apply-job/:id',protect, applyApplication);
-router.get('/user-applications',protect,userApplications) // Typo -> Appliations -> Applications
+router.get('/user-applications',protect,userApplications); // -> Typo function not defined
 router.get('/reg-applicants/:id', protect, registeredApplicants);
-router.post('/status-update-app',protect, statusUpdateApplication);
+router.post('/status-update-app/:id',protect, statusUpdateApplication);
 
 export default router;

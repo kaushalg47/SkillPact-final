@@ -44,24 +44,18 @@ const jobSchema = new mongoose.Schema({
     ref: 'Company',
     required: true
   },
-  badges: { // made the default array as empty error
-    type: [
-      {
-        type: mongoose.Schema.ObjectId,
-        ref: 'Badge'
-      }
-    ],
-    default: [],
-  },
-  applications: { // made the default array as empty error
-    type: [
-      {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'Application'
-      },
-    ],
-    default: [],
-  }
+  badges: [
+    {
+      type: mongoose.Schema.ObjectId,
+      ref: 'Badge'
+    }
+  ],
+  application: [
+    {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'Application'
+    }
+  ]
 
 },{timestamps:true});
 
