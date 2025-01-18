@@ -22,11 +22,25 @@ const registerCompany = asyncHandler(async (req, res) => {
       });
     }
 
+    //check if the user has already registered a company
+    const user= req.user._id;
+    const count = await Company.countDocuments({ userId: user });
+    console.log(`Number of companies for user ${user}:`, count);
+
     // Create a new company
-    company = await Company.create({
-      name: companyName,
-      userId: req.user._id, // Use req.user._id instead of req.id
-    });
+    if(count>0){
+      return res.status(400).json({
+        message: "You can't register more than 1 company",
+        success: false,
+      });
+
+    }else{
+      company = await Company.create({
+        name: companyName,
+        userId: req.user._id, // Use req.user._id instead of req.id
+      }); 
+    }  
+      
 
     return res.status(201).json({
       message: "Company registered successfully.",
@@ -46,7 +60,7 @@ const userCompany = asyncHandler(async (req, res) => {
   try {
     const userId = req.user._id; // logged in user id
     const companies = await Company.find({ userId });
-    if (!companies) {
+    if (companies.length === 0) {
         return res.status(404).json({
             message: "Companies not found.",
             success: false
@@ -57,7 +71,11 @@ const userCompany = asyncHandler(async (req, res) => {
         success:true
     })
 } catch (error) {
-    console.log(error);
+  console.error("Error fetching companies:", error); // Enhanced error logging
+  return res.status(500).json({
+    message: "Internal server error",
+    success: false
+  });
 }
 });
 
@@ -76,32 +94,37 @@ const infoCompany = asyncHandler(async (req, res) => {
             success: true
         })
     } catch (error) {
-        console.log(error);
+      console.error("Error fetching company:", error); // Enhanced error logging
+      return res.status(500).json({
+        message: "Internal server error",
+        success: false
+      });
     }
 });
 
 const updateCompany = asyncHandler(async (req, res) => {
   try {
-      const { name, description, website, location } = req.body;
+    const { name, description, website, location } = req.body;
+    const updateData = { name, description, website, location };
+    const company = await Company.findByIdAndUpdate(req.query.id, updateData, { new: true });
+    if (!company) {
+      return res.status(404).json({
+        message: "Company not found.",
+        success: false
+      });
+    }
 
-  
-      const updateData = { name, description, website, location};
-
-      const company = await Company.findByIdAndUpdate(req.query.id, updateData, { new: true });  //pass the companyId in the query and the content through the BODY
-
-      if (!company) {
-          return res.status(404).json({
-              message: "Company not found.",
-              success: false
-          })
-      }
-      return res.status(200).json({
-          message:"Company information updated.",
-          success:true
-      })
-
+    return res.status(200).json({
+      message: "Company information updated.",
+      success: true,
+      company
+    });
   } catch (error) {
-      console.log(error);
+    console.error("Error updating company:", error);   // Enhanced error logging
+    return res.status(500).json({
+      message: "Internal server error",
+      success: false
+    });
   }
 });
 
