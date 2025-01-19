@@ -24,7 +24,7 @@ const getJobs = asyncHandler(async (req, res) => {
         path: "badges", // Adjust the populate path if required
       })
       .sort({ createdAt: -1 });
-
+      
     // If no jobs found, return a 404 response
     if (!jobs || jobs.length === 0) {
       return res.status(404).json({
