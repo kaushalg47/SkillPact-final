@@ -1,20 +1,26 @@
 import { apiSlice } from './apiSlice';
 
-const COURSE_URL = '/api/course';
+const COURSE_URL = '/api/courses';
 
 export const courseApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
-    createCourseQuery: builder.query({
-      query: () => `${COURSE_URL}/`,
+    // Fetch published courses
+    getCourses: builder.query({
+      query: () => `${COURSE_URL}`,
     }),
-    // Endpoint to fetch all user job applications
-    getCoursesQuery: builder.query({
-      query: () => `${COURSE_URL}/published-courses`,
+    // Create a new course
+    createCourse: builder.mutation({
+      query: (courseData) => ({
+        url: COURSE_URL,
+        method: 'POST',
+        body: courseData,
+      }),
     }),
   }),
 });
 
 export const {
-  useCreateCourseQuery,
-  useGetCoursesQuery,
+  useGetCoursesQuery, // Hook to fetch published courses
+  useCreateCourseMutation, // Hook to create a new course
 } = courseApiSlice;
+

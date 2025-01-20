@@ -9,7 +9,7 @@ import userRoutes from './routes/userRoutes.js';
 import jobRoutes from './routes/jobRoutes.js';
 import companyRoutes from './routes/companyRoutes.js';
 import applicationRoutes from './routes/applicationRoutes.js';
-
+import courseRoutes from './routes/course.route.js';
 const port = process.env.PORT || 5000;
 
 connectDB();
@@ -31,6 +31,7 @@ app.use('/api/users', userRoutes);
 app.use('/api/jobs', jobRoutes);
 app.use('/api/apply', applicationRoutes);
 app.use('/api/company', companyRoutes);
+app.use('/api/courses',courseRoutes);
 
 if (process.env.NODE_ENV === 'production') {
   const __dirname = path.resolve();
