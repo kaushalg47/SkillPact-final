@@ -22,6 +22,10 @@ const badgeSchema = new mongoose.Schema({
       "Communicator"
     ], // Added more badges
   },
+  imageUrl: {
+    type: String,
+    default: "",
+  }
 });
 
 const Badge = mongoose.model('Badge', badgeSchema);
