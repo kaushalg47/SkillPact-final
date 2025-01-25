@@ -4,8 +4,28 @@ const badgeSchema = new mongoose.Schema({
   title: { 
     type: String, 
     required: true, 
-    enum: ["Team Player", "Innovative", "Leadership", "Problem Solver", "Hardworking"], // Predefined badges
+    enum: [
+      "Team Player", 
+      "Innovative", 
+      "Leadership", 
+      "Problem Solver", 
+      "Hardworking",
+      "Creative Thinker",
+      "Dependable",
+      "Motivator",
+      "Efficient",
+      "Strategic Planner",
+      "Mentor",
+      "Collaborator",
+      "Visionary",
+      "Achiever",
+      "Communicator"
+    ], // Added more badges
   },
+  imageUrl: {
+    type: String,
+    default: "",
+  }
 });
 
 const Badge = mongoose.model('Badge', badgeSchema);
