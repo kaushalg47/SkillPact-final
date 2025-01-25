@@ -1,4 +1,4 @@
-import mongoose from "mongoose"
+import mongoose from "mongoose";
 
 const courseSchema = new mongoose.Schema({
     courseTitle:{
@@ -40,8 +40,16 @@ const courseSchema = new mongoose.Schema({
     isPublished:{
         type:Boolean,
         default:false
-    }
-
+    }, 
+    badges: {
+        type: [
+            {
+            type: mongoose.Schema.ObjectId,
+            ref: 'Badge'
+            }
+        ],
+        default: [],
+    }, // Each course needs to have badges
 }, {timestamps:true});
 
 export const Course = mongoose.model("Course", courseSchema);
