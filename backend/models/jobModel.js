@@ -13,6 +13,15 @@ const jobSchema = new mongoose.Schema({
     trim: true,
     maxlength: 500,
   },
+  category:{
+    type:String,
+    enum:[
+      'Software', 'AI/ML', 'Data Science', 'Cloud',
+      'DevOps', 'Security', 'Frontend', 'Backend'
+    ],
+    required:true,
+
+  },
   minqualification: {
     type: String,
     trim: true,
