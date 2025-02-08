@@ -1,5 +1,4 @@
 import mongoose from 'mongoose';
-
 const jobSchema = new mongoose.Schema({
   title: {
     type: String,
@@ -13,14 +12,13 @@ const jobSchema = new mongoose.Schema({
     trim: true,
     maxlength: 500,
   },
-  category:{
-    type:String,
-    enum:[
+  category: {
+    type: String,
+    enum: [
       'Software', 'AI/ML', 'Data Science', 'Cloud',
       'DevOps', 'Security', 'Frontend', 'Backend'
     ],
-    required:true,
-
+    required: true,
   },
   minqualification: {
     type: String,
@@ -38,6 +36,10 @@ const jobSchema = new mongoose.Schema({
     type: String,
     trim: true,
   },
+  startsOn: { // New field added
+    type: Date,
+    required: true,
+  },
   stipend: {
     type: Number, // stipend should be a +ve number
     trim: true,
@@ -51,22 +53,21 @@ const jobSchema = new mongoose.Schema({
   company: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'Company',
-    required: true
+    required: true,
   },
   badges: [
     {
       type: mongoose.Schema.ObjectId,
-      ref: 'Badge'
+      ref: 'Badge',
     }
   ],
   application: [
     {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'Application'
+      ref: 'Application',
     }
   ]
-
-},{timestamps:true});
+}, {timestamps: true});
 
 const Job = mongoose.model('Job', jobSchema);
 export default Job;
