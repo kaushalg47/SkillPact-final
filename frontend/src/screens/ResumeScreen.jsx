@@ -131,7 +131,7 @@ const ResumeScreen = () => {
             ))}
           </div>
         ) : (
-          <p>{data}</p>
+          <p>Not applied for any jobs yet</p>
         )}
       </div>
     </div>
