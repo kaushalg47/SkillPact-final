@@ -66,7 +66,7 @@ const applyApplication = asyncHandler(async (req, res) => {
     });
 
     // Add the new application to the job's application array
-    job.applications.push(newApplication._id); // Ensure `application` field in Job is an array
+    job.application.push(newApplication._id); // Ensure `application` field in Job is an array // 'application"s"' is not defined
     await job.save();
 
     return res.status(201).json({
@@ -109,31 +109,33 @@ const userApplications = asyncHandler(async (req, res) => { // Typo -> Appliatio
   };
 });
 
-//to see applicants for course owners
+//see applied jobs for users
 const registeredApplicants = asyncHandler(async (req, res) => {
   try {
-      const jobId = req.params.id;
-      const job = await Job.findById(jobId).populate({
-          path:'applications',
-          options:{sort:{createdAt:-1}},
-          populate:{
-              path:'applicant'
-          }
-      });
-      if(!job){
-          return res.status(404).json({
-              message:'Job not found.',
-              success:false
-          })
-      };
-      return res.status(200).json({
-          job, 
-          success:true // Typo Succees -> Success
-      });
+    const jobId = req.params.id;
+    const application = await Application.find({job:jobId}).sort({createdAt:-1}).populate({
+      path:'job',
+      option:{sort:{createdAt:-1}},
+      populate:{
+        path:'title',
+        options:{sort:{createdAt:-1}},
+      }
+    });
+    if(!application){
+      return res.status(404).json({
+        message:"No Applications",
+        success:false
+      })
+    };
+    return res.status(200).json({
+      application,
+      success:true
+    })
   } catch (error) {
-      console.log(error);
-  }
+    console.log(error);
+  };
 });
+
 
 //to change status of application
 const statusUpdateApplication = asyncHandler(async (req, res) => {

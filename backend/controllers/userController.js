@@ -72,13 +72,33 @@ const logoutUser = (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private
 const getUserProfile = asyncHandler(async (req, res) => {
-  const user = await User.findById(req.user._id);
+  const user = await User.findById(req.user._id).populate('badges');
 
   if (user) {
     res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
+      badges: user.badges, // Added badges while giving response
+    });
+  } else {
+    res.status(404);
+    throw new Error('User not found');
+  }
+});
+
+// @desc    Get any user's profile by ID
+// @route   GET /api/users/profile/:id
+// @access  Public
+const getUserProfileById = asyncHandler(async (req, res) => { // Added another route where any one can see a user's profile without needing login
+  const user = await User.findById(req.params.id).populate('badges');
+
+  if (user) {
+    res.json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      badges: user.badges, // Added badges while giving response
     });
   } else {
     res.status(404);
@@ -118,4 +138,5 @@ export {
   logoutUser,
   getUserProfile,
   updateUserProfile,
+  getUserProfileById,
 };

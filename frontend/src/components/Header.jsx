@@ -1,4 +1,3 @@
-// import { Navbar, Nav, Container, NavDropdown, Badge } from 'react-bootstrap';
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
 import { FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -6,13 +5,12 @@ import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { useLogoutMutation } from '../slices/usersApiSlice';
 import { logout } from '../slices/authSlice';
+import './styles/header.css';
 
 const Header = () => {
   const { userInfo } = useSelector((state) => state.auth);
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
   const [logoutApiCall] = useLogoutMutation();
 
   const logoutHandler = async () => {
@@ -27,32 +25,85 @@ const Header = () => {
 
   return (
     <header>
-      <Navbar bg='dark' variant='dark' expand='lg' collapseOnSelect>
-        <Container>
+      <Navbar 
+        expand='lg' 
+        collapseOnSelect 
+        style={{
+          background: '#FFFFFF',
+          height: '70px',  // Decreased from 90px
+          border: '1px solid #000000',
+          boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)'
+        }}
+      >
+        <Container fluid="sm"
+          style={{
+            maxWidth: '1728px',
+            margin: '0 auto',
+            paddingLeft: '20px',
+            paddingRight: '20px',
+            position: 'relative'  // Added for absolute positioning context
+          }}>
           <LinkContainer to='/'>
-            <Navbar.Brand>SkillPact</Navbar.Brand>
+            <Navbar.Brand 
+              style={{
+                height: '45px',
+                marginLeft: '36px',
+                fontFamily: 'Inter',
+                fontWeight: '400',
+                fontSize: '35px',
+                lineHeight: '42.36px'
+              }}>
+              SkillPact
+            </Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
-            <Nav className='ms-auto'>
+            <Nav className='ms-auto' style={{ position: 'relative' }}>  {/* Added position relative */}
               {userInfo ? (
                 <>
-                  <NavDropdown title={userInfo.name} id='username'>
+                  <NavDropdown 
+                    title={userInfo.name} 
+                    id='username' 
+                    style={{
+                      fontFamily: 'Inter',
+                      fontStyle: 'normal',
+                      fontWeight: '400',
+                      fontSize: '28px',
+                      lineHeight: '34px',
+                      color: '#000000',
+                      marginLeft: '20px'  // Using margin instead of absolute positioning
+                    }}>
                     <LinkContainer to='/profile'>
                       <NavDropdown.Item>Profile</NavDropdown.Item>
                     </LinkContainer>
-                    <NavDropdown.Item onClick={logoutHandler}>
-                      Logout
-                    </NavDropdown.Item>
+                    <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
                   </NavDropdown>
                   <LinkContainer to='/jobs'>
-                    <Nav.Link>
-                      <FaSignInAlt /> jobs
+                    <Nav.Link 
+                      style={{
+                        fontFamily: 'Inter',
+                        fontStyle: 'normal',
+                        fontWeight: '400',
+                        fontSize: '28px',
+                        lineHeight: '34px',
+                        color: '#000000',
+                        marginLeft: '20px'  // Using margin instead of absolute positioning
+                      }}>
+                      <FaSignInAlt /> Jobs
                     </Nav.Link>
                   </LinkContainer>
                   <LinkContainer to='/courses'>
-                    <Nav.Link>
-                      <FaSignInAlt /> courses
+                    <Nav.Link 
+                      style={{
+                        fontFamily: 'Inter',
+                        fontStyle: 'normal',
+                        fontWeight: '400',
+                        fontSize: '28px',
+                        lineHeight: '34px',
+                        color: '#000000',
+                        marginLeft: '20px'  // Using margin instead of absolute positioning
+                      }}>
+                      <FaSignInAlt /> Courses
                     </Nav.Link>
                   </LinkContainer>
                 </>
