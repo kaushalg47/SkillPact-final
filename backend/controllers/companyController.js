@@ -185,4 +185,3 @@ const updateCompany = asyncHandler(async (req, res) => {
 export {
   infoCompany, registerCompany, updateCompany, userCompany
 };
-
