@@ -16,8 +16,7 @@ router.get('/:id', infoJobs);
 // Pending to be fixed
 router.get('/admin-jobs',protect, adminJobs);
 
-router.route('/')
-      .post(protect, approveCompany, postJobs); // Protect the jobs.
+router.post('/', protect, approveCompany, postJobs); // Protect the jobs.
       // Only allow companies with approval to post
 
 export default router;

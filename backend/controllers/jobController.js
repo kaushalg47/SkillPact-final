@@ -102,6 +102,8 @@ const postJobs = asyncHandler(async (req, res) => {
       company, // Company is a required parameter in database
     });
 
+    job.save()
+
     return res.status(201).json({
       message: "New job created successfully",
       job,

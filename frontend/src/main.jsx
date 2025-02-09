@@ -20,6 +20,7 @@ import CourseScreen from './screens/CourseScreen.jsx';
 import ResumeScreen from './screens/ResumeScreen.jsx';
 import JobDetailScreen from './screens/JobDetailScreen.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
+import CompanyInfo from './screens/CompanyInfo.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -34,7 +35,7 @@ const router = createBrowserRouter(
       <Route path='/job-info/:jobId' element={<JobDetailScreen/>}/>
       <Route path='/courses' element={<CourseScreen />}/>
       <Route path='/profile' element={<ResumeScreen/>}/>
-      
+      <Route path='/manage-company' element={<CompanyInfo/>}/>
     </Route>
   )
 );
