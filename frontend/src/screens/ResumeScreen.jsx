@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useGetUserApplicationsQuery } from "../slices/applicationApiSlice";
 import { useGetUserInfoQuery } from "../slices/userInfoApiSlice";
+import { Link } from "react-router-dom";
 
 const ResumeScreen = () => {
 	const {
@@ -65,7 +66,7 @@ const ResumeScreen = () => {
 							</div>
 							{userInfo.company && (
 								<p className="mt-2">
-									<a href="/manage-company">Manage your company</a>
+									<Link to="/company-info">Manage your company</Link>
 								</p>
 							)}
 						</div>

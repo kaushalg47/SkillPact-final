@@ -77,16 +77,18 @@ const registerCompany = asyncHandler(async (req, res) => {
 const userCompany = asyncHandler(async (req, res) => {
   try {
     const userId = req.user._id; // logged in user id
-    const companies = await Company.find({ userId });
+    const company = await Company.findOne({ userId });
 
-    if (!companies || companies.length == 0) {
+    console.log(company)
+
+    if (!company) {
         return res.status(404).json({
             message: "Companies not found.",
             success: false
         })
     }
     return res.status(200).json({
-        companies,
+        company,
         success:true
     })
 } catch (error) {
@@ -154,6 +156,8 @@ const updateCompany = asyncHandler(async (req, res) => {
       }
 
       const { companyInfo } = req.body;
+      
+      console.log(req.body);
 
       if (!companyInfo) {
         return res.status(400).json({

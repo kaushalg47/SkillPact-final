@@ -91,7 +91,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 // @route   GET /api/users/profile/:id
 // @access  Public
 const getUserProfileById = asyncHandler(async (req, res) => { // Added another route where any one can see a user's profile without needing login
-  const user = await User.findById(req.params.id).populate('badges').populate("company");
+  const user = await User.findById(req.params.id).populate('badges');
 
   if (user) {
     res.json({

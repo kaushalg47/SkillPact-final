@@ -11,7 +11,7 @@ import approveCompany from '../middleware/companyApproveMiddleware.js';
 const router = express.Router();
 
 // Arranged in logical order
-router.get('/',protect, getJobs);
+router.get('/', getJobs);
 router.get('/:id', infoJobs);
 // Pending to be fixed
 router.get('/admin-jobs',protect, adminJobs);

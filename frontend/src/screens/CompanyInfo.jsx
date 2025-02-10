@@ -1,23 +1,41 @@
+import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useGetUserInfoQuery } from "../slices/userInfoApiSlice";
+import { Link, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
+import { useGetUserCompanyInfoQuery } from "../slices/companyApiSlice";
+
 const CompanyInfo = () => {
 	let { userInfo: tempData } = useSelector((state) => state.auth);
-	let { data: userInfo, isLoading } = useGetUserInfoQuery(tempData._id);
+	const [companyInfo, setCompanyInfo] = useState(null);
 
-	if (isLoading || !userInfo) return <p>Loading...</p>;
-	const companyData = userInfo.company;
+	const navigate = useNavigate();
+	useEffect(() => {
+		if (!tempData) {
+			navigate("/login");
+			toast.error("Login Required");
+		}
+	}, [tempData, navigate]);
 
-  if (!companyData) {
-    return <>Company Not Found</>
-  }
+	const { data, isLoading } = useGetUserCompanyInfoQuery(tempData?._id, { skip: !tempData });
+
+	useEffect(() => {
+		if (data) {
+			setCompanyInfo(data.company);
+		}
+	}, [data])
+
+	if (isLoading || !companyInfo) return <p>Loading...</p>;
+
+	if (!companyInfo) return <p>Company Not Found</p>;
 
 	return (
 		<section>
-			<p>{JSON.stringify(companyData)}</p>
-			<h1>{companyData.name}</h1>
-			<p>{companyData.description}</p>
-      <a href={`${companyData.website}`}>{companyData.name}</a>
-      <p>Location: {companyData.location}</p>
+			<p>{JSON.stringify(companyInfo)}</p>
+			<h1>{companyInfo.name}</h1>
+			<p>{companyInfo.description}</p>
+			<a href={`${companyInfo.website}`}>{companyInfo.name}</a>
+			<p>Location: {companyInfo.location}</p>
+			<Link to="edit">Edit Company Details</Link>
 		</section>
 	);
 };
