@@ -83,7 +83,8 @@ const JobScreen = () => {
               {sortedJobs.map((job) => (
                 <div key={job._id} className="col-md-4 mb-4">
                   <Card
-                    image="https://via.placeholder.com/150" // Replace with dynamic image if available
+                    image="https://placehold.co/400" // Replace with dynamic image if available
+                    // Updated image url for a working url
                     title={job.title}
                     role={job.role || 'Role Not Specified'}
                     location={job.location || 'Location Not Specified'}

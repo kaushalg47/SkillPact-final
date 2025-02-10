@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Children } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App.jsx';
 import {
@@ -20,10 +20,12 @@ import CourseScreen from './screens/CourseScreen.jsx';
 import ResumeScreen from './screens/ResumeScreen.jsx';
 import JobDetailScreen from './screens/JobDetailScreen.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
+import CourseInfo from './screens/CourseInfo.jsx';
+import CourseProgress from './screens/CourseProgress.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
-    <Route path='/' element={<App />}>
+      <Route path='/' element={<App/>}>
       <Route index={true} path='/' element={<HomeScreen />} />
       <Route path='/login' element={<LoginScreen />} />
       <Route path='/register' element={<RegisterScreen />} />
@@ -32,6 +34,8 @@ const router = createBrowserRouter(
       </Route>
       <Route path='/jobs' element={<JobScreen />}/>
       <Route path='/job-info/:jobId' element={<JobDetailScreen/>}/>
+      <Route path='/courses/:courseId'element={<CourseInfo/>} />
+      <Route path='/courses/:courseId/course-progress' element={<CourseProgress/>}/>
       <Route path='/courses' element={<CourseScreen />}/>
       <Route path='/profile' element={<ResumeScreen/>}/>
       
