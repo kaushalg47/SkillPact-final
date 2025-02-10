@@ -3,6 +3,7 @@ import { useGetJobsQuery } from '../slices/jobsApiSlice';
 import Card from '../components/Card';
 import { useNavigate } from 'react-router-dom';
 import { FaFilter } from 'react-icons/fa';
+import PropTypes from 'prop-types'; // Importing PropTypes
 import '../components/styles/JobScreen.css';
 
 const JobCategories = ({ selectedCategories, toggleCategory }) => {
@@ -124,6 +125,12 @@ const JobScreen = () => {
 import PropTypes from 'prop-types';
 JobCategories.propTypes = {
   selectedCategories: PropTypes.arrayOf(PropTypes.string).isRequired,
+  toggleCategory: PropTypes.func.isRequired,
+};
+
+// PropTypes validation for JobCategories component
+JobCategories.propTypes = {
+  selectedCategories: PropTypes.array.isRequired,
   toggleCategory: PropTypes.func.isRequired,
 };
 
