@@ -11,10 +11,10 @@ import approveCompany from '../middleware/companyApproveMiddleware.js';
 const router = express.Router();
 
 // Arranged in logical order
+router.get('/admin-jobs',protect, approveCompany, adminJobs);
 router.get('/', getJobs);
 router.get('/:id', infoJobs);
 // Pending to be fixed
-router.get('/admin-jobs',protect, adminJobs);
 
 router.post('/', protect, approveCompany, postJobs); // Protect the jobs.
       // Only allow companies with approval to post
