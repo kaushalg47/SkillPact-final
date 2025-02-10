@@ -8,12 +8,13 @@ const App = () => {
     <div>
       <Header />
       <ToastContainer />
-      <Container fluid="sm"
+      <Container fluid="xl"
         style={{
-          maxWidth: '1500px',
+          maxWidth: '1900px',
+          maxHeight:'1000px',
           margin: '0 auto',
-          paddingLeft: '20px',
-          paddingRight: '20px'
+          paddingLeft: '0px',
+          paddingRight: '0px'
         }}>
         <Outlet />
       </Container>

@@ -122,7 +122,6 @@ const JobScreen = () => {
     </div>
   );
 };
-import PropTypes from 'prop-types';
 JobCategories.propTypes = {
   selectedCategories: PropTypes.arrayOf(PropTypes.string).isRequired,
   toggleCategory: PropTypes.func.isRequired,
