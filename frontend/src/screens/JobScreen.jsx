@@ -122,6 +122,10 @@ const JobScreen = () => {
     </div>
   );
 };
+JobCategories.propTypes = {
+  selectedCategories: PropTypes.arrayOf(PropTypes.string).isRequired,
+  toggleCategory: PropTypes.func.isRequired,
+};
 
 // PropTypes validation for JobCategories component
 JobCategories.propTypes = {
