@@ -1,0 +1,177 @@
+/* Main container */
+.job-detail-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    max-width: 1728px;
+    width: 100%;
+    margin: auto;
+    background: #FFFFFF;
+    padding: 20px;
+    gap: 55px;
+  }
+  
+  /* Left Section (Job Details) */
+  .left-container {
+    flex: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+  }
+  
+  /* Large Job Description Box */
+  .job-content {
+    width: 1150px;
+    height: 446px;
+    background: #FFFFFF;
+    border: 2px solid #000000;
+    border-radius: 20px;
+    padding: 20px;
+  }
+  
+  /* Medium-sized Company Info Box */
+  .company-info {
+    width: 1150px;
+    display: flex;
+    align-items: center;
+    background: #FFFFFF;
+    border: 2px solid #000000;
+    border-radius: 20px;
+    padding: 15px;
+    gap: 15px;
+  }
+  
+  .company-logo {
+    width: 153px;
+    height: 90px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  
+  .company-details h3 {
+    font-size: 22px;
+    font-weight: 600;
+  }
+  
+  /* Right Section (Application Info) */
+  /* Right Section (Application Info) */
+.right-container {
+  flex: 1;
+  background: #FFFFFF;
+  border: 2px solid #000000;
+  border-radius: 20px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  position: relative;
+  width: 366px;
+  height: 595px;
+}
+
+
+/* Click Here to Apply */
+.right-container p {
+  font-size: 25px;
+  font-weight: 350;
+  margin-top: 10px;
+  color: #000000;
+}
+
+/* Enroll Button */
+.apply-button {
+  width: 210px;
+  height: 45px;
+  background: #D9D9D9;
+  border: none;
+  border-radius: 10px;
+  font-size: 28px;
+  color: black;
+  cursor: pointer;
+  position: absolute;
+  top: 82px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.apply-button:hover {
+  background: #b5b5b5;
+}
+
+/* Eligible Button */
+.eligibility {
+  position: absolute;
+  width: 130px;
+  height: 30px;
+  top: 150px;
+  background: #B9E4C2;
+  font-size: 12px;
+  font-weight: bold;
+  color: #106516;
+  padding: 8px 15px;
+  border-radius: 10px;
+  text-align: center;
+  left: 31px;
+}
+
+/* Required Badges */
+.badges-container {
+  width: 100%;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.badges-container h4 {
+  font-size: 20px;
+  font-weight: 400;
+  color: #000000;
+  left: 40%;
+}
+
+/* Badge Placeholders */
+.badge-placeholder {
+  width: 90px;
+  height: 80px;
+  background: #D9D9D9;
+  display: inline-block;
+  border-radius: 10px;
+  margin: 10px;
+}
+
+/* Required Badges Position */
+.required-badges {
+  position: absolute;
+  top: 190px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 250px;
+}
+
+/* Earned Badges Position */
+.earned-badges {
+  position: absolute;
+  top: 442px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 304px;
+}
+
+  
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .job-detail-container {
+      flex-direction: column;
+      align-items: center;
+    }
+  
+    .left-container, .right-container {
+      width: 100%;
+    }
+  
+    .company-info {
+      flex-direction: column;
+      text-align: center;
+    }
+  }
+  
