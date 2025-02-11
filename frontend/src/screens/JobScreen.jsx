@@ -3,7 +3,7 @@ import { useGetJobsQuery } from '../slices/jobsApiSlice';
 import Card from '../components/Card';
 import { useNavigate } from 'react-router-dom';
 import { FaFilter } from 'react-icons/fa';
-import PropTypes from 'prop-types'; // Importing PropTypes
+import PropTypes from 'prop-types';
 import '../components/styles/JobScreen.css';
 
 const JobCategories = ({ selectedCategories, toggleCategory }) => {
@@ -40,22 +40,19 @@ const JobScreen = () => {
 
   const jobs = data?.jobs || [];
 
-  // Toggle category selection
   const toggleCategory = (category) => {
     setSelectedCategories((prev) =>
       prev.includes(category)
-        ? prev.filter((cat) => cat !== category) // Remove if already selected
-        : [...prev, category] // Add if not selected
+        ? prev.filter((cat) => cat !== category)
+        : [...prev, category]
     );
   };
 
-  // Filtering jobs based on selected categories
   const filteredJobs = jobs.filter((job) =>
     (selectedCategories.length === 0 || selectedCategories.includes(job.category)) &&
     job.title.toLowerCase().includes(filter.toLowerCase())
   );
 
-  // Sorting logic
   const sortedJobs = [...filteredJobs].sort((a, b) => {
     return sortOrder === 'asc'
       ? a.title.localeCompare(b.title)
@@ -78,26 +75,27 @@ const JobScreen = () => {
             value={filter}
             onChange={(e) => setFilter(e.target.value)}
           />
-          <button
-            className="filter-button"
-            onClick={() => setShowFilter(!showFilter)}
-          >
-            <FaFilter size={20} />
-          </button>
-        </div>
-
-        {showFilter && (
-          <div className="filter-container">
-            <select
-              className="sort-select"
-              value={sortOrder}
-              onChange={(e) => setSortOrder(e.target.value)}
+          <div className="filter-dropdown-container">
+            <button
+              className="filter-button"
+              onClick={() => setShowFilter(!showFilter)}
             >
-              <option value="asc">Ascending</option>
-              <option value="desc">Descending</option>
-            </select>
+              <FaFilter size={20} />
+            </button>
+            {showFilter && (
+              <div className="filter-dropdown">
+                <select
+                  className="sort-select"
+                  value={sortOrder}
+                  onChange={(e) => setSortOrder(e.target.value)}
+                >
+                  <option value="asc">Ascending</option>
+                  <option value="desc">Descending</option>
+                </select>
+              </div>
+            )}
           </div>
-        )}
+        </div>
 
         <div className="jobs-grid">
           {sortedJobs.length > 0 ? (
@@ -122,14 +120,9 @@ const JobScreen = () => {
     </div>
   );
 };
+
 JobCategories.propTypes = {
   selectedCategories: PropTypes.arrayOf(PropTypes.string).isRequired,
-  toggleCategory: PropTypes.func.isRequired,
-};
-
-// PropTypes validation for JobCategories component
-JobCategories.propTypes = {
-  selectedCategories: PropTypes.array.isRequired,
   toggleCategory: PropTypes.func.isRequired,
 };
 

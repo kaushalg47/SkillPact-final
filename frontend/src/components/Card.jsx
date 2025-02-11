@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 
 const Card = ({ image, title, role, location, company, duration, startDate, onClick }) => {
   const [isHovered, setIsHovered] = useState(false);
@@ -18,9 +18,10 @@ const Card = ({ image, title, role, location, company, duration, startDate, onCl
         <p style={styles.company}>{company}</p>
       </div>
       <h3 style={styles.title}>{title}</h3>
-      <p style={styles.duration}>Duration: {duration}</p>
-      <p style={styles.location}>Location: {location}</p>
-      <p style={styles.startDate}>Starts on: {startDate}</p>
+      {role && <p style={styles.role}>Role: {role}</p>}
+      {duration && <p style={styles.duration}>Duration: {duration}</p>}
+      {location && <p style={styles.location}>Location: {location}</p>}
+      {startDate && <p style={styles.startDate}>Starts on: {startDate}</p>}
       <p
         style={{
           ...styles.clickToApply,
@@ -36,7 +37,7 @@ const Card = ({ image, title, role, location, company, duration, startDate, onCl
 const styles = {
   card: {
     width: '300px',
-    height: '261px', 
+    height: 'auto',
     position: 'relative',
     borderRadius: '20px',
     border: '2px solid #000000',
@@ -73,6 +74,13 @@ const styles = {
     color: '#000000',
     margin: '0 0 16px 0',
   },
+  role: {
+    fontFamily: 'Inter',
+    fontSize: '16px',
+    fontWeight: 400,
+    color: '#000000',
+    margin: '8px 0',
+  },
   duration: {
     fontFamily: 'Inter',
     fontSize: '16px',
@@ -81,13 +89,6 @@ const styles = {
     margin: '8px 0',
   },
   location: {
-    fontFamily: 'Inter',
-    fontSize: '16px',
-    fontWeight: 400,
-    color: '#000000',
-    margin: '8px 0',
-  },
-  remote: {
     fontFamily: 'Inter',
     fontSize: '16px',
     fontWeight: 400,
