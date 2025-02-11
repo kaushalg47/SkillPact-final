@@ -31,13 +31,17 @@ const CompanyJobs = () => {
 		}
 	}, [data]);
 
-	if (isLoading || !adminJobs) {
+	if (isLoading) {
 		return <p>Loading...</p>;
 	}
-
+  
 	if (isError) {
-		return <p>Some error occurred</p>;
+    return <p>Some error occurred</p>;
 	}
+
+  if (!adminJobs) {
+    return <p>No Jobs found</p>
+  }
 
 	return <>
     {JSON.stringify(adminJobs)}

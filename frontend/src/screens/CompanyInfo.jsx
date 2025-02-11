@@ -24,8 +24,7 @@ const CompanyInfo = () => {
 		}
 	}, [data])
 
-	if (isLoading || !companyInfo) return <p>Loading...</p>;
-
+	if (isLoading) return <p>Loading...</p>;
 	if (!companyInfo) return <p>Company Not Found</p>;
 
 	return (
@@ -36,6 +35,10 @@ const CompanyInfo = () => {
 			<a href={`${companyInfo.website}`}>{companyInfo.name}</a>
 			<p>Location: {companyInfo.location}</p>
 			<Link to="edit">Edit Company Details</Link>
+			<br />
+			<Link to="/company-jobs">View Jobs</Link>
+			<br />
+			<Link to="/post-jobs">Post Jobs</Link>
 		</section>
 	);
 };

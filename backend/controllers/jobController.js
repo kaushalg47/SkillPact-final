@@ -57,7 +57,11 @@ const postJobs = asyncHandler(async (req, res) => {
       title,
       description,
       badges,
+      startsOn,
+      category,
      } = req.body;
+
+     console.log(title, description, badges, startsOn, category);
 
     const userId = req.user._id;
     console.log(userId);
@@ -68,7 +72,7 @@ const postJobs = asyncHandler(async (req, res) => {
       })
     };
 
-    if (!title || !description) {
+    if (!title || !description || !startsOn || !category) {
       return res.status(400).json({
         message: "Something is missing",
         success: false
@@ -100,6 +104,8 @@ const postJobs = asyncHandler(async (req, res) => {
       description,
       createdby: userId,
       company, // Company is a required parameter in database
+      category,
+      startsOn,
     });
 
     job.save()
