@@ -99,6 +99,7 @@ const getUserProfileById = asyncHandler(async (req, res) => { // Added another r
       name: user.name,
       email: user.email,
       badges: user.badges, // Added badges while giving response
+      company: user.company,
     });
   } else {
     res.status(404);
@@ -133,10 +134,6 @@ const updateUserProfile = asyncHandler(async (req, res) => {
   }
 });
 export {
-  authUser,
-  registerUser,
-  logoutUser,
-  getUserProfile,
-  updateUserProfile,
-  getUserProfileById,
+  authUser, getUserProfile, getUserProfileById, logoutUser, registerUser, updateUserProfile
 };
+
