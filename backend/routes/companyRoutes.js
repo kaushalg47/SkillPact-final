@@ -13,6 +13,6 @@ const router = express.Router();
 router.get('/',protect,userCompany)
 router.post('/',protect, registerCompany);
 router.put('/:compId',protect, approveCompany, updateCompany); // Added middleware "approveCompany" to block pending company requests
-router.get('/:compId', protect, infoCompany);
+router.get('/:compId', infoCompany);
 
 export default router;

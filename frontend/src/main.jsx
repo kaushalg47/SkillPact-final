@@ -20,6 +20,11 @@ import CourseScreen from './screens/CourseScreen.jsx';
 import ResumeScreen from './screens/ResumeScreen.jsx';
 import JobDetailScreen from './screens/JobDetailScreen.jsx';
 import PrivateRoute from './components/PrivateRoute.jsx';
+import CompanyInfo from './screens/CompanyInfo.jsx';
+import EditCompany from './screens/EditCompany.jsx';
+import CompanyJobs from './screens/CompanyJobs.jsx';
+import Applicants from './screens/Applicants.jsx';
+import PostJobs from './screens/PostJobs.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -30,11 +35,15 @@ const router = createBrowserRouter(
       <Route path='' element={<PrivateRoute />}>
         <Route path='/update-profile' element={<ProfileScreen />} />
       </Route>
+      <Route path='/company-info/edit' element={<EditCompany />} />
       <Route path='/jobs' element={<JobScreen />}/>
       <Route path='/job-info/:jobId' element={<JobDetailScreen/>}/>
       <Route path='/courses' element={<CourseScreen />}/>
       <Route path='/profile' element={<ResumeScreen/>}/>
-      
+      <Route path='/company-info' element={<CompanyInfo/>}/>
+      <Route path='/company-jobs' element={<CompanyJobs/>}/>
+      <Route path='/company-jobs/:jobId' element={<Applicants/>}/>
+      <Route path='/post-jobs' element={<PostJobs/>}/>
     </Route>
   )
 );
