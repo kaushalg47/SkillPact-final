@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAdminJobsQuery } from "../slices/jobsApiSlice";
 import { toast } from "react-toastify";
 
@@ -64,7 +64,9 @@ const CompanyJobs = () => {
               <td>{data.createdAt}</td>
               <td>{data.updatedAt}</td>
               <td>{data.application?.length}</td>
-              <td></td>
+              <td>
+                <Link to={`/company-jobs/${data._id}`}>See Applicants</Link>
+              </td>
             </tr>
           ))}
         </tbody>

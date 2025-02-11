@@ -114,13 +114,10 @@ const registeredApplicants = asyncHandler(async (req, res) => {
   try {
     const jobId = req.params.id;
     const application = await Application.find({job:jobId}).sort({createdAt:-1}).populate({
-      path:'job',
-      option:{sort:{createdAt:-1}},
-      populate:{
-        path:'title',
-        options:{sort:{createdAt:-1}},
-      }
+      path:'applicant',
+      select: "name email status",
     });
+
     if(!application){
       return res.status(404).json({
         message:"No Applications",
