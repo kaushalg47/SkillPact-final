@@ -9,7 +9,6 @@ const CourseInfo = () => {
   if (error) return <p>Error: {error.message}</p>;
 
 
-  // Render course details in a card
   return (
     <div className="container mt-5">
       <div className="card">
