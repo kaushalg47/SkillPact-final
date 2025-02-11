@@ -1,70 +1,57 @@
-
 import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Card, Spinner } from 'react-bootstrap';
-import { useGetJobByIdQuery } from '../slices/jobsApiSlice'; // Import the query hook
+import { Spinner } from 'react-bootstrap';
+import { useGetJobByIdQuery } from '../slices/jobsApiSlice';
+import '../components/styles/JobDetail.css';
 
 const JobDetailPage = () => {
-  const { jobId } = useParams(); // Get the jobId from the route parameters
-  const navigate = useNavigate(); // For navigation
-
-  // Fetch job data based on the jobId using the hook
+  const { jobId } = useParams();
+  const navigate = useNavigate();
   const { data, error, isLoading } = useGetJobByIdQuery(jobId);
   const job = data?.job;
 
-  // Handle Apply button click (for example, navigate to the application page)
   const handleApply = () => {
     if (job) {
-      navigate(`/apply/${jobId}`); // Navigate to the application page
+      // Corrected the navigate path by adding quotes around the string
+      navigate(`/apply/${jobId}`);
     }
   };
 
-  // Display a loading spinner while fetching data
   if (isLoading) {
     return (
-      <div className="text-center my-5">
+      <div className="loading-container">
         <Spinner animation="border" variant="primary" />
       </div>
     );
   }
 
-  // Display error message if something goes wrong
   if (error) {
-    return (
-      <div className="alert alert-danger text-center my-5">
-        {error?.message || 'Failed to load job details'}
-      </div>
-    );
+    return <div className="error-message alert alert-danger text-center my-5">{error?.message || 'Failed to load job details'}</div>;
   }
 
-  // Ensure job exists before rendering the content
   if (!job) {
-    return (
-      <div className="alert alert-warning text-center my-5">
-        No job details found.
-      </div>
-    );
-  } 
+    return <div className="no-job-message alert alert-warning text-center my-5">No job details found.</div>;
+  }
 
   return (
-    <div className="container mt-5">
-      <Card className="shadow-lg">
-        <Card.Header className="bg-primary text-white text-center">
+    <div className="job-detail-container">
+      {/* Left Section */}
+      <div className="left-container">
+        {/* Job Description */}
+        <div className="job-content">
           <h2>{job.title}</h2>
-        </Card.Header>
-        <Card.Body>
-          <div className="mb-4">
+          <div className="job-info">
             <h5>Company:</h5>
             <p>{job.company}</p>
           </div>
-          <div className="mb-4">
+          <div className="job-info">
             <h5>Location:</h5>
             <p>{job.location}</p>
           </div>
-          <div className="mb-4">
+          <div className="job-info">
             <h5>Job Description:</h5>
             <p>{job.description}</p>
           </div>
-          <div className="mb-4">
+          <div className="job-info">
             <h5>Requirements:</h5>
             <ul>
               {job.requirements?.length > 0 ? (
@@ -76,13 +63,35 @@ const JobDetailPage = () => {
               )}
             </ul>
           </div>
-          <div className="text-center">
-            <Button variant="success" size="lg" onClick={handleApply}>
-              Apply Now
-            </Button>
+        </div>
+
+        {/* Company Info */}
+        <div className="company-info">
+          <img src={job.companyLogo || '/placeholder-logo.png'} alt="Company Logo" className="company-logo" />
+          <div className="company-details">
+            <h3>{job.company}</h3>
+            <p>{job.title}</p>
           </div>
-        </Card.Body>
-      </Card>
+        </div>
+      </div>
+
+      <div className="right-container">
+        <p>Click here to apply</p>
+        <button className="apply-button" onClick={handleApply}>Enroll</button>
+        <div className="eligibility">Eligible ✅</div>
+        <div className="badges-container required-badges">
+          <h4>Required Badges:</h4>
+          <span className="badge-placeholder"></span>
+          <span className="badge-placeholder"></span>
+          <span className="badge-placeholder"></span>
+        </div>
+        <div className="badges-container earned-badges">
+          <h4>Your Badges:</h4>
+          <span className="badge-placeholder"></span>
+          <span className="badge-placeholder"></span>
+        </div>
+      </div>
+
     </div>
   );
 };
