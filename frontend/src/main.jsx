@@ -25,6 +25,7 @@ import EditCompany from './screens/EditCompany.jsx';
 import CompanyJobs from './screens/CompanyJobs.jsx';
 import Applicants from './screens/Applicants.jsx';
 import PostJobs from './screens/PostJobs.jsx';
+import CourseInfo from './screens/CourseInfoScreen.jsx';
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -39,6 +40,7 @@ const router = createBrowserRouter(
       <Route path='/jobs' element={<JobScreen />}/>
       <Route path='/job-info/:jobId' element={<JobDetailScreen/>}/>
       <Route path='/courses' element={<CourseScreen />}/>
+      <Route path='/courses/:courseId' element={<CourseInfo/>} />
       <Route path='/profile' element={<ResumeScreen/>}/>
       <Route path='/company-info' element={<CompanyInfo/>}/>
       <Route path='/company-jobs' element={<CompanyJobs/>}/>
