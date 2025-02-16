@@ -8,6 +8,9 @@ export const courseApiSlice = apiSlice.injectEndpoints({
     getCourses: builder.query({
       query: () => `${COURSE_URL}`,
     }),
+    getCourseById: builder.query({
+      query: (courseId) => `${COURSE_URL}/${courseId}`,
+    }),
     // Create a new course
     createCourse: builder.mutation({
       query: (courseData) => ({
@@ -21,6 +24,7 @@ export const courseApiSlice = apiSlice.injectEndpoints({
 
 export const {
   useGetCoursesQuery, // Hook to fetch published courses
+  useGetCourseByIdQuery,
   useCreateCourseMutation, // Hook to create a new course
 } = courseApiSlice;
 
