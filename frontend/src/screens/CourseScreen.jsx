@@ -73,7 +73,7 @@ const CourseScreen = () => {
                 role={course.role || "Role Not Specified"}
                 location={course.location || "Location Not Specified"}
                 company={course.company || "Company Not Specified"}
-                onClick={() => navigate(`/courseif/${course._id}`)}
+                onClick={() => navigate(`/courses/${course._id}`)}
               />
             ))
           ) : (
