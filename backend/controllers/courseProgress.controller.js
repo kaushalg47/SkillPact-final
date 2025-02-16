@@ -6,12 +6,13 @@ export const getCourseProgress = async (req, res) => {
     const { courseId } = req.params;
     const userId = req.id;
 
+
     // step-1 fetch the user course progress
     let courseProgress = await CourseProgress.findOne({
       courseId,
       userId,
     }).populate("courseId");
-
+    
     const courseDetails = await Course.findById(courseId).populate("lectures");
 
     if (!courseDetails) {
