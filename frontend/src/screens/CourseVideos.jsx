@@ -20,7 +20,7 @@ const CourseVideos = () => {
   ];
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 mb-5">
       <h2 className="text-center mb-4">Course Content - {course.title}</h2>
       <div className="card mb-3">
         <div className="card-body text-center">
