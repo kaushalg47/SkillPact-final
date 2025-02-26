@@ -10,7 +10,7 @@ const CourseInfo = () => {
   if (error) return <p>Error: {error.message}</p>;
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 mb-5">
       <header className="bg-dark text-white p-3">
         <h2>{course.course.courseTitle}</h2>
         <p>{course.course.category || 'N/A'}</p>
