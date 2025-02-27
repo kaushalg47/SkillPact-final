@@ -1,46 +1,213 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { useGetUserCompanyInfoQuery } from "../slices/companyApiSlice";
+import { 
+  useGetUserCompanyInfoQuery, 
+  useUpdateCompanyMutation 
+} from "../slices/companyApiSlice";
+import Form, { 
+  FormGroup, 
+  FormInput, 
+  FormTextarea, 
+  FormActions, 
+  SubmitButton,
+  EditButton,
+  CancelButton,
+  LinkButton
+} from "../components/Form";
 
 const CompanyInfo = () => {
-	let { userInfo: tempData } = useSelector((state) => state.auth);
-	const [companyInfo, setCompanyInfo] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const [formData, setFormData] = useState({
+    name: "",
+    description: "",
+    website: "",
+    location: "",
+  });
 
-	const navigate = useNavigate();
-	useEffect(() => {
-		if (!tempData) {
-			navigate("/login");
-			toast.error("Login Required");
+  let { userInfo: tempData } = useSelector((state) => state.auth);
+  const navigate = useNavigate();
+  
+  const { data, isLoading, refetch } = useGetUserCompanyInfoQuery(tempData?._id, { 
+    skip: !tempData 
+  });
+  
+  const [updateCompany, { isLoading: isUpdating }] = useUpdateCompanyMutation();
+
+  // Check authentication
+  useEffect(() => {
+    if (!tempData) {
+      navigate("/login");
+      toast.error("Login Required");
+    }
+  }, [tempData, navigate]);
+
+  // Set form data from API data
+  useEffect(() => {
+    if (data && data.company) {
+      setFormData({
+        name: data.company.name || "",
+        description: data.company.description || "",
+        website: data.company.website || "",
+        location: data.company.location || "",
+      });
+    }
+  }, [data]);
+
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value,
+    });
+  };
+
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+	
+		if (!data || !data.company || !data.company._id) {
+		toast.error("Company information is missing.");
+		console.error("Error: Missing company ID", data);
+		return;
 		}
-	}, [tempData, navigate]);
-
-	const { data, isLoading } = useGetUserCompanyInfoQuery(tempData?._id, { skip: !tempData });
-
-	useEffect(() => {
-		if (data) {
-			setCompanyInfo(data.company);
+	
+		try {
+		console.log("Updating company with ID:", data.company._id);
+	
+		await updateCompany({
+			compId: data.company._id,
+			data: { companyInfo: formData },
+		}).unwrap();
+	
+		toast.success("Company information updated successfully");
+		setIsEditing(false);
+		refetch(); // Refresh the data after update
+		} catch (err) {
+		console.error("Update error:", err);
+		toast.error(err?.data?.message || err.error);
 		}
-	}, [data])
+	};
+  
 
-	if (isLoading) return <p>Loading...</p>;
-	if (!companyInfo) return <p>Company Not Found</p>;
+  const handleCancel = () => {
+    if (data && data.company) {
+      setFormData({
+        name: data.company.name || "",
+        description: data.company.description || "",
+        website: data.company.website || "",
+        location: data.company.location || "",
+      });
+    }
+    setIsEditing(false);
+  };
 
-	return (
-		<section>
-			<p>{JSON.stringify(companyInfo)}</p>
-			<h1>{companyInfo.name}</h1>
-			<p>{companyInfo.description}</p>
-			<a href={`${companyInfo.website}`}>{companyInfo.name}</a>
-			<p>Location: {companyInfo.location}</p>
-			<Link to="edit">Edit Company Details</Link>
-			<br />
-			<Link to="/company-jobs">View Jobs</Link>
-			<br />
-			<Link to="/post-jobs">Post Jobs</Link>
-		</section>
-	);
+  if (isLoading) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '70vh' 
+      }}>
+        <p style={{ fontSize: '1.2rem' }}>Loading company information...</p>
+      </div>
+    );
+  }
+
+  if (!data || !data.company) {
+    return (
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: 'column',
+        justifyContent: 'center', 
+        alignItems: 'center', 
+        height: '70vh',
+        gap: '1rem'
+      }}>
+        <p style={{ fontSize: '1.2rem' }}>Company profile not found or not yet created.</p>
+        <button 
+          onClick={() => navigate('/create-company')}
+          style={{
+            padding: '0.75rem 2rem',
+            backgroundColor: '#4299e1',
+            color: 'white',
+            fontWeight: 600,
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '1rem',
+          }}
+        >
+          Create Company Profile
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <Form title="Company Information" onSubmit={handleSubmit}>
+      <FormGroup label="Company Name" required>
+        <FormInput
+          name="name"
+          value={formData.name}
+          onChange={handleChange}
+          placeholder="Enter company name"
+          required
+          readOnly={!isEditing}
+        />
+      </FormGroup>
+      
+      <FormGroup label="Website">
+        <FormInput
+          name="website"
+          value={formData.website}
+          onChange={handleChange}
+          placeholder="Enter company website"
+          readOnly={!isEditing}
+        />
+      </FormGroup>
+      
+      <FormGroup label="Location">
+        <FormInput
+          name="location"
+          value={formData.location}
+          onChange={handleChange}
+          placeholder="Enter company location"
+          readOnly={!isEditing}
+        />
+      </FormGroup>
+      
+      <FormGroup label="Description" fullWidth>
+        <FormTextarea
+          name="description"
+          value={formData.description}
+          onChange={handleChange}
+          placeholder="Enter company description"
+          readOnly={!isEditing}
+        />
+      </FormGroup>
+      
+      <FormActions>
+        <div>
+          {isEditing ? (
+            <>
+              <CancelButton onClick={handleCancel}>Cancel</CancelButton>
+              <SubmitButton>{isUpdating ? "Updating..." : "Save Changes"}</SubmitButton>
+            </>
+          ) : (
+            <EditButton onClick={() => setIsEditing(true)} />
+          )}
+        </div>
+        
+        {!isEditing && (
+          <div>
+            <LinkButton to="/company-jobs">View Jobs</LinkButton>
+            <LinkButton to="/post-jobs">Post Jobs</LinkButton>
+          </div>
+        )}
+      </FormActions>
+    </Form>
+  );
 };
 
 export default CompanyInfo;
