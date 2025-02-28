@@ -11,10 +11,17 @@ export const applicationApiSlice = apiSlice.injectEndpoints({
     getUserApplications: builder.query({
       query: () => `${APPLICATION_URL}/user-applications`,
     }),
+    applyForJob: builder.mutation({
+      query: (jobId) => ({
+        url: `${APPLICATION_URL}/apply-job/${jobId}`,
+        method: 'POST',
+      }),
+    }),
   }),
 });
 
 export const {
   useGetJobApplicationQuery,
   useGetUserApplicationsQuery,
+  useApplyForJobMutation
 } = applicationApiSlice;

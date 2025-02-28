@@ -11,8 +11,12 @@ const HomeScreen = () => {
 
   return (
     <div>
+      <section>
+        <div></div>
+      </section>
       <h1>Job Listings</h1>
       {jobs.length > 0 ? (
+        
         <ul>
           {jobs.map((job) => (
             <li key={job._id}>
