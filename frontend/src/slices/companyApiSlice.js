@@ -10,6 +10,10 @@ export const companyInfoApiSlice = apiSlice.injectEndpoints({
 			query: () => `${COMPANY_URL}`,
 			providesTags: ["CompanyInfo"],
 		}),
+		registerCompany: builder.mutation({
+			query: (data) => ({   url: `${COMPANY_URL}`,method: "POST",body: data,
+			}),
+			invalidatesTags: ["CompanyInfo"],}),
 		updateCompany: builder.mutation({
 			query: ({ compId, data }) => ({
 				url: `${COMPANY_URL}/${compId}`,
@@ -21,4 +25,4 @@ export const companyInfoApiSlice = apiSlice.injectEndpoints({
 	}),
 });
 
-export const { useGetCompanyInfoQuery, useUpdateCompanyMutation, useGetUserCompanyInfoQuery } = companyInfoApiSlice;
+export const { useGetCompanyInfoQuery, useUpdateCompanyMutation, useGetUserCompanyInfoQuery,useRegisterCompanyMutation } = companyInfoApiSlice;
