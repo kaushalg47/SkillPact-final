@@ -1,6 +1,5 @@
 import mongoose from "mongoose";
 
-// Extra validation to keep database consistent
 const companySchema = new mongoose.Schema(
 	{
 		name: {

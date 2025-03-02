@@ -55,7 +55,7 @@ const registerCompany = asyncHandler(async (req, res) => {
       // Create a new company
       company = await Company.create({
         ...companyInfo,
-        userId: req.user._id, // Use req.user._id instead of req.id
+        userId: req.user._id,
       });
       
       user.company = company;
@@ -104,7 +104,7 @@ const userCompany = asyncHandler(async (req, res) => {
 
 const infoCompany = asyncHandler(async (req, res) => {
   try {
-        const companyId = req.params.compId;  // Company id is being passed in params not in query
+        const companyId = req.params.compId;
         const company = await Company.findById(companyId);
         if (!company) {
             return res.status(404).json({
@@ -141,7 +141,7 @@ const updateCompany = asyncHandler(async (req, res) => {
     } 
     */
 
-      const company = await Company.findById(req.params.compId); // changed req.params.id to req.params.compId
+      const company = await Company.findById(req.params.compId);
 
       if (!company) {
           return res.status(404).json({
@@ -168,9 +168,7 @@ const updateCompany = asyncHandler(async (req, res) => {
         });
       }
       
-      const updatedCompany = await Company.findByIdAndUpdate(req.params.compId, companyInfo, { new: true, runValidators: true });  // Company information should be passed in parameters to maintain consistency
-      // req.params.id -> req.params.compId 
-      // Validations in schema set to true
+      const updatedCompany = await Company.findByIdAndUpdate(req.params.compId, companyInfo, { new: true, runValidators: true }); 
       console.log(updatedCompany);
 
       return res.status(200).json({

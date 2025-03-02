@@ -1,17 +1,17 @@
-import express from 'express';
+import express from "express";
 import {
-  applyApplication,
-  userApplications, // Typo -> Appliations -> Applications
-  registeredApplicants,
-  statusUpdateApplication,
-} from '../controllers/applicationController.js';
-import { protect } from '../middleware/authMiddleware.js';
+	applyApplication,
+	registeredApplicants,
+	statusUpdateApplication,
+	userApplications,
+} from "../controllers/applicationController.js";
+import { protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post('/apply-job/:id',protect, applyApplication);
-router.get('/user-applications',protect,userApplications); // -> Typo function not defined
-router.get('/reg-applicants/:id', protect, registeredApplicants);
-router.post('/status-update-app/:id',protect, statusUpdateApplication);
+router.post("/apply-job/:id", protect, applyApplication);
+router.get("/user-applications", protect, userApplications);
+router.get("/reg-applicants/:id", protect, registeredApplicants);
+router.post("/status-update-app/:id", protect, statusUpdateApplication);
 
 export default router;
