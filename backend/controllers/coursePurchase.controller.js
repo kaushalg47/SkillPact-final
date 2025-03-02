@@ -140,7 +140,7 @@ export const stripeWebhook = async (req, res) => {
 export const getCourseDetailWithPurchaseStatus = async (req, res) => {
   try {
     const { courseId } = req.params;
-    const userId = req.id;
+    const userId = req.user._id;
 
     const course = await Course.findById(courseId)
       .populate({ path: "creator" })

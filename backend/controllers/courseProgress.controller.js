@@ -58,7 +58,7 @@ export const updateLectureProgress = async (req, res) => {
       courseProgress = new CourseProgress({
         userId,
         courseId,
-        completed: false,
+        completed: true,
         lectureProgress: [],
       });
     }

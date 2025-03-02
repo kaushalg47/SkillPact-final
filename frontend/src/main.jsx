@@ -27,7 +27,7 @@ import Applicants from './screens/Applicants.jsx';
 import PostJobs from './screens/PostJobs.jsx';
 import CourseInfo from './screens/CourseInfoScreen.jsx';
 import CourseVideos from './screens/CourseVideos.jsx';
-
+import CompanyRegisterScreen from "../src/screens/CompanyRegisterScreen.jsx";
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
@@ -38,6 +38,7 @@ const router = createBrowserRouter(
         <Route path='/update-profile' element={<ProfileScreen />} />
       </Route>
       <Route path='/company-info/edit' element={<EditCompany />} />
+      <Route path='/create-company' element={<CompanyRegisterScreen />} />
       <Route path='/jobs' element={<JobScreen />}/>
       <Route path='/job-info/:jobId' element={<JobDetailScreen/>}/>
       <Route path='/courses' element={<CourseScreen />}/>

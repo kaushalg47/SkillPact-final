@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import { useGetCourseByIdQuery } from '../slices/courseApiSlice';
@@ -7,6 +7,31 @@ const CourseVideos = () => {
   const { courseId } = useParams();
   const { data: course, isLoading, error } = useGetCourseByIdQuery(courseId);
   const [currentVideo, setCurrentVideo] = useState(0);
+  const [progress, setProgress] = useState(null);
+
+  useEffect(() => {
+    const fetchProgress = async () => {
+      try {
+        const response = await fetch(`/api/course-progress/${courseId}`);
+        const data = await response.json();
+        setProgress(data);
+      } catch (err) {
+        console.error('Error fetching progress:', err);
+      }
+    };
+    fetchProgress();
+  }, [courseId]);
+
+  const handleViewProgress = async () => {
+    try {
+      const response = await fetch(`/api/course-progress/${courseId}`);
+      const data = await response.json();
+      setProgress(data);
+      console.log(data);
+    } catch (err) {
+      console.error('Error fetching progress:', err);
+    }
+  };
 
   if (isLoading) return <p>Loading course content...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -20,8 +45,12 @@ const CourseVideos = () => {
   ];
 
   return (
-    <div className="container mt-5">
+    <div className="container mt-5 mb-5">
       <h2 className="text-center mb-4">Course Content - {course.title}</h2>
+      <button className="btn btn-primary mb-3" onClick={handleViewProgress}>View Course Progress</button>
+      {progress && (
+        <div className="alert alert-info">Progress: {progress.data?.progress.length || 0} lectures completed</div>
+      )}
       <div className="card mb-3">
         <div className="card-body text-center">
           <h5 className="card-title">{dummyVideos[currentVideo].title}</h5>
