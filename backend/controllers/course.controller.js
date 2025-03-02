@@ -15,7 +15,7 @@ export const createCourse = async (req,res) => {
         const course = await Course.create({
             courseTitle,
             category,
-            creator:req.id
+            creator:req.user._id // Wrong id
         });
 
         return res.status(201).json({
@@ -74,7 +74,7 @@ export const searchCourse = async (req,res) => {
 export const getPublishedCourse = async (_z,res) => {
     let courses
     try {
-        const courses = await Course.find({isPublished:true}).populate({path:"creator", select:"name photoUrl"});
+        courses = await Course.find({isPublished:true}).populate({path:"creator", select:"name photoUrl"}); // bug
         // console.log(courses);
         if(!courses){
             return res.status(404).json({
@@ -95,7 +95,7 @@ export const getPublishedCourse = async (_z,res) => {
 }
 export const getCreatorCourses = async (req,res) => {
     try {
-        const userId = req.id;
+        const userId = req.user._id; // Looking for wrong id
         const courses = await Course.find({creator:userId});
         if(!courses){
             return res.status(404).json({
@@ -131,14 +131,14 @@ export const editCourse = async (req,res) => {
                 const publicId = course.courseThumbnail.split("/").pop().split(".")[0];
                 await deleteMediaFromCloudinary(publicId); // delete old image
             }
-            // upload a thumbnail on clourdinary
+            // upload a thumbnail on Cloudinary
             courseThumbnail = await uploadMedia(thumbnail.path);
         }
 
  
         const updateData = {courseTitle, subTitle, description, category, courseLevel, coursePrice, courseThumbnail:courseThumbnail?.secure_url};
 
-        course = await Course.findByIdAndUpdate(courseId, updateData, {new:true});
+        course = await Course.findByIdAndUpdate(courseId, updateData, {new:true, runValidators: true});
 
         return res.status(200).json({
             course,
@@ -148,7 +148,7 @@ export const editCourse = async (req,res) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({
-            message:"Failed to create course"
+            message:"Failed to update course"
         })
     }
 }
@@ -245,11 +245,11 @@ export const editLecture = async (req,res) => {
         if(lectureTitle) lecture.lectureTitle = lectureTitle;
         if(videoInfo?.videoUrl) lecture.videoUrl = videoInfo.videoUrl;
         if(videoInfo?.publicId) lecture.publicId = videoInfo.publicId;
-        lecture.isPreviewFree = isPreviewFree;
+        lecture.isPreviewFree = isPreviewFree.toLowerCase();
 
         await lecture.save();
 
-        // Ensure the course still has the lecture id if it was not aleardy added;
+        // Ensure the course still has the lecture id if it was not already added;
         const course = await Course.findById(courseId);
         if(course && !course.lectures.includes(lecture._id)){
             course.lectures.push(lecture._id);
@@ -275,7 +275,7 @@ export const removeLecture = async (req,res) => {
                 message:"Lecture not found!"
             });
         }
-        // delete the lecture from couldinary as well
+        // delete the lecture from cloudinary as well
         if(lecture.publicId){
             await deleteVideoFromCloudinary(lecture.publicId);
         }
@@ -315,7 +315,7 @@ export const getLectureById = async (req,res) => {
         })
     }
 }
-// publich unpublish course logic
+// public unpublish course logic
 
 export const togglePublishCourse = async (req,res) => {
     try {
@@ -327,7 +327,7 @@ export const togglePublishCourse = async (req,res) => {
                 message:"Course not found!"
             });
         }
-        // publish status based on the query paramter
+        // publish status based on the query parameter
         course.isPublished = publish === "true";
         await course.save();
 
