@@ -1,11 +1,11 @@
-import asyncHandler from 'express-async-handler';
-import Company from '../models/companyModel.js';
-import User from '../models/userModel.js';
+import asyncHandler from "express-async-handler";
+import Company from "../models/companyModel.js";
+import User from "../models/userModel.js";
 
 // TODO: SCHEMA VALIDATION
 const registerCompany = asyncHandler(async (req, res) => {
-  try {
-    /*
+	try {
+		/*
     IMP - COMPANY INFO TO BE PASSED AS JS OBJECT
     companyInfo[name] = <Name>
     companyInfo[description] = <description>
@@ -19,115 +19,115 @@ const registerCompany = asyncHandler(async (req, res) => {
     } 
     */
 
-    const { companyInfo } = req.body;
-    console.log(companyInfo)
+		const { companyInfo } = req.body;
+		console.log(companyInfo);
 
-    // Validate the company name
-    if (!companyInfo) {
-      return res.status(400).json({
-        message: "Company is required.",
-        success: false,
-      });
-    }
+		// Validate the company name
+		if (!companyInfo) {
+			return res.status(400).json({
+				message: "Company is required.",
+				success: false,
+			});
+		}
 
-    // Check if the company already exists
-    let company = await Company.findOne({ name: companyInfo.name });
-    if (company) {
-      return res.status(400).json({
-        message: "You can't register the same company.",
-        success: false,
-      });
-    }
-    
-    // While making company it has to be saved in user's company
-    const userId = req.user._id;
-    const user = await User.findById(userId);
-    console.log("USER BEFORE REGISTRATION:", user);
-    console.log("USER.COMPANY:", user.company);
+		// Check if the company already exists
+		let company = await Company.findOne({ name: companyInfo.name });
+		if (company) {
+			return res.status(400).json({
+				message: "You can't register the same company.",
+				success: false,
+			});
+		}
 
-    // If company defined then we can't register more than one company
-    if (user.company) {
-      return res.status(400).json({
-        message: "You can't register more than 1 company",
-        success: false,
-      });
-    } else {
-      // Create a new company
-      company = await Company.create({
-        ...companyInfo,
-        userId: req.user._id, // Use req.user._id instead of req.id
-      });
-      
-      user.company = company;
-      await user.save();
-    }
+		// While making company it has to be saved in user's company
+		const userId = req.user._id;
+		const user = await User.findById(userId);
+		console.log("USER BEFORE REGISTRATION:", user);
+		console.log("USER.COMPANY:", user.company);
 
-    return res.status(201).json({
-      message: "Company registered successfully.",
-      company,
-      success: true, 
-    });
-  } catch (error) {
-    console.error("Error registering company: ", error);
-    return res.status(500).json({
-      message: "Company registration failed",
-      success: false,
-    });
-  }
+		// If company defined then we can't register more than one company
+		if (user.company) {
+			return res.status(400).json({
+				message: "You can't register more than 1 company",
+				success: false,
+			});
+		} else {
+			// Create a new company
+			company = await Company.create({
+				...companyInfo,
+				userId: req.user._id,
+			});
+
+			user.company = company;
+			await user.save();
+		}
+
+		return res.status(201).json({
+			message: "Company registered successfully.",
+			company,
+			success: true,
+		});
+	} catch (error) {
+		console.error("Error registering company: ", error);
+		return res.status(500).json({
+			message: "Company registration failed",
+			success: false,
+		});
+	}
 });
 
 const userCompany = asyncHandler(async (req, res) => {
-  try {
-    const userId = req.user._id; // logged in user id
-    const company = await Company.findOne({ userId });
+	try {
+		const userId = req.user._id; // logged in user id
+		const company = await Company.findOne({ userId });
 
-    console.log(company)
+		console.log(company);
 
-    if (!company) {
-        return res.status(404).json({
-            message: "Companies not found.",
-            success: false
-        })
-    }
-    return res.status(200).json({
-        company,
-        success:true
-    })
-} catch (error) {
-    console.log("Error fetching user company", error);
-    return res.status(500).json({
-      message: "Can't fetch company data",
-      success: false,
-    });
-  }
+		if (!company) {
+			return res.status(404).json({
+				message: "Companies not found.",
+				success: false,
+			});
+		}
+		return res.status(200).json({
+			company,
+			success: true,
+		});
+	} catch (error) {
+		console.log("Error fetching user company", error);
+		return res.status(500).json({
+			message: "Can't fetch company data",
+			success: false,
+		});
+	}
 });
 
 const infoCompany = asyncHandler(async (req, res) => {
-  try {
-        const companyId = req.params.compId;  // Company id is being passed in params not in query
-        const company = await Company.findById(companyId);
-        if (!company) {
-            return res.status(404).json({
-                message: "Company not found.",
-                success: false
-            })
-        }
-        return res.status(200).json({
-            company,
-            success: true
-        })
-    } catch (error) {
-      console.log("Error getting company info: ", error);
-      return res.status(500).json({
-        message: "Can't fetch company data",
-        success: false,
-      });
-    }
+	try {
+		const companyId = req.params.compId;
+		const company = await Company.findById(companyId);
+		if (!company) {
+			return res.status(404).json({
+				message: "Company not found.",
+				success: false,
+			});
+		}
+		return res.status(200).json({
+			company,
+			success: true,
+		});
+	} catch (error) {
+		console.log("Error getting company info: ", error);
+		return res.status(500).json({
+			message: "Can't fetch company data",
+			success: false,
+		});
+	}
 });
 
 const updateCompany = asyncHandler(async (req, res) => {
-  try {
-    /* 
+	try {
+		/* 
     COMPANY INFO TO BE PASSED AS JS OBJECT
     companyInfo[name] = <Name>
     companyInfo[description] = <description>
@@ -141,53 +141,51 @@ const updateCompany = asyncHandler(async (req, res) => {
     } 
     */
 
-      const company = await Company.findById(req.params.compId); // changed req.params.id to req.params.compId
+		const company = await Company.findById(req.params.compId);
 
-      if (!company) {
-          return res.status(404).json({
-              message: "Company not found.",
-              success: false
-          })
-      }
-      
-      if (req.user._id.toString() !== company.userId.toString()) {
-        return res.status(403).json({
-          message: "Cannot update the company, Unauthorized",
-          success: false,
-        })
-      }
+		if (!company) {
+			return res.status(404).json({
+				message: "Company not found.",
+				success: false,
+			});
+		}
 
-      const { companyInfo } = req.body;
-      
-      console.log(req.body);
+		if (req.user._id.toString() !== company.userId.toString()) {
+			return res.status(403).json({
+				message: "Cannot update the company, Unauthorized",
+				success: false,
+			});
+		}
 
-      if (!companyInfo) {
-        return res.status(400).json({
-          message: "CompanyInfo is required.",
-          success: false,
-        });
-      }
-      
-      const updatedCompany = await Company.findByIdAndUpdate(req.params.compId, companyInfo, { new: true, runValidators: true });  // Company information should be passed in parameters to maintain consistency
-      // req.params.id -> req.params.compId 
-      // Validations in schema set to true
-      console.log(updatedCompany);
+		const { companyInfo } = req.body;
 
-      return res.status(200).json({
-          message:"Company information updated.",
-          company: updatedCompany,
-          success:true,
-      })
+		console.log(req.body);
 
-  } catch (error) {
-    console.log("Company update failed: ", error);
-    return res.status(500).json({
-      message: "Company update failed",
-      success: false,
-    });
-  }
+		if (!companyInfo) {
+			return res.status(400).json({
+				message: "CompanyInfo is required.",
+				success: false,
+			});
+		}
+
+		const updatedCompany = await Company.findByIdAndUpdate(req.params.compId, companyInfo, {
+			new: true,
+			runValidators: true,
+		});
+		console.log(updatedCompany);
+
+		return res.status(200).json({
+			message: "Company information updated.",
+			company: updatedCompany,
+			success: true,
+		});
+	} catch (error) {
+		console.log("Company update failed: ", error);
+		return res.status(500).json({
+			message: "Company update failed",
+			success: false,
+		});
+	}
 });
 
-export {
-  infoCompany, registerCompany, updateCompany, userCompany
-};
+export { infoCompany, registerCompany, updateCompany, userCompany };
