@@ -9,13 +9,11 @@ const courseValidationSchema = Joi.object({
 	description: Joi.string().max(3000),
 	category: Joi.string().min(2).max(50).required(),
 	courseLevel: Joi.string().required().valid("Beginner", "Medium", "Advance"),
-	coursePrice: Joi.number().min(0),
+	coursePrice: Joi.number().required().min(0),
 	courseThumbnail: Joi.string(),
-	enrolledStudents: Joi.array().items(Joi.objectId()),
-	lectures: Joi.array().items(Joi.objectId()),
-	creator: Joi.objectId().required(),
 	isPublished: Joi.boolean(),
-	badges: Joi.array().items(Joi.objectId()),
+	// ! temp removed
+	// badges: Joi.array().items(Joi.objectId()),
 });
 
 const lectureValidationSchema = Joi.object({
@@ -25,12 +23,10 @@ const lectureValidationSchema = Joi.object({
 	isPreviewFree: Joi.boolean(),
 });
 
+// ? Pending
 const coursePurchaseValidationSchema = Joi.object({
-	courseId: Joi.objectId().required(),
-	userId: Joi.objectId().required(),
 	amount: Joi.number().required().min(0),
 	status: Joi.string().valid("pending", "completed", "failed").default("pending"),
-	paymentId: Joi.string().required(),
 });
 
 export const validateCourse = (data) => courseValidationSchema.validate(data);

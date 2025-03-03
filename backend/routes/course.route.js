@@ -14,12 +14,13 @@ import {
 	togglePublishCourse,
 } from "../controllers/course.controller.js";
 import { protect } from "../middleware/authMiddleware.js";
+import { validateCourse, validateLecture } from "../middleware/schemaValidationMiddleware.js";
 import upload from "../utils/multer.js";
 
 const router = express.Router();
 
 // Route to create a new course
-router.post("/", protect, createCourse);
+router.post("/", protect, validateCourse, createCourse);
 
 // Route to search courses
 router.get("/search", protect, searchCourse);
@@ -37,7 +38,7 @@ router.put("/:courseId", protect, upload.single("courseThumbnail"), editCourse);
 router.get("/:courseId", protect, getCourseById);
 
 // Route to create a new lecture for a specific course
-router.post("/:courseId/lecture", protect, createLecture);
+router.post("/:courseId/lecture", protect, validateLecture, createLecture);
 
 // Route to get lectures for a specific course
 router.get("/:courseId/lecture", protect, getCourseLecture);

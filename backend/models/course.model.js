@@ -8,8 +8,14 @@ const courseSchema = new mongoose.Schema(
 			minlength: 2,
 			maxlength: 100,
 		},
-		subTitle: { type: String, maxlength: 200 },
-		description: { type: String, maxlength: 3000 },
+		subTitle: {
+			type: String,
+			maxlength: 200,
+		},
+		description: {
+			type: String,
+			maxlength: 3000,
+		},
 		category: {
 			type: String,
 			required: true,
@@ -24,6 +30,7 @@ const courseSchema = new mongoose.Schema(
 		coursePrice: {
 			type: Number,
 			min: 0,
+			required: true,
 			default: 0,
 		},
 		courseThumbnail: {
