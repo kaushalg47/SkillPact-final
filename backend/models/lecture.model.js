@@ -5,6 +5,8 @@ const lectureSchema = new mongoose.Schema(
 		lectureTitle: {
 			type: String,
 			required: true,
+			maxlength: 100,
+			minlength: 2,
 		},
 		videoUrl: { type: String },
 		publicId: { type: String },
