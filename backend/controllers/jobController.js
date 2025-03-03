@@ -3,8 +3,8 @@ import Badge from "../models/badgeModel.js";
 import Job from "../models/jobModel.js";
 import User from "../models/userModel.js";
 
-// @desc    Fetch all jobs
-// @route   GET /api/jobs/get-jobs
+// @desc    Fetch all jobs related to a keyword
+// @route   GET /api/jobs/
 // @access  Public
 const getJobs = asyncHandler(async (req, res) => {
 	try {
@@ -25,14 +25,6 @@ const getJobs = asyncHandler(async (req, res) => {
 			})
 			.sort({ createdAt: -1 });
 
-		// If no jobs found, return a 404 response
-		if (!jobs || jobs.length === 0) {
-			return res.status(404).json({
-				message: "Jobs not found",
-				success: false,
-			});
-		}
-		console.log("sent");
 		// Return the list of jobs with a 200 response
 		return res.status(200).json({
 			jobs,
@@ -48,60 +40,19 @@ const getJobs = asyncHandler(async (req, res) => {
 });
 
 // @desc    Post a job
-// @route   POST /api/jobs/get-jobs
+// @route   POST /api/jobs/
 // @access  Authenticated
 const postJobs = asyncHandler(async (req, res) => {
 	try {
-		const { title, description, badges, startsOn, category } = req.body;
-
-		console.log(title, description, badges, startsOn, category);
-
 		const userId = req.user._id;
-		console.log(userId);
-		if (!userId) {
-			return res.status(400).json({
-				message: "user not logged in",
-				success: false,
-			});
-		}
-
-		if (!title || !description || !startsOn || !category) {
-			return res.status(400).json({
-				message: "Something is missing",
-				success: false,
-			});
-		}
-
-		const company = (await User.findById(userId)).company; // Finding the user company
-
-		if (!company) {
-			return res.status(400).json({
-				message: "Company not registered for user",
-				success: false,
-			});
-		}
-
-		try {
-			if (badges && badges.length > 0) {
-				const badgeDocs = await Badge.find({ _id: { $in: badges } });
-				if (badgeDocs.length !== badges.length) {
-					return res.status(400).json({ message: "some badge" });
-				}
-			}
-		} catch (error) {
-			console.log(error);
-		}
+		const company = (await User.findById(userId)).company;
 
 		const job = await Job.create({
-			title,
-			description,
+			...req.body,
 			createdby: userId,
-			company, // Company is a required parameter in database
-			category,
-			startsOn,
+			company: userId,
+			company,
 		});
-
-		job.save();
 
 		return res.status(201).json({
 			message: "New job created successfully",
@@ -110,11 +61,15 @@ const postJobs = asyncHandler(async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
+		return res.status(500).json({
+			message: "Could not post job due to some error!",
+			success: false,
+		});
 	}
 });
 
 // @desc    fetch job details
-// @route   GET /api/jobs/info-jobs/:id
+// @route   GET /api/jobs/:id
 // @access  Public
 const infoJobs = asyncHandler(async (req, res) => {
 	try {
@@ -131,6 +86,10 @@ const infoJobs = asyncHandler(async (req, res) => {
 		return res.status(200).json({ job, success: true });
 	} catch (error) {
 		console.log(error);
+		return res.status(500).json({
+			message: "Could not get any information about the job!",
+			success: false,
+		});
 	}
 });
 

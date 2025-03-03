@@ -16,6 +16,7 @@ export const getCourseProgress = async (req, res) => {
 
 		if (!courseDetails) {
 			return res.status(404).json({
+				success: false,
 				message: "Course not found",
 			});
 		}
@@ -40,7 +41,11 @@ export const getCourseProgress = async (req, res) => {
 			},
 		});
 	} catch (error) {
-		console.log(error);
+		console.dir(error);
+		return res.status(500).json({
+			success: false,
+			message: "Some error occurred!",
+		});
 	}
 };
 
@@ -110,7 +115,11 @@ export const updateLectureProgress = async (req, res) => {
 			message: "Lecture progress updated successfully.",
 		});
 	} catch (error) {
-		console.log(error);
+		console.dir(error);
+		return res.status(500).json({
+			success: false,
+			message: "Some error occurred!",
+		});
 	}
 };
 
@@ -127,7 +136,11 @@ export const markAsCompleted = async (req, res) => {
 		await courseProgress.save();
 		return res.status(200).json({ message: "Course marked as completed." });
 	} catch (error) {
-		console.log(error);
+		console.dir(error);
+		return res.status(500).json({
+			success: false,
+			message: "Some error occurred!",
+		});
 	}
 };
 
@@ -144,6 +157,10 @@ export const markAsIncomplete = async (req, res) => {
 		await courseProgress.save();
 		return res.status(200).json({ message: "Course marked as incomplete." });
 	} catch (error) {
-		console.log(error);
+		console.dir(error);
+		return res.status(500).json({
+			success: false,
+			message: "Some error occurred!",
+		});
 	}
 };

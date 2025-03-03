@@ -29,8 +29,26 @@ const coursePurchaseValidationSchema = Joi.object({
 	status: Joi.string().valid("pending", "completed", "failed").default("pending"),
 });
 
+const jobValidationSchema = Joi.object({
+	title: Joi.string().min(1).max(100).required(),
+	description: Joi.string().required().max(2000),
+	category: Joi.string()
+		.required()
+		.valid("Software", "AI/ML", "Data Science", "Cloud", "DevOps", "Security", "Frontend", "Backend"),
+	minqualification: Joi.string().max(100),
+	position: Joi.string().max(100),
+	location: Joi.string().max(200),
+	duration: Joi.string().required(),
+	startsOn: Joi.date().required(),
+	stipend: Joi.number().min(0),
+	// ! Temp removed
+	// badges: Joi.array().items(Joi.objectId()),
+});
+
 export const validateCourse = (data) => courseValidationSchema.validate(data);
 
 export const validateLecture = (data) => lectureValidationSchema.validate(data);
 
 export const validateCoursePurchase = (data) => coursePurchaseValidationSchema.validate(data);
+
+export const validateJobValidationSchema = (data) => jobValidationSchema.validate(data);

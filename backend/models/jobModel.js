@@ -12,7 +12,8 @@ const jobSchema = new mongoose.Schema(
 		description: {
 			type: String,
 			trim: true,
-			maxlength: 500,
+			required: true,
+			maxlength: 2000,
 		},
 		category: {
 			type: String,
@@ -33,40 +34,46 @@ const jobSchema = new mongoose.Schema(
 		},
 		duration: {
 			type: String,
+			required: true,
 			trim: true,
 		},
 		startsOn: {
-			// New field added
 			type: Date,
 			required: true,
 		},
 		stipend: {
-			type: Number, // stipend should be a +ve number
+			type: Number,
 			trim: true,
 			min: 0,
 		},
 		createdby: {
 			type: mongoose.Schema.ObjectId,
 			ref: "User",
-			required: true, // Required creator
+			required: true,
 		},
 		company: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "Company",
 			required: true,
 		},
-		badges: [
-			{
-				type: mongoose.Schema.ObjectId,
-				ref: "Badge",
-			},
-		],
-		application: [
-			{
-				type: mongoose.Schema.Types.ObjectId,
-				ref: "Application",
-			},
-		],
+		badges: {
+			type: [
+				{
+					type: mongoose.Schema.ObjectId,
+					ref: "Badge",
+				},
+			],
+			default: [],
+		},
+		application: {
+			type: [
+				{
+					type: mongoose.Schema.Types.ObjectId,
+					ref: "Application",
+				},
+			],
+			default: [],
+		},
 	},
 	{ timestamps: true }
 );
