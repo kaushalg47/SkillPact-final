@@ -1,14 +1,20 @@
-import express from "express"
+import express from "express";
 
-import { getCourseProgress, markAsCompleted, markAsInCompleted, updateLectureProgress } from "../controllers/courseProgress.controller.js";
+import {
+	getCourseProgress,
+	markAsCompleted,
+	markAsIncomplete,
+	updateLectureProgress,
+} from "../controllers/courseProgress.controller.js";
 
-const router = express.Router()
+const router = express.Router();
 
-import { protect } from '../middleware/authMiddleware.js';
+import { protect } from "../middleware/authMiddleware.js";
 
+// ? Missing response when wrong request in catch block
 router.route("/:courseId").get(getCourseProgress);
 router.route("/:courseId/lecture/:lectureId/view").post(protect, updateLectureProgress);
 router.route("/:courseId/complete").post(protect, markAsCompleted);
-router.route("/:courseId/incomplete").post(protect, markAsInCompleted);
+router.route("/:courseId/incomplete").post(protect, markAsIncomplete);
 
 export default router;
