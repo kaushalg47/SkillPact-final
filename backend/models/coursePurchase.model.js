@@ -14,6 +14,8 @@ const coursePurchaseSchema = new mongoose.Schema(
 		amount: {
 			type: Number,
 			required: true,
+			min: 0,
+			default: 0,
 		},
 		status: {
 			type: String,
@@ -27,4 +29,5 @@ const coursePurchaseSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 );
+
 export const CoursePurchase = mongoose.model("CoursePurchase", coursePurchaseSchema);
