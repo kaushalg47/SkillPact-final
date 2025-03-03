@@ -44,7 +44,7 @@ router.post("/:courseId/lecture", protect, validateLecture, createLecture);
 router.get("/:courseId/lecture", protect, getCourseLecture);
 
 // Route to edit a specific lecture by its ID
-router.patch("/:courseId/lecture/:lectureId", protect, editLecture); // Changed the request type of edit
+router.patch("/:courseId/lecture/:lectureId", protect, editLecture);
 
 // Route to remove a specific lecture by its ID
 // ? Can be improved

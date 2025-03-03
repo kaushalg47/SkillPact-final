@@ -182,31 +182,33 @@ export const getCourseById = async (req, res) => {
 
 export const createLecture = async (req, res) => {
 	try {
-		const { lectureTitle } = req.body;
 		const { courseId } = req.params;
 
-		if (!lectureTitle || !courseId) {
+		// Checking if course exists
+		const course = await Course.findById(courseId);
+		if (!course) {
 			return res.status(400).json({
-				message: "Lecture title is required",
-			});
+				success: false,
+				message: "Course not found",
+			})
 		}
 
 		// create lecture
-		const lecture = await Lecture.create({ lectureTitle });
+		const lecture = await Lecture.create(req.body);
 
-		const course = await Course.findById(courseId);
-		if (course) {
-			course.lectures.push(lecture._id);
-			await course.save();
-		}
+		// Put the course id in the course
+		course.lectures.push(lecture._id);
+		await course.save();
 
 		return res.status(201).json({
 			lecture,
+			success: true,
 			message: "Lecture created successfully.",
 		});
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({
+			success: false,
 			message: "Failed to create lecture",
 		});
 	}
