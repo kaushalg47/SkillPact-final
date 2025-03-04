@@ -9,6 +9,7 @@ const CourseVideos = () => {
   const { data: lectures, isLoading: lecturesLoading, error: lecturesError } = useGetCourseLectureQuery(courseId);
   const [currentVideo, setCurrentVideo] = useState(0);
   const [progress, setProgress] = useState(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProgress = async () => {
@@ -70,7 +71,16 @@ const CourseVideos = () => {
       <div className="card mb-3">
         <div className="card-body text-center">
           <h5 className="card-title">{lectures.lectures[currentVideo]?.lectureTitle}</h5>
-          <ReactPlayer url={lectures.lectures[currentVideo]?.videoUrl} controls width="100%" height="400px" onEnded={() => handleVideoEnd(lectures.lectures[currentVideo]._id)} />
+          <ReactPlayer 
+            url={lectures.lectures[currentVideo]?.videoUrl} 
+            controls 
+            width="100%" 
+            height="400px" 
+            onEnded={() => handleVideoEnd(lectures.lectures[currentVideo]._id)} 
+            onReady={() => setLoading(false)}
+            onBuffer={() => setLoading(true)}
+          />
+          {loading && <p>Loading video...</p>}
           <div className="mt-3">
             <button className="btn btn-secondary me-2" onClick={handlePrevious} disabled={currentVideo === 0}>Previous</button>
             <button className="btn btn-secondary" onClick={handleNext} disabled={currentVideo === lectures.lectures.length - 1}>Next</button>
