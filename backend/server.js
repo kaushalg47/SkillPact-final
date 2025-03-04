@@ -10,6 +10,7 @@ import courseRoutes from "./routes/course.route.js";
 import courseProgress from "./routes/courseProgress.route.js";
 import jobRoutes from "./routes/jobRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import coursePurchaseRoutes from "./routes/purchaseCourse.route.js";
 dotenv.config();
 const port = process.env.PORT || 5000;
 
@@ -34,6 +35,7 @@ app.use("/api/apply", applicationRoutes);
 app.use("/api/company", companyRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/course-progress", courseProgress);
+app.use("/api/course-purchase", coursePurchaseRoutes);
 
 if (process.env.NODE_ENV === "production") {
 	const __dirname = path.resolve();

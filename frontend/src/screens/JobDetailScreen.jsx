@@ -1,18 +1,22 @@
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import { Spinner } from 'react-bootstrap';
 import { useGetJobByIdQuery } from '../slices/jobsApiSlice';
+import { useApplyForJobMutation } from '../slices/applicationApiSlice';
 import '../components/styles/JobDetail.css';
 
 const JobDetailPage = () => {
   const { jobId } = useParams();
-  const navigate = useNavigate();
   const { data, error, isLoading } = useGetJobByIdQuery(jobId);
+  const [applyForJob, { isLoading: isApplying }] = useApplyForJobMutation();
   const job = data?.job;
 
-  const handleApply = () => {
+  const handleApply = async () => {
     if (job) {
-      // Corrected the navigate path by adding quotes around the string
-      navigate(`/apply/${jobId}`);
+      try {
+        await applyForJob(jobId).unwrap();  // Navigate after successful application
+      } catch (err) {
+        console.error("Application failed:", err);
+      }
     }
   };
 
@@ -77,7 +81,7 @@ const JobDetailPage = () => {
 
       <div className="right-container">
         <p>Click here to apply</p>
-        <button className="apply-button" onClick={handleApply}>Enroll</button>
+        <button className="apply-button" onClick={handleApply} disabled={isApplying}>{isApplying ? "Applying..." : "Enroll"}</button>
         <div className="eligibility">Eligible ✅</div>
         <div className="badges-container required-badges">
           <h4>Required Badges:</h4>
