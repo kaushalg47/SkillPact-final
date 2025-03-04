@@ -4,7 +4,7 @@ import { CourseProgress } from "../models/courseProgress.js";
 export const getCourseProgress = async (req, res) => {
 	try {
 		const { courseId } = req.params;
-		const userId = req.id;
+		const userId = req.user._id;
 
 		// step-1 fetch the user course progress
 		let courseProgress = await CourseProgress.findOne({
@@ -99,6 +99,8 @@ export const updateLectureProgress = async (req, res) => {
 				viewed: true,
 			});
 		}
+
+		console.log(courseProgress.lectureProgress);
 
 		// if all lecture is complete
 		const lectureProgressLength = courseProgress.lectureProgress.filter(
