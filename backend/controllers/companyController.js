@@ -42,9 +42,6 @@ const registerCompany = asyncHandler(async (req, res) => {
     // While making company it has to be saved in user's company
     const userId = req.user._id;
     const user = await User.findById(userId);
-    console.log("USER BEFORE REGISTRATION:", user);
-    console.log("USER.COMPANY:", user.company);
-
     // If company defined then we can't register more than one company
     if (user.company) {
       return res.status(400).json({
