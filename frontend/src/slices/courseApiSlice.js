@@ -6,7 +6,7 @@ export const courseApiSlice = apiSlice.injectEndpoints({
   endpoints: (builder) => ({
     // Fetch published courses
     getCourses: builder.query({
-      query: () => `${COURSE_URL}`,
+      query: () => `${COURSE_URL}/published-courses`,
     }),
     getCourseById: builder.query({
       query: (courseId) => `${COURSE_URL}/${courseId}`,

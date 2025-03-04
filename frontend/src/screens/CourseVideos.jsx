@@ -1,7 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import { useGetCourseByIdQuery } from '../slices/courseApiSlice';
+
 
 const CourseVideos = () => {
   const { courseId } = useParams();
@@ -46,7 +47,7 @@ const CourseVideos = () => {
 
   return (
     <div className="container mt-5 mb-5">
-      <h2 className="text-center mb-4">Course Content - {course.title}</h2>
+      <h2 className="text-center mb-4">Course Content - {course?.title}</h2>
       <button className="btn btn-primary mb-3" onClick={handleViewProgress}>View Course Progress</button>
       {progress && (
         <div className="alert alert-info">Progress: {progress.data?.progress.length || 0} lectures completed</div>
@@ -60,11 +61,9 @@ const CourseVideos = () => {
       <h3 className="mt-4">Upcoming Videos</h3>
       <ul className="list-group">
         {dummyVideos.map((video, index) => (
-          index !== currentVideo && (
-            <li key={video.id} className="list-group-item list-group-item-action" onClick={() => setCurrentVideo(index)}>
-              {video.title}
-            </li>
-          )
+          <li key={video.id} className={`list-group-item list-group-item-action ${index === currentVideo ? 'active' : ''}`} onClick={() => setCurrentVideo(index)}>
+            {video.title}
+          </li>
         ))}
       </ul>
     </div>

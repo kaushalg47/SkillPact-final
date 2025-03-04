@@ -7,6 +7,7 @@ import '../components/styles/CourseScreen.css';
 
 const CourseScreen = () => {
   const { data, error, isLoading } = useGetCoursesQuery();
+  console.log(data || "nothing");
   const [filter, setFilter] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
   const [showFilter, setShowFilter] = useState(false);
