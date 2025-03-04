@@ -98,6 +98,7 @@
     text-transform: capitalize;
 }
 
+/* Status badge colors */
 .applicant-status.pending {
     background-color: #fef3c7;
     color: #92400e;
@@ -105,47 +106,107 @@
 }
 
 .applicant-status.accepted {
-    background-color: #d1fae5;
-    color: #065f46;
+    background-color: #dcfce7;
+    color: #166534;
     border: 1px solid #10b981;
 }
 
 .applicant-status.rejected {
     background-color: #fee2e2;
-    color: #b91c1c;
+    color: #991b1b;
     border: 1px solid #ef4444;
 }
 
-.expand-btn {
-    background: none;
-    border: none;
-    color: #6b7280;
-    font-size: 16px;
-    cursor: pointer;
-    width: 24px;
-    height: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
+.status-update-buttons {
+    margin-top: 16px;
+    padding-top: 16px;
+    border-top: 1px solid #e5e7eb;
 }
 
-.expand-btn:hover {
-    color: #1f2937;
+.status-update-buttons .btn-group {
+    display: inline-flex;
+    align-items: center;
+    background-color: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e5e7eb;
+}
+
+.status-update-buttons .btn {
+    padding: 8px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    border: none;
+    background: transparent;
+    transition: all 0.2s ease;
+    position: relative;
+    margin: 0;
+}
+
+.status-update-buttons .btn:not(:last-child) {
+    border-right: 1px solid #e5e7eb;
+}
+
+.status-update-buttons .btn:hover {
+    transform: none;
+    box-shadow: none;
+    background-color: #f9fafb;
+}
+
+/* Success button styles */
+.status-update-buttons .btn-success {
+    background-color: #10b981;
+    color: white;
+}
+
+.status-update-buttons .btn-outline-success {
+    color: #10b981;
+}
+
+.status-update-buttons .btn-outline-success:hover {
+    background-color: #f0fdf4;
+}
+
+/* Danger button styles */
+.status-update-buttons .btn-danger {
+    background-color: #ef4444;
+    color: white;
+}
+
+.status-update-buttons .btn-outline-danger {
+    color: #ef4444;
+}
+
+.status-update-buttons .btn-outline-danger:hover {
+    background-color: #fef2f2;
+}
+
+/* Warning button styles */
+.status-update-buttons .btn-warning {
+    background-color: #f59e0b;
+    color: white;
+}
+
+.status-update-buttons .btn-outline-warning {
+    color: #f59e0b;
+}
+
+.status-update-buttons .btn-outline-warning:hover {
+    background-color: #fffbeb;
 }
 
 .applicant-details {
     padding: 16px;
     background-color: #f9fafb;
     border-top: 1px solid #e5e7eb;
-    font-size: 14px;
-    margin-top: 8px;
 }
 
 .details-grid {
     display: grid;
-    grid-template-columns: 100px auto;
-    gap: 12px 16px;
+    grid-template-columns: 120px 1fr;
+    gap: 12px;
+    align-items: center;
 }
 
 .detail-label {
@@ -155,36 +216,70 @@
 
 .detail-value {
     color: #111827;
-    word-break: break-word;
 }
 
 .resume-link {
     color: #2563eb;
     text-decoration: none;
+    font-weight: 500;
 }
 
 .resume-link:hover {
     text-decoration: underline;
 }
 
-@media (max-width: 640px) {
+/* Media Queries */
+@media (max-width: 768px) {
     .applicants-container {
-        margin: 0 12px;
         padding: 16px;
-    }
-
-    .applicant-main-info {
-        flex-direction: column;
-        align-items: flex-start;
-    }
-
-    .applicant-name {
-        margin-top: 8px;
-        margin-bottom: 8px;
-        margin-right: 0;
+        margin: 0 16px;
     }
 
     .details-grid {
         grid-template-columns: 1fr;
+        gap: 8px;
+    }
+
+    .status-update-buttons .btn-group {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .status-update-buttons .btn {
+        width: 100%;
+        padding: 10px;
+        border-right: none;
+    }
+
+    .status-update-buttons .btn:not(:last-child) {
+        border-right: none;
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    .applicant-main-info {
+        flex-wrap: wrap;
+    }
+
+    .applicant-status {
+        margin-top: 8px;
+    }
+}
+
+@media (max-width: 480px) {
+    .applicant-initial {
+        width: 32px;
+        height: 32px;
+        font-size: 14px;
+        margin-right: 12px;
+    }
+
+    .applicant-name {
+        font-size: 14px;
+    }
+
+    .applicant-status {
+        font-size: 11px;
+        padding: 3px 6px;
     }
 }
