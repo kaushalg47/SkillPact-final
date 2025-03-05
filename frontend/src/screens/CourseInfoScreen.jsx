@@ -1,59 +1,85 @@
 import { useParams } from 'react-router-dom';
-import { useGetCourseByIdQuery } from '../slices/courseApiSlice';
+import { useGetCourseDetailWithStatusQuery } from '../slices/coursePurchaseApiSlice';
 import { Link } from 'react-router-dom';
 
 const CourseInfo = () => {
-  const { courseId } = useParams(); // Extract courseId from the URL
-  const { data: course, isLoading, error } = useGetCourseByIdQuery(courseId);
+  const { courseId } = useParams();
+  const { data: course, isLoading, error } = useGetCourseDetailWithStatusQuery(courseId);
+  const badge = course?.course?.badges || "'";
 
-  if (isLoading) return <p>Loading course details...</p>;
-  if (error) return <p>Error: {error.message}</p>;
+  if (isLoading) return <p className="text-center mt-5">Loading course details...</p>;
+  if (error) return <p className="text-danger text-center mt-5">Error: {error.message}</p>;
 
   return (
     <div className="container mt-5 mb-5">
-      <header className="bg-dark text-white p-3">
-        <h2>{course.course.courseTitle}</h2>
-        <p>{course.course.category || 'N/A'}</p>
-      </header>
+      {/* Course Header */}
+      <div className="card shadow-sm border-0 rounded">
+        <div className="card-body text-white bg-dark p-4 rounded-top">
+          <h2 className="fw-bold">{course.course.courseTitle}</h2>
+          <span className="badge bg-grey fs-6">{course.course.category || 'N/A'}</span>
+        </div>
+      </div>
 
-      <section className="mt-3">
-        <h5>Description</h5>
-        <p>{course.course.description || 'No description available.'}</p>
-      </section>
+      {/* Course Description */}
+      <div className="card mt-4 shadow-sm border-0 rounded">
+        <div className="card-body p-4">
+          <h5 className="fw-bold">Description</h5>
+          <p className="text-muted">{course.course.description || 'No description available.'}</p>
+        </div>
+      </div>
 
-      <section className="mt-3">
-        <h5>Key Takeaways</h5>
-        <ul>
-          {course.course.takeaways?.map((item, index) => (
-            <li key={index}>{item}</li>
-          )) || <li>No takeaways available.</li>}
-        </ul>
-      </section>
+      {/* Course Details */}
+      <div className="row mt-4">
+        <div className="col-md-6">
+          <div className="card shadow-sm border-0 rounded">
+            <div className="card-body p-4">
+              <h5 className="fw-bold">Course Level</h5>
+              <p className="text-muted">{course.course.courseLevel}</p>
+              <h5 className="fw-bold mt-3">Enrolled Students</h5>
+              <p className="text-muted">{course.course.enrolledstudents?.length || 0}</p>
+            </div>
+          </div>
+        </div>
 
-      <section className="mt-3">
-        <h5>Prerequisites</h5>
-        <ul>
-          {course.course.prerequisites?.map((item, index) => (
-            <li key={index}>{item}</li>
-          )) || <li>No prerequisites listed.</li>}
-        </ul>
-      </section>
+        {/* Prerequisites */}
+        <div className="col-md-6">
+          <div className="card shadow-sm border-0 rounded">
+            <div className="card-body p-4">
+              <img src={badge.imageUrl} alt={badge.title} className="img-fluid mb-2" />
+              <h6 className="card-title">{badge.title}</h6>
+            </div>
+          </div>
+        </div>
+      </div>
 
-      <section className="mt-3" style={{ maxWidth: '600px', margin: 'auto' }}>
-        <video width="100%" height="300px" controls>
-          <source src={course.course.videoUrl} type="video/mp4" />
-          Your browser does not support the video tag.
-        </video>
-      </section>
+      {/* Video Preview */}
+      <div className="card mt-4 shadow-sm border-0 rounded">
+        <div className="card-body p-4 text-center">
+          <h5 className="fw-bold mb-3">Course Preview</h5>
+          <video width="100%" height="300px" controls className="rounded">
+            <source src={course.course.videoUrl} type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </div>
+      </div>
 
-      <section className="mt-3">
-        <h5>Price</h5>
-        <p><strong>₹{course.course.price || 'N/A'}</strong></p>
-      </section>
+      {/* Pricing & Action */}
+      <div className="card mt-4 shadow-sm border-0 rounded">
+        <div className="card-body p-4 text-center">
+          <h5 className="fw-bold">Price</h5>
+          <p className="fs-4 text-success fw-bold">₹{course.course.coursePrice || 'N/A'}</p>
 
-      <Link to={`/course-content/${courseId}`} className="btn btn-secondary mt-3">
-        Continue Course
-      </Link>
+          {course.purchased ? (
+            <Link to={`/course-content/${courseId}`} className="btn btn-secondary btn-lg mt-3">
+              Continue Course
+            </Link>
+          ) : (
+            <Link to={`/course-content/${courseId}`} className="btn btn-primary btn-lg mt-3">
+              Buy Now
+            </Link>
+          )}
+        </div>
+      </div>
     </div>
   );
 };

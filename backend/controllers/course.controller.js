@@ -1,5 +1,6 @@
 import { Course } from "../models/course.model.js";
 import { Lecture } from "../models/lecture.model.js";
+import Badge from "../models/badgeModel.js";
 import { deleteMediaFromCloudinary, deleteVideoFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
 
 export const createCourse = async (req, res) => {
@@ -7,6 +8,7 @@ export const createCourse = async (req, res) => {
 		const course = await Course.create({
 			...req.body,
 			creator: req.user._id,
+
 		});
 
 		console.log(course);
