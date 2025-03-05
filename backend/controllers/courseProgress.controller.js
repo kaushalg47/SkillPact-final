@@ -12,14 +12,7 @@ export const getCourseProgress = async (req, res) => {
 			userId,
 		}).populate("courseId");
 
-		const courseDetails = await Course.findById(courseId).populate("lectures");
-
-		if (!courseDetails) {
-			return res.status(404).json({
-				success: false,
-				message: "Course not found",
-			});
-		}
+		const courseDetails = await res.locals.course.populate("lectures");
 
 		// Step-2 If no progress found, return course details with an empty progress
 		if (!courseProgress) {
@@ -53,11 +46,14 @@ export const updateLectureProgress = async (req, res) => {
 	try {
 		const { courseId, lectureId } = req.params;
 		const userId = req.user._id;
+		const course = res.locals.course;
 
 		// fetch or create course progress
 		let courseProgress = await CourseProgress.findOne({ courseId, userId });
 
 		if (!courseProgress) {
+			// TODO: MUST BE CREATED WHILE PAYMENT
+			// !
 			// If no progress exist, create a new record
 			courseProgress = new CourseProgress({
 				userId,
@@ -78,14 +74,6 @@ export const updateLectureProgress = async (req, res) => {
 		} else {
 			// Add new lecture progress
 			// Making sure that the lecture is valid and is present
-			const course = await Course.findById(courseId);
-
-			if (!course) {
-				return res.status(404).json({
-					message: "Course not present",
-				});
-			}
-
 			const lectureIndex = course.lectures.findIndex((lecture) => lecture.toString() === lectureId);
 
 			if (lectureIndex === -1) {
@@ -100,14 +88,10 @@ export const updateLectureProgress = async (req, res) => {
 			});
 		}
 
-		console.log(courseProgress.lectureProgress);
-
 		// if all lecture is complete
 		const lectureProgressLength = courseProgress.lectureProgress.filter(
 			(lectureProg) => lectureProg.viewed
 		).length;
-
-		const course = await Course.findById(courseId);
 
 		if (course.lectures.length === lectureProgressLength) courseProgress.completed = true;
 
@@ -166,3 +150,9 @@ export const markAsIncomplete = async (req, res) => {
 		});
 	}
 };
+
+
+// Problems ->
+/*
+* @getCourseProgress
+*/

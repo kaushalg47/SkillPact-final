@@ -14,6 +14,7 @@ import {
 	togglePublishCourse,
 } from "../controllers/course.controller.js";
 import { protect } from "../middleware/authMiddleware.js";
+import { courseExists } from "../middleware/courseExists.middleware.js";
 import { validateCourse, validateLecture } from "../middleware/schemaValidationMiddleware.js";
 import upload from "../utils/multer.js";
 
@@ -32,19 +33,19 @@ router.get("/published-courses", getPublishedCourse);
 router.get("/", protect, getCreatorCourses);
 
 // Route to edit a course by its ID with an uploaded thumbnail
-router.put("/:courseId", protect, upload.single("courseThumbnail"), editCourse);
+router.put("/:courseId", protect, courseExists, upload.single("courseThumbnail"), editCourse);
 
 // Route to get a course by its ID
-router.get("/:courseId", protect, getCourseById);
+router.get("/:courseId", protect, courseExists, getCourseById);
 
 // Route to create a new lecture for a specific course
-router.post("/:courseId/lecture", protect, validateLecture, createLecture);
+router.post("/:courseId/lecture", protect, courseExists, validateLecture, createLecture);
 
 // Route to get lectures for a specific course
-router.get("/:courseId/lecture", protect, getCourseLecture);
+router.get("/:courseId/lecture", protect, courseExists, getCourseLecture);
 
 // Route to edit a specific lecture by its ID
-router.patch("/:courseId/lecture/:lectureId", protect, editLecture);
+router.patch("/:courseId/lecture/:lectureId", protect, courseExists, editLecture);
 
 // Route to remove a specific lecture by its ID
 // ? Can be improved
@@ -54,6 +55,6 @@ router.delete("/lecture/:lectureId", protect, removeLecture);
 router.get("/lecture/:lectureId", protect, getLectureById);
 
 // Route to toggle the publication status of a course
-router.patch("/:courseId", protect, togglePublishCourse);
+router.patch("/:courseId", protect, courseExists, togglePublishCourse);
 
 export default router;

@@ -12,6 +12,7 @@ const courseValidationSchema = Joi.object({
 	coursePrice: Joi.number().required().min(0),
 	courseThumbnail: Joi.string(),
 	isPublished: Joi.boolean(),
+	// TODO
 	// ! temp removed
 	// badges: Joi.array().items(Joi.objectId()),
 });

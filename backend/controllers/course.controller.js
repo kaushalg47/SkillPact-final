@@ -13,11 +13,13 @@ export const createCourse = async (req, res) => {
 
 		return res.status(201).json({
 			course,
+			success: true,
 			message: "Course created.",
 		});
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({
+			success: false,
 			message: "Failed to create course",
 		});
 	}
@@ -57,53 +59,50 @@ export const searchCourse = async (req, res) => {
 
 		return res.status(200).json({
 			success: true,
-			courses: courses || [],
+			courses: courses,
 		});
 	} catch (error) {
 		console.log(error);
+		return res.status(500).json({
+			success: false,
+			message: "Failed to search courses",
+		});
 	}
 };
 
 export const getPublishedCourse = async (_z, res) => {
-	let courses;
 	try {
-		courses = await Course.find({ isPublished: true }).populate({
+		const courses = await Course.find({ isPublished: true }).populate({
 			path: "creator",
 			select: "name photoUrl",
 		});
 
-		if (!courses) {
-			return res.status(404).json({
-				message: "Course not found",
-			});
-		}
+		return res.status(200).json({
+			success: true,
+			courses: courses,
+		});
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({
+			success: false,
 			message: "Failed to get published courses",
 		});
 	}
-	return res.status(200).json({
-		courses: courses,
-	});
 };
 
 export const getCreatorCourses = async (req, res) => {
 	try {
 		const userId = req.user._id;
 		const courses = await Course.find({ creator: userId });
-		if (!courses) {
-			return res.status(404).json({
-				courses: [],
-				message: "Course not found",
-			});
-		}
+		
 		return res.status(200).json({
+			success: true,
 			courses,
 		});
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({
+			success: false,
 			message: "Failed to create course",
 		});
 	}
@@ -115,12 +114,7 @@ export const editCourse = async (req, res) => {
 		const { courseTitle, subTitle, description, category, courseLevel, coursePrice } = req.body;
 		const thumbnail = req.file;
 
-		let course = await Course.findById(courseId);
-		if (!course) {
-			return res.status(404).json({
-				message: "Course not found!",
-			});
-		}
+		let course = res.locals.course;
 		let courseThumbnail;
 		if (thumbnail) {
 			if (course.courseThumbnail) {
@@ -145,11 +139,13 @@ export const editCourse = async (req, res) => {
 
 		return res.status(200).json({
 			course,
+			success: true,
 			message: "Course updated successfully.",
 		});
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({
+			success: false,
 			message: "Failed to update course",
 		});
 	}
@@ -157,21 +153,15 @@ export const editCourse = async (req, res) => {
 
 export const getCourseById = async (req, res) => {
 	try {
-		const { courseId } = req.params;
-
-		const course = await Course.findById(courseId);
-
-		if (!course) {
-			return res.status(404).json({
-				message: "Course not found!",
-			});
-		}
+		const course = res.locals.course;
 		return res.status(200).json({
+			success: true,
 			course,
 		});
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({
+			success: false,
 			message: "Failed to get course by id",
 		});
 	}
@@ -182,16 +172,7 @@ export const getCourseById = async (req, res) => {
 
 export const createLecture = async (req, res) => {
 	try {
-		const { courseId } = req.params;
-
-		// Checking if course exists
-		const course = await Course.findById(courseId);
-		if (!course) {
-			return res.status(400).json({
-				success: false,
-				message: "Course not found",
-			})
-		}
+		const course = res.locals.course;
 
 		// create lecture
 		const lecture = await Lecture.create(req.body);
@@ -216,19 +197,16 @@ export const createLecture = async (req, res) => {
 
 export const getCourseLecture = async (req, res) => {
 	try {
-		const { courseId } = req.params;
-		const course = await Course.findById(courseId).populate("lectures");
-		if (!course) {
-			return res.status(404).json({
-				message: "Course not found",
-			});
-		}
+		const course = await res.locals.course.populate("lectures");
+
 		return res.status(200).json({
+			success: true,
 			lectures: course.lectures,
 		});
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({
+			success: false,
 			message: "Failed to get lectures",
 		});
 	}
@@ -262,11 +240,13 @@ export const editLecture = async (req, res) => {
 		}
 		return res.status(200).json({
 			lecture,
+			success: true,
 			message: "Lecture updated successfully.",
 		});
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({
+			success: false,
 			message: "Failed to edit lectures",
 		});
 	}
@@ -293,11 +273,13 @@ export const removeLecture = async (req, res) => {
 		);
 
 		return res.status(200).json({
+			success: true,
 			message: "Lecture removed successfully.",
 		});
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({
+			success: false,
 			message: "Failed to remove lecture",
 		});
 	}
@@ -313,11 +295,13 @@ export const getLectureById = async (req, res) => {
 			});
 		}
 		return res.status(200).json({
+			success: true,
 			lecture,
 		});
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({
+			success: false,
 			message: "Failed to get lecture by id",
 		});
 	}
@@ -326,25 +310,21 @@ export const getLectureById = async (req, res) => {
 // publish unpublish course logic
 export const togglePublishCourse = async (req, res) => {
 	try {
-		const { courseId } = req.params;
 		const { publish } = req.query; // true, false
-		const course = await Course.findById(courseId);
-		if (!course) {
-			return res.status(404).json({
-				message: "Course not found!",
-			});
-		}
+		const course = res.locals.course;
 		// publish status based on the query parameter
 		course.isPublished = publish === "true";
 		await course.save();
 
 		const statusMessage = course.isPublished ? "Published" : "Unpublished";
 		return res.status(200).json({
+			success: true,
 			message: `Course is ${statusMessage}`,
 		});
 	} catch (error) {
 		console.log(error);
 		return res.status(500).json({
+			success: false,
 			message: "Failed to update status",
 		});
 	}
