@@ -28,15 +28,15 @@ const ResumeScreen = () => {
 	if (applicationError || userDataError)
 		return (
 			<div className="text-center mt-5 text-danger">
-				{" "}
 				Error: {applicationError?.message ||
 					userDataError?.message ||
-					"An unknown error occurred"}{" "}
+					"An unknown error occurred"}
 			</div>
 		);
 
 	const applications = data?.application || [];
 	const badgesCount = userInfo?.badges?.length || 0;
+	const favoriteBadges = userInfo?.badges || [];
 
 	return (
 		<div className="container py-4">
@@ -103,19 +103,20 @@ const ResumeScreen = () => {
 			<div className="mb-4">
 				<h5 className="mb-3">Favorite Badges</h5>
 				<div className="row g-3">
-					{[
-						{ title: "Android Studio User", date: "Nov 2, 2021" },
-						{ title: "First Learning", date: "Aug 8, 2021" },
-					].map((badge, index) => (
-						<div className="col-md-3" key={index}>
-							<div className="card shadow-sm text-center">
-								<div className="card-body">
-									<h6 className="card-title">{badge.title}</h6>
-									<p className="text-muted small">{badge.date}</p>
+					{favoriteBadges.length > 0 ? (
+						favoriteBadges.map((badge, index) => (
+							<div className="col-md-3" key={index}>
+								<div className="card shadow-sm text-center">
+									<div className="card-body">
+										<img src={badge.imageUrl} alt={badge.title} className="img-fluid mb-2" />
+										<h6 className="card-title">{badge.title}</h6>
+									</div>
 								</div>
 							</div>
-						</div>
-					))}
+						))
+					) : (
+						<p>No favorite badges available</p>
+					)}
 				</div>
 			</div>
 
@@ -142,9 +143,7 @@ const ResumeScreen = () => {
 								<div className="card shadow-sm">
 									<div className="card-body">
 										<h6 className="card-title">{application.job?.title || "N/A"}</h6>
-										<p className="text-muted small">
-											Company: {application.job?.company || "N/A"}
-										</p>
+										<p className="text-muted small">Company: {application.job?.company || "N/A"}</p>
 										<p className="text-muted small">Status: {application.status}</p>
 									</div>
 								</div>

@@ -1,10 +1,23 @@
 import { Course } from "../models/course.model.js";
 import { Lecture } from "../models/lecture.model.js";
+import Badge from "../models/badgeModel.js";
 import { deleteMediaFromCloudinary, deleteVideoFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
 
 export const createCourse = async (req, res) => {
 	try {
-		const { courseTitle, category } = req.body;
+		const { courseTitle, category, subTitle, description, courseLevel, coursePrice, thumbnail, badgeTitle } = req.body;
+
+		const validTitles = ["Team Player", "Innovative", "Leadership"];
+    if (!validTitles.includes(badgeTitle)) {
+      return res.status(400).json({ message: "Invalid badge title" });
+    }
+
+    // Find the badge by title
+    const badge = await Badge.findOne({ title: badgeTitle });
+    if (!badge) {
+      return res.status(404).json({ message: "Badge not found" });
+    }
+
 		if (!courseTitle || !category) {
 			return res.status(400).json({
 				message: "Course title and category is required.",
@@ -14,7 +27,14 @@ export const createCourse = async (req, res) => {
 		const course = await Course.create({
 			courseTitle,
 			category,
+			subTitle,
+			description,
+			courseLevel,
+			coursePrice,
+			badges: badge._id,
+			courseThumbnail: thumbnail?.secure_url,
 			creator: req.user._id,
+
 		});
 
 		return res.status(201).json({
@@ -188,17 +208,17 @@ export const getCourseById = async (req, res) => {
 
 export const createLecture = async (req, res) => {
 	try {
-		const { lectureTitle } = req.body;
+		const { lectureTitle, videoUrl } = req.body;
 		const { courseId } = req.params;
 
-		if (!lectureTitle || !courseId) {
+		if (!lectureTitle || !videoUrl|| !courseId) {
 			return res.status(400).json({
-				message: "Lecture title is required",
+				message: "details are missing",
 			});
 		}
 
 		// create lecture
-		const lecture = await Lecture.create({ lectureTitle });
+		const lecture = await Lecture.create({ lectureTitle, videoUrl });
 
 		const course = await Course.findById(courseId);
 		if (course) {

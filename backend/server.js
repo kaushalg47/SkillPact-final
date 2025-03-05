@@ -11,8 +11,9 @@ import courseProgress from "./routes/courseProgress.route.js";
 import jobRoutes from "./routes/jobRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import coursePurchaseRoutes from "./routes/purchaseCourse.route.js";
+import badgeRoutes from "./routes/badgeRoutes.js";
 dotenv.config();
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8000;
 
 connectDB();
 
@@ -36,6 +37,7 @@ app.use("/api/company", companyRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/course-progress", courseProgress);
 app.use("/api/course-purchase", coursePurchaseRoutes);
+app.use("/api/badges", badgeRoutes);
 
 if (process.env.NODE_ENV === "production") {
 	const __dirname = path.resolve();
