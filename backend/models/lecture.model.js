@@ -18,6 +18,10 @@ const lectureSchema = new mongoose.Schema(
 			type: Boolean,
 			default: false,
 		},
+		courseId: {
+			type: mongoose.Schema.Types.ObjectId,
+			required: true,
+		},
 	},
 	{ timestamps: true }
 );

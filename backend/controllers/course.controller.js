@@ -111,31 +111,28 @@ export const getCreatorCourses = async (req, res) => {
 export const editCourse = async (req, res) => {
 	try {
 		const courseId = req.params.courseId;
-		const { courseTitle, subTitle, description, category, courseLevel, coursePrice } = req.body;
 		const thumbnail = req.file;
-
 		let course = res.locals.course;
-		let courseThumbnail;
+
+		const updateData = {
+			...req.body,
+		};
+
 		if (thumbnail) {
 			if (course.courseThumbnail) {
 				const publicId = course.courseThumbnail.split("/").pop().split(".")[0];
 				await deleteMediaFromCloudinary(publicId); // delete old image
 			}
 			// upload a thumbnail on Cloudinary
-			courseThumbnail = await uploadMedia(thumbnail.path);
+			const courseThumbnail = await uploadMedia(thumbnail.path);
+			updateData.courseThumbnail = courseThumbnail?.secure_url;
 		}
 
-		const updateData = {
-			courseTitle,
-			subTitle,
-			description,
-			category,
-			courseLevel,
-			coursePrice,
-			courseThumbnail: courseThumbnail?.secure_url,
-		};
-
-		course = await Course.findByIdAndUpdate(courseId, updateData, { new: true, runValidators: true });
+		course = await Course.findByIdAndUpdate(
+			courseId,
+			updateData,
+			{ new: true, runValidators: true }
+		);
 
 		return res.status(200).json({
 			course,
@@ -167,6 +164,32 @@ export const getCourseById = async (req, res) => {
 	}
 };
 
+
+// publish unpublish course logic
+export const togglePublishCourse = async (req, res) => {
+	try {
+		const { publish } = req.query; // true, false
+		const course = res.locals.course;
+		
+		// publish status based on the query parameter
+		course.isPublished = publish === "true";
+		await course.save();
+
+		const statusMessage = course.isPublished ? "Published" : "Unpublished";
+		return res.status(200).json({
+			success: true,
+			message: `Course is ${statusMessage}`,
+		});
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({
+			success: false,
+			message: "Failed to update status",
+		});
+	}
+};
+
+
 // -------------------------------------------------
 //Lectures
 
@@ -175,7 +198,7 @@ export const createLecture = async (req, res) => {
 		const course = res.locals.course;
 
 		// create lecture
-		const lecture = await Lecture.create(req.body);
+		const lecture = await Lecture.create({...req.body, courseId: course._id});
 
 		// Put the course id in the course
 		course.lectures.push(lecture._id);
@@ -215,14 +238,7 @@ export const getCourseLecture = async (req, res) => {
 export const editLecture = async (req, res) => {
 	try {
 		const { lectureTitle, videoInfo, isPreviewFree } = req.body;
-
-		const { courseId, lectureId } = req.params;
-		const lecture = await Lecture.findById(lectureId);
-		if (!lecture) {
-			return res.status(404).json({
-				message: "Lecture not found!",
-			});
-		}
+		const lecture = res.locals.lecture;
 
 		// update lecture
 		if (lectureTitle) lecture.lectureTitle = lectureTitle;
@@ -232,12 +248,6 @@ export const editLecture = async (req, res) => {
 
 		await lecture.save();
 
-		// Ensure the course still has the lecture id if it was not already added;
-		const course = await Course.findById(courseId);
-		if (course && !course.lectures.includes(lecture._id)) {
-			course.lectures.push(lecture._id);
-			await course.save();
-		}
 		return res.status(200).json({
 			lecture,
 			success: true,
@@ -258,18 +268,16 @@ export const removeLecture = async (req, res) => {
 		const lecture = res.locals.lecture;
 		await lecture.deleteOne();
 
-		console.log(lecture);
+		// Remove the lecture reference from the associated course
+		await Course.findByIdAndUpdate(
+			lecture.courseId,
+			{ $pull: { lectures: lectureId } } // Remove the lectures id from the lectures array
+		);
 
 		// delete the lecture from cloudinary as well
 		if (lecture.publicId) {
 			await deleteVideoFromCloudinary(lecture.publicId);
 		}
-
-		// Remove the lecture reference from the associated course
-		await Course.updateOne(
-			{ lectures: lectureId }, // find the course that contains the lecture
-			{ $pull: { lectures: lectureId } } // Remove the lectures id from the lectures array
-		);
 
 		return res.status(200).json({
 			lecture,
@@ -297,29 +305,6 @@ export const getLectureById = async (req, res) => {
 		return res.status(500).json({
 			success: false,
 			message: "Failed to get lecture by id",
-		});
-	}
-};
-
-// publish unpublish course logic
-export const togglePublishCourse = async (req, res) => {
-	try {
-		const { publish } = req.query; // true, false
-		const course = res.locals.course;
-		// publish status based on the query parameter
-		course.isPublished = publish === "true";
-		await course.save();
-
-		const statusMessage = course.isPublished ? "Published" : "Unpublished";
-		return res.status(200).json({
-			success: true,
-			message: `Course is ${statusMessage}`,
-		});
-	} catch (error) {
-		console.log(error);
-		return res.status(500).json({
-			success: false,
-			message: "Failed to update status",
 		});
 	}
 };

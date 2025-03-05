@@ -54,7 +54,7 @@ export const courseApiSlice = apiSlice.injectEndpoints({
     editLecture: builder.mutation({
       query: ({ courseId, lectureId, lectureData }) => ({
         url: `${COURSE_URL}/${courseId}/lecture/${lectureId}`,
-        method: 'PATCH',
+        method: 'PUT',
         body: lectureData,
       }),
     }),

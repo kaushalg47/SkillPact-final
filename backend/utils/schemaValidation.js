@@ -10,6 +10,7 @@ const courseValidationSchema = Joi.object({
 	category: Joi.string().min(2).max(50).required(),
 	courseLevel: Joi.string().required().valid("Beginner", "Medium", "Advance"),
 	coursePrice: Joi.number().required().min(0),
+	// ?
 	courseThumbnail: Joi.string(),
 	isPublished: Joi.boolean(),
 	// TODO
