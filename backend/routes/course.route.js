@@ -15,6 +15,7 @@ import {
 } from "../controllers/course.controller.js";
 import { protect } from "../middleware/authMiddleware.js";
 import { courseExists } from "../middleware/courseExists.middleware.js";
+import { lectureExists } from "../middleware/lectureExists.middleware.js";
 import { validateCourse, validateLecture } from "../middleware/schemaValidationMiddleware.js";
 import upload from "../utils/multer.js";
 
@@ -45,14 +46,14 @@ router.post("/:courseId/lecture", protect, courseExists, validateLecture, create
 router.get("/:courseId/lecture", protect, courseExists, getCourseLecture);
 
 // Route to edit a specific lecture by its ID
-router.patch("/:courseId/lecture/:lectureId", protect, courseExists, editLecture);
+router.patch("/:courseId/lecture/:lectureId", protect, courseExists, lectureExists, editLecture);
 
 // Route to remove a specific lecture by its ID
 // ? Can be improved
-router.delete("/lecture/:lectureId", protect, removeLecture);
+router.delete("/lecture/:lectureId", protect, lectureExists, removeLecture);
 
 // Route to get a specific lecture by its ID
-router.get("/lecture/:lectureId", protect, getLectureById);
+router.get("/lecture/:lectureId", protect, lectureExists, getLectureById);
 
 // Route to toggle the publication status of a course
 router.patch("/:courseId", protect, courseExists, togglePublishCourse);

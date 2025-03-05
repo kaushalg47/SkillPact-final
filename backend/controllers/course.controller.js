@@ -94,7 +94,7 @@ export const getCreatorCourses = async (req, res) => {
 	try {
 		const userId = req.user._id;
 		const courses = await Course.find({ creator: userId });
-		
+
 		return res.status(200).json({
 			success: true,
 			courses,
@@ -255,12 +255,11 @@ export const editLecture = async (req, res) => {
 export const removeLecture = async (req, res) => {
 	try {
 		const { lectureId } = req.params;
-		const lecture = await Lecture.findByIdAndDelete(lectureId);
-		if (!lecture) {
-			return res.status(404).json({
-				message: "Lecture not found!",
-			});
-		}
+		const lecture = res.locals.lecture;
+		await lecture.deleteOne();
+
+		console.log(lecture);
+
 		// delete the lecture from cloudinary as well
 		if (lecture.publicId) {
 			await deleteVideoFromCloudinary(lecture.publicId);
@@ -273,6 +272,7 @@ export const removeLecture = async (req, res) => {
 		);
 
 		return res.status(200).json({
+			lecture,
 			success: true,
 			message: "Lecture removed successfully.",
 		});
@@ -287,13 +287,7 @@ export const removeLecture = async (req, res) => {
 
 export const getLectureById = async (req, res) => {
 	try {
-		const { lectureId } = req.params;
-		const lecture = await Lecture.findById(lectureId);
-		if (!lecture) {
-			return res.status(404).json({
-				message: "Lecture not found!",
-			});
-		}
+		const lecture = res.locals.lecture;
 		return res.status(200).json({
 			success: true,
 			lecture,
