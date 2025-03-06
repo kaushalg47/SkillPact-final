@@ -70,6 +70,17 @@ const jobValidationSchema = Joi.object({
 	// badges: Joi.array().items(Joi.objectId()),
 });
 
+const userValidationSchema = Joi.object({
+	name: Joi.string().required().max(100).min(2),
+	email: Joi.string().email().required(),
+	password: Joi.string().required().min(6),
+})
+
+const userUpdateValidationSchema = Joi.object({
+	name: Joi.string().max(100).min(2),
+	password: Joi.string().min(6),
+})
+
 export const validateCourse = (data) => courseValidationSchema.validate(data);
 
 export const validateLecture = (data) => lectureValidationSchema.validate(data);
@@ -81,3 +92,7 @@ export const validateJob = (data) => jobValidationSchema.validate(data);
 export const validateCourseUpdate = (data) => courseUpdateValidationSchema.validate(data);
 
 export const validateLectureUpdate = (data) => lectureUpdateValidationSchema.validate(data);
+
+export const validateUser = (data) => userValidationSchema.validate(data);
+
+export const validateUserUpdate = (data) => userUpdateValidationSchema.validate(data);

@@ -1,11 +1,11 @@
-import asyncHandler from "express-async-handler";
+import expressAsyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 import generateToken from "../utils/generateToken.js";
 
 // @desc    Auth user & get token
 // @route   POST /api/users/auth
 // @access  Public
-const authUser = asyncHandler(async (req, res) => {
+const authUser = expressAsyncHandler(async (req, res) => {
 	const { email, password } = req.body;
 
 	const user = await User.findOne({ email });
@@ -17,24 +17,28 @@ const authUser = asyncHandler(async (req, res) => {
 			_id: user._id,
 			name: user.name,
 			email: user.email,
+			success: true,
 		});
 	} else {
-		res.status(401);
-		throw new Error("Invalid email or password");
+		res.status(401).json({
+			message: "Invalid email or password",
+			success: false,
+		});
 	}
 });
 
 // @desc    Register a new user
 // @route   POST /api/users
 // @access  Public
-const registerUser = asyncHandler(async (req, res) => {
-	const { name, email, password } = req.body;
-
-	const userExists = await User.findOne({ email });
-
+const registerUser = expressAsyncHandler(async (req, res) => {
+	const { name, password, email } = req.body;
+	const userExists = await User.exists({ email });
+	
 	if (userExists) {
-		res.status(400);
-		throw new Error("User already exists");
+		return res.status(400).json({
+			message: "User already exists",
+			success: false,
+		});
 	}
 
 	const user = await User.create({
@@ -47,13 +51,16 @@ const registerUser = asyncHandler(async (req, res) => {
 		generateToken(res, user._id);
 
 		res.status(201).json({
+			success: true,
 			_id: user._id,
 			name: user.name,
 			email: user.email,
 		});
 	} else {
-		res.status(400);
-		throw new Error("Invalid user data");
+		res.status(400).json({
+			message: "Invalid user data",
+			success: false,
+		});
 	}
 });
 
@@ -65,34 +72,17 @@ const logoutUser = (req, res) => {
 		httpOnly: true,
 		expires: new Date(0),
 	});
-	res.status(200).json({ message: "Logged out successfully" });
+	res.status(200).json({
+		message: "Logged out successfully",
+		success: true,
+	});
 };
 
 // @desc    Get user profile
 // @route   GET /api/users/profile
 // @access  Private
-const getUserProfile = asyncHandler(async (req, res) => {
-	const user = await User.findById(req.user._id).populate("badges");
-
-	if (user) {
-		res.json({
-			_id: user._id,
-			name: user.name,
-			email: user.email,
-			badges: user.badges,
-		});
-	} else {
-		res.status(404);
-		throw new Error("User not found");
-	}
-});
-
-// @desc    Get any user's profile by ID
-// @route   GET /api/users/profile/:id
-// @access  Public
-const getUserProfileById = asyncHandler(async (req, res) => {
-	// Added another route where any one can see a user's profile without needing login
-	const user = await User.findById(req.params.id).populate("badges");
+const getUserProfile = expressAsyncHandler(async (req, res) => {
+	const user = await res.locals.user.populate("badges");
 
 	if (user) {
 		res.json({
@@ -103,36 +93,54 @@ const getUserProfileById = asyncHandler(async (req, res) => {
 			company: user.company,
 		});
 	} else {
-		res.status(404);
-		throw new Error("User not found");
+		res.status(404).json({
+			message: "User not found",
+			success: false,
+		});
+	}
+});
+
+// @desc    Get any user's profile by ID
+// @route   GET /api/users/profile/:id
+// @access  Public
+const getUserProfileById = expressAsyncHandler(async (req, res) => {
+	// Added another route where any one can see a user's profile without needing login
+	const user = await res.locals.user.populate("badges");
+
+	if (user) {
+		res.json({
+			_id: user._id,
+			name: user.name,
+			email: user.email,
+			badges: user.badges,
+			company: user.company,
+		});
+	} else {
+		res.status(404).json({
+			message: "User not found",
+			success: false,
+		});
 	}
 });
 
 // @desc    Update user profile
 // @route   PUT /api/users/profile
 // @access  Private
-const updateUserProfile = asyncHandler(async (req, res) => {
-	const user = await User.findById(req.user._id);
+const updateUserProfile = expressAsyncHandler(async (req, res) => {
+	const user = res.locals.user;
 
-	if (user) {
-		user.name = req.body.name || user.name;
-		user.email = req.body.email || user.email;
+	const { name, password } = req.body;
 
-		if (req.body.password) {
-			user.password = req.body.password;
-		}
+	if (name) user.name = name;
+	if (password) user.password = password;
 
-		const updatedUser = await user.save();
+	const updatedUser = await user.save();
 
-		res.json({
-			_id: updatedUser._id,
-			name: updatedUser.name,
-			email: updatedUser.email,
-		});
-	} else {
-		res.status(404);
-		throw new Error("User not found");
-	}
+	res.json({
+		_id: updatedUser._id,
+		name: updatedUser.name,
+		email: updatedUser.email,
+	});
 });
 
 export { authUser, getUserProfile, getUserProfileById, logoutUser, registerUser, updateUserProfile };

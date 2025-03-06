@@ -1,10 +1,12 @@
 import {
 	validateCourse as course,
 	validateCoursePurchase as coursePurchase,
-	validateLecture as lecture,
-	validateJob as job,
 	validateCourseUpdate as courseUpdate,
+	validateJob as job,
+	validateLecture as lecture,
 	validateLectureUpdate as lectureUpdate,
+	validateUser as user,
+	validateUserUpdate as userUpdate,
 } from "../utils/schemaValidation.js";
 
 const handleError = (req, res, next, error) => {
@@ -40,9 +42,19 @@ export const validateJob = (req, res, next) => {
 export const validateCourseUpdate = (req, res, next) => {
 	let { error } = courseUpdate(req.body);
 	return handleError(req, res, next, error);
-}
+};
 
 export const validateLectureUpdate = (req, res, next) => {
 	let { error } = lectureUpdate(req.body);
 	return handleError(req, res, next, error);
-}
+};
+
+export const validateUser = (req, res, next) => {
+	let { error } = user(req.body);
+	return handleError(req, res, next, error);
+};
+
+export const validateUserUpdate = (req, res, next) => {
+	let { error } = userUpdate(req.body);
+	return handleError(req, res, next, error);
+};

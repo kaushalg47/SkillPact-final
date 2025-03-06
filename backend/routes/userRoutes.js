@@ -8,14 +8,18 @@ import {
 	updateUserProfile,
 } from "../controllers/userController.js";
 import { protect } from "../middleware/authMiddleware.js";
+import { validateUser, validateUserUpdate } from "../middleware/schemaValidationMiddleware.js";
+import { userExists } from "../middleware/userExists.middleware.js";
 
 const router = express.Router();
 
-// Reconfigured /register to register users
-router.post("/register", registerUser);
+router.post("/register", validateUser, registerUser);
 router.post("/auth", authUser);
 router.post("/logout", logoutUser);
-router.route("/profile").get(protect, getUserProfile).put(protect, updateUserProfile);
-router.get("/profile/:id", getUserProfileById);
+router
+	.route("/profile")
+	.get(protect, userExists, getUserProfile)
+	.put(protect, userExists, validateUserUpdate, updateUserProfile);
+router.get("/profile/:userId", userExists, getUserProfileById);
 
 export default router;
