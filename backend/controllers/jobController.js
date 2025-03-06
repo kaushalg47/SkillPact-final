@@ -1,12 +1,10 @@
-import asyncHandler from "express-async-handler";
-import Badge from "../models/badgeModel.js";
+import expressAsyncHandler from "express-async-handler";
 import Job from "../models/jobModel.js";
-import User from "../models/userModel.js";
 
 // @desc    Fetch all jobs related to a keyword
 // @route   GET /api/jobs/
 // @access  Public
-const getJobs = asyncHandler(async (req, res) => {
+const getJobs = expressAsyncHandler(async (req, res) => {
 	try {
 		const keyword = req.query.keyword || "";
 
@@ -42,7 +40,7 @@ const getJobs = asyncHandler(async (req, res) => {
 // @desc    Post a job
 // @route   POST /api/jobs/
 // @access  Authenticated
-const postJobs = asyncHandler(async (req, res) => {
+const postJobs = expressAsyncHandler(async (req, res) => {
 	try {
 		const userId = req.user._id;
 		const company = res.locals.company;
@@ -92,7 +90,7 @@ const postJobs = asyncHandler(async (req, res) => {
 // @desc    fetch job details
 // @route   GET /api/jobs/:id
 // @access  Public
-const infoJobs = asyncHandler(async (req, res) => {
+const infoJobs = expressAsyncHandler(async (req, res) => {
 	try {
 		const job = await res.locals.job.populate("application");
 
@@ -109,7 +107,7 @@ const infoJobs = asyncHandler(async (req, res) => {
 // @desc    fetch all jobs as an admin
 // @route   GET /api/jobs/admin-jobs
 // @access  Admin
-const adminJobs = asyncHandler(async (req, res) => {
+const adminJobs = expressAsyncHandler(async (req, res) => {
 	try {
 		const adminId = req.user._id;
 		const jobs = await Job.find({ createdby: adminId });

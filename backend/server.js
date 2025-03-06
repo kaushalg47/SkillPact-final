@@ -32,7 +32,7 @@ app.use(cookieParser());
 
 app.use("/api/users", userRoutes);
 app.use("/api/jobs", jobRoutes);
-app.use("/api/apply", applicationRoutes);
+app.use("/api/applications", applicationRoutes);
 app.use("/api/company", companyRoutes);
 app.use("/api/courses", courseRoutes);
 app.use("/api/course-progress", courseProgress);

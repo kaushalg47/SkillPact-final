@@ -1,47 +1,21 @@
 import asyncHandler from "express-async-handler";
 import Application from "../models/applicationModel.js";
-import Job from "../models/jobModel.js";
-import User from "../models/userModel.js";
 
 //apply for jobs
-const applyApplication = asyncHandler(async (req, res) => {
+const applyForJob = asyncHandler(async (req, res) => {
 	try {
-		const userId = req.user._id; // Retrieved from isAuthenticated middleware
-		const jobId = req.params.id;
-
-		// Validate job ID
-		if (!jobId) {
-			return res.status(400).json({
-				message: "Job ID is required",
-				success: false,
-			});
-		}
+		const user = req.user;
+		const job = res.locals.job;
 
 		// Check if the user has already applied for the job
 		const existingApplication = await Application.findOne({
-			job: jobId,
-			applicant: userId,
+			job: job._id,
+			applicant: user._id,
 		});
 
 		if (existingApplication) {
 			return res.status(400).json({
 				message: "You have already applied for this job",
-				success: false,
-			});
-		}
-
-		// Find the job
-		const job = await Job.findById(jobId);
-		if (!job) {
-			return res.status(404).json({
-				message: "Job not found",
-				success: false,
-			});
-		}
-		const user = await User.findById(userId);
-		if (!user) {
-			return res.status(404).json({
-				message: "User not found",
 				success: false,
 			});
 		}
@@ -59,14 +33,16 @@ const applyApplication = asyncHandler(async (req, res) => {
 		}
 
 		// Create a new application
-		const newApplication = await Application.create({
-			job: jobId,
-			applicant: userId,
+		const newApplication = new Application({
+			job: job._id,
+			applicant: user._id,
 		});
 
 		// Add the new application to the job's application array
 		job.application.push(newApplication._id);
-		await job.save();
+
+		// Asynchronously save the job and the new application
+		await Promise.all([job.save(), newApplication.save()]);
 
 		return res.status(201).json({
 			message: "Job applied successfully",
@@ -84,53 +60,46 @@ const applyApplication = asyncHandler(async (req, res) => {
 //see applied jobs for users
 const userApplications = asyncHandler(async (req, res) => {
 	try {
-		const userId = req.user._id;
+		const userId = req.params.userId;
 		const application = await Application.find({ applicant: userId })
 			.sort({ createdAt: -1 })
 			.populate({
 				path: "job",
-				option: { sort: { createdAt: -1 } },
-				populate: {
-					path: "title",
-					options: { sort: { createdAt: -1 } },
-				},
+				select: "title category duration",
 			});
-		if (!application) {
-			return res.status(404).json({
-				message: "No Applications",
-				success: false,
-			});
-		}
+
 		return res.status(200).json({
 			application,
 			success: true,
 		});
 	} catch (error) {
-		console.log(error);
+		console.error("Error while finding user applications: ", error);
+		return res.status(500).json({
+			message: "Internal server error",
+			success: false,
+		});
 	}
 });
 
 //see applied jobs for users
 const registeredApplicants = asyncHandler(async (req, res) => {
 	try {
-		const jobId = req.params.id;
+		const jobId = req.params.jobId;
 		const application = await Application.find({ job: jobId }).sort({ createdAt: -1 }).populate({
 			path: "applicant",
-			select: "name email status",
+			select: "name email",
 		});
 
-		if (!application) {
-			return res.status(404).json({
-				message: "No Applications",
-				success: false,
-			});
-		}
 		return res.status(200).json({
 			application,
 			success: true,
 		});
 	} catch (error) {
-		console.log(error);
+		console.error("Error while finding job applications: ", error);
+		return res.status(500).json({
+			message: "Internal server error",
+			success: false,
+		});
 	}
 });
 
@@ -138,10 +107,18 @@ const registeredApplicants = asyncHandler(async (req, res) => {
 const statusUpdateApplication = asyncHandler(async (req, res) => {
 	try {
 		const { status } = req.body;
-		const applicationId = req.params.id;
+		const applicationId = req.params.appId;
 		if (!status) {
 			return res.status(400).json({
 				message: "status is required",
+				success: false,
+			});
+		}
+
+		const allowedStatus = ["pending", "accepted", "rejected"];
+		if (!allowedStatus.includes(status.toLowerCase())) {
+			return res.status(400).json({
+				message: "Invalid status",
 				success: false,
 			});
 		}
@@ -160,12 +137,16 @@ const statusUpdateApplication = asyncHandler(async (req, res) => {
 		await application.save();
 
 		return res.status(200).json({
-			message: "Status updated successfully.",
+			message: `Status updated successfully to ${status.toLowerCase()}.`,
 			success: true,
 		});
 	} catch (error) {
-		console.log(error);
+		console.error("Error while updating status of job application: ", error);
+		return res.status(500).json({
+			message: "Internal server error",
+			success: false,
+		});
 	}
 });
 
-export { applyApplication, registeredApplicants, statusUpdateApplication, userApplications };
+export { applyForJob, registeredApplicants, statusUpdateApplication, userApplications };
