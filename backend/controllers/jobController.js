@@ -45,14 +45,25 @@ const getJobs = asyncHandler(async (req, res) => {
 const postJobs = asyncHandler(async (req, res) => {
 	try {
 		const userId = req.user._id;
-		const company = (await User.findById(userId)).company;
+		const company = (await User.findById(userId).select("company")).company;
+		
+		const { title, description, category, minqualification, position, location, duration, startsOn, stipend } = req.body;
 
-		const job = await Job.create({
-			...req.body,
+		const jobData = {
+			title,
+			description,
+			category,
+			minqualification,
+			position,
+			location,
+			duration,
+			startsOn,
+			stipend,
 			createdby: userId,
-			company: userId,
 			company,
-		});
+		}
+
+		const job = await Job.create(jobData);
 
 		return res.status(201).json({
 			message: "New job created successfully",

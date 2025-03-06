@@ -1,14 +1,31 @@
+import Badge from "../models/badgeModel.js";
 import { Course } from "../models/course.model.js";
 import { Lecture } from "../models/lecture.model.js";
-import Badge from "../models/badgeModel.js";
 import { deleteMediaFromCloudinary, deleteVideoFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
 
 export const createCourse = async (req, res) => {
 	try {
-		const course = await Course.create({
-			...req.body,
-			creator: req.user._id,
+		const {
+			courseTitle,
+			subTitle,
+			description,
+			category,
+			courseLevel,
+			coursePrice,
+			courseThumbnail,
+			isPublished = false,
+		} = req.body;
 
+		const course = await Course.create({
+			courseTitle,
+			subTitle,
+			description,
+			category,
+			courseLevel,
+			coursePrice,
+			courseThumbnail,
+			isPublished,
+			creator: req.user._id,
 		});
 
 		console.log(course);
@@ -116,8 +133,27 @@ export const editCourse = async (req, res) => {
 		const thumbnail = req.file;
 		let course = res.locals.course;
 
+		const {
+			courseTitle,
+			subTitle,
+			description,
+			category,
+			courseLevel,
+			coursePrice,
+			courseThumbnail,
+			isPublished = false,
+		} = req.body;
+
 		const updateData = {
-			...req.body,
+			courseTitle,
+			subTitle,
+			description,
+			category,
+			courseLevel,
+			coursePrice,
+			courseThumbnail,
+			isPublished,
+			creator: req.user._id,
 		};
 
 		if (thumbnail) {
@@ -130,11 +166,7 @@ export const editCourse = async (req, res) => {
 			updateData.courseThumbnail = courseThumbnail?.secure_url;
 		}
 
-		course = await Course.findByIdAndUpdate(
-			courseId,
-			updateData,
-			{ new: true, runValidators: true }
-		);
+		course = await Course.findByIdAndUpdate(courseId, updateData, { new: true, runValidators: true });
 
 		return res.status(200).json({
 			course,
@@ -166,13 +198,12 @@ export const getCourseById = async (req, res) => {
 	}
 };
 
-
 // publish unpublish course logic
 export const togglePublishCourse = async (req, res) => {
 	try {
 		const { publish } = req.query; // true, false
 		const course = res.locals.course;
-		
+
 		// publish status based on the query parameter
 		course.isPublished = publish === "true";
 		await course.save();
@@ -191,7 +222,6 @@ export const togglePublishCourse = async (req, res) => {
 	}
 };
 
-
 // -------------------------------------------------
 //Lectures
 
@@ -199,12 +229,21 @@ export const createLecture = async (req, res) => {
 	try {
 		const course = res.locals.course;
 
+		const { lectureTitle, videoUrl, publicId, isPreviewFree } = req.body;
+		const lectureData = {
+			lectureTitle,
+			videoUrl,
+			publicId,
+			isPreviewFree,
+			courseId: course._id,
+		};
+
 		// create lecture
-		const lecture = await Lecture.create({...req.body, courseId: course._id});
+		const lecture = await Lecture.create(lectureData);
 
 		// TODO: ADD LECTURE VIDEO TO CLOUDINARY
 
-		// Put the course id in the course
+		// Put the lecture id in the course
 		course.lectures.push(lecture._id);
 		await course.save();
 
@@ -241,14 +280,14 @@ export const getCourseLecture = async (req, res) => {
 
 export const editLecture = async (req, res) => {
 	try {
-		const { lectureTitle, videoInfo, isPreviewFree } = req.body;
+		const { lectureTitle, videoUrl, publicId, isPreviewFree } = req.body;
 		const lecture = res.locals.lecture;
 
 		// update lecture
 		if (lectureTitle) lecture.lectureTitle = lectureTitle;
-		if (videoInfo?.videoUrl) lecture.videoUrl = videoInfo.videoUrl;
-		if (videoInfo?.publicId) lecture.publicId = videoInfo.publicId;
-		if (isPreviewFree) lecture.isPreviewFree = isPreviewFree.toLowerCase();
+		if (videoUrl) lecture.videoUrl = videoUrl;
+		if (publicId) lecture.publicId = publicId;
+		if (isPreviewFree) lecture.isPreviewFree = isPreviewFree;
 
 		await lecture.save();
 
