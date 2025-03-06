@@ -16,6 +16,7 @@ const lectureSchema = new mongoose.Schema(
 		},
 		isPreviewFree: {
 			type: Boolean,
+			set: (value) => String(value || "").toLowerCase() === "true",
 			default: false,
 		},
 		courseId: {

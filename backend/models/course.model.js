@@ -62,6 +62,7 @@ const courseSchema = new mongoose.Schema(
 		isPublished: {
 			type: Boolean,
 			default: false,
+			set: (value) => String(value || "").toLowerCase() === "true",
 		},
 		badges: {
 			type: [
