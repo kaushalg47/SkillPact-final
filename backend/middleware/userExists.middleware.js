@@ -2,24 +2,21 @@ import expressAsyncHandler from "express-async-handler";
 import User from "../models/userModel.js";
 
 export const userExists = expressAsyncHandler(async (req, res, next) => {
-    const userId = req.params.userId || req.user._id;
-    
-    if (!userId) {
-        return res.status(400).json({
-            success: false,
-            message: "User ID is required",
-        });
+    // If user is looking for a specific user by id
+    if (req.params.userId) {
+        const user = await User.findById(req.params.userId);
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                message: "User not found",
+            });
+        }
+
+        res.locals.user = user;
+        return next();
     }
 
-	const user = await User.findById(userId).populate("badges");
-
-	if (!user) {
-        return res.status(404).json({
-            success: false,
-            message: "User not found",
-        })
-	}
-
-    res.locals.user = user;
+    // If the user is finding himself
+    res.locals.user = req.user;
     return next();
 });
