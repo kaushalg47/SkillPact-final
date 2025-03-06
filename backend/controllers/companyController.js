@@ -2,48 +2,10 @@ import asyncHandler from "express-async-handler";
 import Company from "../models/companyModel.js";
 import User from "../models/userModel.js";
 
-// TODO: SCHEMA VALIDATION
 const registerCompany = asyncHandler(async (req, res) => {
 	try {
-		/*
-    IMP - COMPANY INFO TO BE PASSED AS JS OBJECT
-    companyInfo[name] = <Name>
-    companyInfo[description] = <description>
-    ...
-
-    OR 
-
-    companyInfo = {
-       name: <Name>
-       description: <Description>
-    } 
-    */
-
-		const { companyInfo } = req.body;
-		console.log(companyInfo);
-
-		// Validate the company name
-		if (!companyInfo) {
-			return res.status(400).json({
-				message: "Company is required.",
-				success: false,
-			});
-		}
-
-		// Check if the company already exists
-		let company = await Company.findOne({ name: companyInfo.name });
-		if (company) {
-			return res.status(400).json({
-				message: "You can't register the same company.",
-				success: false,
-			});
-		}
-
-		// While making company it has to be saved in user's company
-		const userId = req.user._id;
-		const user = await User.findById(userId);
-		console.log("USER BEFORE REGISTRATION:", user);
-		console.log("USER.COMPANY:", user.company);
+		const { name, description, website, location, logo } = req.body;
+		const user = req.user;
 
 		// If company defined then we can't register more than one company
 		if (user.company) {
@@ -51,16 +13,33 @@ const registerCompany = asyncHandler(async (req, res) => {
 				message: "You can't register more than 1 company",
 				success: false,
 			});
-		} else {
-			// Create a new company
-			company = await Company.create({
-				...companyInfo,
-				userId: req.user._id,
-			});
-
-			user.company = company;
-			await user.save();
 		}
+
+		const companyExists = await Company.exists({ name: name.trim() }).lean();
+
+		// If company already exists then we can't register the same company
+		if (companyExists) {
+			return res.status(400).json({
+				message: "You can't register the same company.",
+				success: false,
+			});
+		}
+
+		const companyInfo = {
+			name: name.trim(),
+			description: description?.trim(),
+			website: website?.trim(),
+			location: location?.trim(),
+			logo,
+			userId: user._id,
+			status: "pending",
+		};
+
+		// Create a new company
+		const company = new Company(companyInfo);
+		user.set({ company: company._id });
+
+		await Promise.all([company.save(), user.save()]);
 
 		return res.status(201).json({
 			message: "Company registered successfully.",
@@ -78,17 +57,8 @@ const registerCompany = asyncHandler(async (req, res) => {
 
 const userCompany = asyncHandler(async (req, res) => {
 	try {
-		const userId = req.user._id; // logged in user id
-		const company = await Company.findOne({ userId });
+		const company = res.locals.company;
 
-		console.log(company);
-
-		if (!company) {
-			return res.status(404).json({
-				message: "Companies not found.",
-				success: false,
-			});
-		}
 		return res.status(200).json({
 			company,
 			success: true,
@@ -104,14 +74,8 @@ const userCompany = asyncHandler(async (req, res) => {
 
 const infoCompany = asyncHandler(async (req, res) => {
 	try {
-		const companyId = req.params.compId;
-		const company = await Company.findById(companyId);
-		if (!company) {
-			return res.status(404).json({
-				message: "Company not found.",
-				success: false,
-			});
-		}
+		const company = res.locals.company;
+
 		return res.status(200).json({
 			company,
 			success: true,
@@ -127,56 +91,20 @@ const infoCompany = asyncHandler(async (req, res) => {
 
 const updateCompany = asyncHandler(async (req, res) => {
 	try {
-		/* 
-    COMPANY INFO TO BE PASSED AS JS OBJECT
-    companyInfo[name] = <Name>
-    companyInfo[description] = <description>
-    ...
+		const company = res.locals.company;
+		const { name, description, website, location, logo } = req.body;
 
-    OR 
+		if (name) company.name = name.trim();
+		if (description) company.description = description.trim();
+		if (website) company.website = website.trim();
+		if (location) company.location = location.trim();
+		if (logo) company.logo = logo;
 
-    companyInfo = {
-       name: <Name>
-       description: <Description>
-    } 
-    */
-
-		const company = await Company.findById(req.params.compId);
-
-		if (!company) {
-			return res.status(404).json({
-				message: "Company not found.",
-				success: false,
-			});
-		}
-
-		if (req.user._id.toString() !== company.userId.toString()) {
-			return res.status(403).json({
-				message: "Cannot update the company, Unauthorized",
-				success: false,
-			});
-		}
-
-		const { companyInfo } = req.body;
-
-		console.log(req.body);
-
-		if (!companyInfo) {
-			return res.status(400).json({
-				message: "CompanyInfo is required.",
-				success: false,
-			});
-		}
-
-		const updatedCompany = await Company.findByIdAndUpdate(req.params.compId, companyInfo, {
-			new: true,
-			runValidators: true,
-		});
-		console.log(updatedCompany);
+		await company.save();
 
 		return res.status(200).json({
 			message: "Company information updated.",
-			company: updatedCompany,
+			company: company,
 			success: true,
 		});
 	} catch (error) {

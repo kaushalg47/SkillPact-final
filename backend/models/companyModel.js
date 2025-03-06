@@ -13,7 +13,7 @@ const companySchema = new mongoose.Schema(
 		description: {
 			type: String,
 			trim: true, // Ensure no leading or trailing spaces
-			maxlength: 500, // Maximum length of 500 characters
+			maxlength: 3000, // Maximum length of 3000 characters
 		},
 		website: {
 			type: String,
