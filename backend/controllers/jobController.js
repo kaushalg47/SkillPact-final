@@ -45,9 +45,19 @@ const getJobs = asyncHandler(async (req, res) => {
 const postJobs = asyncHandler(async (req, res) => {
 	try {
 		const userId = req.user._id;
-		const company = (await User.findById(userId).select("company")).company;
-		
-		const { title, description, category, minqualification, position, location, duration, startsOn, stipend } = req.body;
+		const company = res.locals.company;
+
+		const {
+			title,
+			description,
+			category,
+			minqualification,
+			position,
+			location,
+			duration,
+			startsOn,
+			stipend,
+		} = req.body;
 
 		const jobData = {
 			title,
@@ -61,13 +71,13 @@ const postJobs = asyncHandler(async (req, res) => {
 			stipend,
 			createdby: userId,
 			company,
-		}
+		};
 
 		const job = await Job.create(jobData);
 
 		return res.status(201).json({
-			message: "New job created successfully",
 			job,
+			message: "New job created successfully",
 			success: true,
 		});
 	} catch (error) {
@@ -84,19 +94,11 @@ const postJobs = asyncHandler(async (req, res) => {
 // @access  Public
 const infoJobs = asyncHandler(async (req, res) => {
 	try {
-		const jobId = req.params.id;
-		const job = await Job.findById(jobId).populate({
-			path: "application",
-		});
-		if (!job) {
-			return res.status(404).json({
-				message: "Jobs not found.",
-				success: false,
-			});
-		}
+		const job = await res.locals.job.populate("application");
+
 		return res.status(200).json({ job, success: true });
 	} catch (error) {
-		console.log(error);
+		console.error("Error fetching job details:", error);
 		return res.status(500).json({
 			message: "Could not get any information about the job!",
 			success: false,
