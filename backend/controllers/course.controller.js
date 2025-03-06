@@ -202,6 +202,8 @@ export const createLecture = async (req, res) => {
 		// create lecture
 		const lecture = await Lecture.create({...req.body, courseId: course._id});
 
+		// TODO: ADD LECTURE VIDEO TO CLOUDINARY
+
 		// Put the course id in the course
 		course.lectures.push(lecture._id);
 		await course.save();

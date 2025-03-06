@@ -2,7 +2,9 @@ import {
 	validateCourse as course,
 	validateCoursePurchase as coursePurchase,
 	validateLecture as lecture,
-	validateJobValidationSchema as job,
+	validateJob as job,
+	validateCourseUpdate as courseUpdate,
+	validateLectureUpdate as lectureUpdate,
 } from "../utils/schemaValidation.js";
 
 const handleError = (req, res, next, error) => {
@@ -34,3 +36,13 @@ export const validateJob = (req, res, next) => {
 	let { error } = job(req.body);
 	return handleError(req, res, next, error);
 };
+
+export const validateCourseUpdate = (req, res, next) => {
+	let { error } = courseUpdate(req.body);
+	return handleError(req, res, next, error);
+}
+
+export const validateLectureUpdate = (req, res, next) => {
+	let { error } = lectureUpdate(req.body);
+	return handleError(req, res, next, error);
+}

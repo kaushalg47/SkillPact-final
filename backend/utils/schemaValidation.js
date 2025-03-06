@@ -18,6 +18,20 @@ const courseValidationSchema = Joi.object({
 	// badges: Joi.array().items(Joi.objectId()),
 });
 
+const courseUpdateValidationSchema = Joi.object({
+	courseTitle: Joi.string().max(100).min(2),
+	subTitle: Joi.string().max(200),
+	description: Joi.string().max(3000),
+	category: Joi.string().min(2).max(50),
+	courseLevel: Joi.string().valid("Beginner", "Medium", "Advance"),
+	coursePrice: Joi.number().min(0),
+	courseThumbnail: Joi.string(),
+	isPublished: Joi.boolean(),
+	// TODO
+	// ! Temp removed
+	// badges: Joi.array().items(Joi.objectId()),
+});
+
 const lectureValidationSchema = Joi.object({
 	lectureTitle: Joi.string().required().max(100).min(2),
 	videoUrl: Joi.string().uri(),
@@ -25,6 +39,14 @@ const lectureValidationSchema = Joi.object({
 	isPreviewFree: Joi.boolean(),
 });
 
+const lectureUpdateValidationSchema = Joi.object({
+	lectureTitle: Joi.string().max(100).min(2),
+	videoUrl: Joi.string().uri(),
+	publicId: Joi.string(),
+	isPreviewFree: Joi.boolean(),
+});
+
+// TODO
 // ? Pending
 const coursePurchaseValidationSchema = Joi.object({
 	amount: Joi.number().required().min(0),
@@ -43,6 +65,7 @@ const jobValidationSchema = Joi.object({
 	duration: Joi.string().required(),
 	startsOn: Joi.date().required(),
 	stipend: Joi.number().min(0),
+	// TODO
 	// ! Temp removed
 	// badges: Joi.array().items(Joi.objectId()),
 });
@@ -53,4 +76,8 @@ export const validateLecture = (data) => lectureValidationSchema.validate(data);
 
 export const validateCoursePurchase = (data) => coursePurchaseValidationSchema.validate(data);
 
-export const validateJobValidationSchema = (data) => jobValidationSchema.validate(data);
+export const validateJob = (data) => jobValidationSchema.validate(data);
+
+export const validateCourseUpdate = (data) => courseUpdateValidationSchema.validate(data);
+
+export const validateLectureUpdate = (data) => lectureUpdateValidationSchema.validate(data);

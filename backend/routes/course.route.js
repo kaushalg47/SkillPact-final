@@ -16,7 +16,7 @@ import {
 import { protect } from "../middleware/authMiddleware.js";
 import { courseExists } from "../middleware/courseExists.middleware.js";
 import { lectureExists } from "../middleware/lectureExists.middleware.js";
-import { validateCourse, validateLecture } from "../middleware/schemaValidationMiddleware.js";
+import { validateCourse, validateLecture, validateCourseUpdate, validateLectureUpdate } from "../middleware/schemaValidationMiddleware.js";
 import upload from "../utils/multer.js";
 
 const router = express.Router();
@@ -35,7 +35,7 @@ router.get("/published-courses", getPublishedCourse);
 router.get("/", protect, getCreatorCourses);
 
 // Route to edit a course by its ID with an uploaded thumbnail
-router.put("/:courseId", protect, courseExists, validateCourse, upload.single("courseThumbnail"), editCourse);
+router.put("/:courseId", protect, courseExists, validateCourseUpdate, upload.single("courseThumbnail"), editCourse);
 
 // Route to get a course by its ID
 router.get("/:courseId", protect, courseExists, getCourseById);
@@ -50,7 +50,7 @@ router.post("/:courseId/lecture", protect, courseExists, validateLecture, create
 router.get("/:courseId/lecture", protect, courseExists, getCourseLecture);
 
 // Route to edit a specific lecture by its ID
-router.put("/:courseId/lecture/:lectureId", protect, lectureExists, validateLecture, editLecture);
+router.put("/:courseId/lecture/:lectureId", protect, lectureExists, validateLectureUpdate, editLecture);
 
 // Route to remove a specific lecture by its ID
 router.delete("/:courseId/lecture/:lectureId", protect, lectureExists, removeLecture);
