@@ -81,6 +81,22 @@ const userUpdateValidationSchema = Joi.object({
 	password: Joi.string().min(6),
 })
 
+const companyValidationSchema = Joi.object({
+	name: Joi.string().required().max(100).min(2),
+	description: Joi.string().max(3000),
+	website: Joi.string().uri(),
+	location: Joi.string().max(200),
+	logo: Joi.string().uri(),
+});
+
+const companyUpdateValidationSchema = Joi.object({
+	name: Joi.string().max(100).min(2),
+	description: Joi.string().max(3000),
+	website: Joi.string().uri(),
+	location: Joi.string().max(200),
+	logo: Joi.string().uri(),
+});
+
 export const validateCourse = (data) => courseValidationSchema.validate(data);
 
 export const validateLecture = (data) => lectureValidationSchema.validate(data);
@@ -96,3 +112,7 @@ export const validateLectureUpdate = (data) => lectureUpdateValidationSchema.val
 export const validateUser = (data) => userValidationSchema.validate(data);
 
 export const validateUserUpdate = (data) => userUpdateValidationSchema.validate(data);
+
+export const validateCompany = (data) => companyValidationSchema.validate(data);
+
+export const validateCompanyUpdate = (data) => companyUpdateValidationSchema.validate(data);
