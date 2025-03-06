@@ -123,7 +123,34 @@ const adminJobs = expressAsyncHandler(async (req, res) => {
 		});
 	} catch (error) {
 		console.log(error);
+		return res.status(500).json({
+			message: "Server error occurred",
+			success: false,
+		});
 	}
 });
 
-export { adminJobs, getJobs, infoJobs, postJobs };
+const isEligible = expressAsyncHandler(async (req, res) => {
+	try {
+		const user = req.user;
+		const job = res.locals.job;
+
+		const requiredBadges = job.badges || [];
+		const userBadges = user.badges || [];
+		const hasAllBadges = requiredBadges.every((badge) => userBadges.includes(badge));
+
+		return res.status(200).json({
+			success: true,
+			isEligible: hasAllBadges,
+		});
+	} catch (error) {
+		console.log(error);
+		return res.status(500).json({
+			message: "Server error occurred",
+			success: false,
+		});
+
+	}
+});
+
+export { adminJobs, getJobs, infoJobs, postJobs, isEligible };
