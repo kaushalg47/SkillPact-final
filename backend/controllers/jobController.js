@@ -1,5 +1,7 @@
 import expressAsyncHandler from "express-async-handler";
 import Job from "../models/jobModel.js";
+import mongoose from "mongoose";
+import { badgesExist, uniqueBadges } from "../utils/badgesFunctions.js";
 
 // @desc    Fetch all jobs related to a keyword
 // @route   GET /api/jobs/
@@ -45,7 +47,7 @@ const postJobs = expressAsyncHandler(async (req, res) => {
 		const userId = req.user._id;
 		const company = res.locals.company;
 
-		const {
+		let {
 			title,
 			description,
 			category,
@@ -55,7 +57,36 @@ const postJobs = expressAsyncHandler(async (req, res) => {
 			duration,
 			startsOn,
 			stipend,
+			badges = [],
 		} = req.body;
+
+		// Validate badge IDs
+		if (!badges.every((badge) => mongoose.Types.ObjectId.isValid(badge))) {
+			return res.status(400).json({
+				success: false,
+				message: "Invalid badge id",
+			});
+		}
+		
+		// Remove duplicate badges
+		badges = uniqueBadges(badges);
+
+		// Check if badges exceed the limit
+		if (badges.length > 10) {
+			return res.status(400).json({
+				success: false,
+				message: "Maximum 10 badges allowed",
+			});
+		};
+		
+		// Check if all badges exist in the database
+		const allBadgesExist = await badgesExist(badges);
+		if (!allBadgesExist) {
+			return res.status(400).json({
+				success: false,
+				message: "Badge not found",
+			});
+		}
 
 		const jobData = {
 			title,
@@ -68,10 +99,12 @@ const postJobs = expressAsyncHandler(async (req, res) => {
 			startsOn,
 			stipend,
 			createdby: userId,
-			company,
+			company: company._id,
+			badges,
 		};
 
 		const job = await Job.create(jobData);
+		// const job = new Job(jobData);
 
 		return res.status(201).json({
 			job,
@@ -92,7 +125,7 @@ const postJobs = expressAsyncHandler(async (req, res) => {
 // @access  Public
 const infoJobs = expressAsyncHandler(async (req, res) => {
 	try {
-		const job = await res.locals.job.populate("application");
+		const job = await res.locals.job.populate("application badges");
 
 		return res.status(200).json({ job, success: true });
 	} catch (error) {

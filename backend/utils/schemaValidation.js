@@ -62,9 +62,7 @@ const jobValidationSchema = Joi.object({
 	duration: Joi.string().required(),
 	startsOn: Joi.date().required(),
 	stipend: Joi.number().min(0),
-	// TODO
-	// ! Temp removed
-	// badges: Joi.array().items(Joi.objectId()),
+	badges: Joi.array().items(Joi.objectId()),
 });
 
 const userValidationSchema = Joi.object({

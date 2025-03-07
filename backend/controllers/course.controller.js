@@ -1,15 +1,9 @@
 import mongoose from "mongoose";
-import Badge from "../models/badgeModel.js";
 import { Course } from "../models/course.model.js";
 import { Lecture } from "../models/lecture.model.js";
 import { deleteMediaFromCloudinary, deleteVideoFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
+import { uniqueBadges, badgesExist } from "../utils/badgesFunctions.js";
 
-const badgesExist = async (badges) => {
-	const docs = await Badge.countDocuments({ _id: { $in: badges } });
-	return docs === badges.length;
-};
-
-const uniqueBadges = (badges) => [...new Set(badges)];
 
 // TODO: FIX COURSE THUMBNAIL
 export const createCourse = async (req, res) => {
