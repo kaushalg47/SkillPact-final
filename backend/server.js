@@ -35,7 +35,7 @@ app.use("/api/jobs", jobRoutes);
 app.use("/api/applications", applicationRoutes);
 app.use("/api/company", companyRoutes);
 app.use("/api/courses", courseRoutes);
-app.use("/api/course-progress", courseProgress);
+app.use("/api/progress/course", courseProgress);
 app.use("/api/course-purchase", coursePurchaseRoutes);
 app.use("/api/badges", badgeRoutes);
 
