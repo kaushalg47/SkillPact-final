@@ -156,4 +156,46 @@ const adminJobs = asyncHandler(async (req, res) => {
 	}
 });
 
-export { adminJobs, getJobs, infoJobs, postJobs };
+const isEligible = asyncHandler(async (req, res) => {
+	try {
+		const userId = req.user._id;
+		const jobId = req.params.jobId;
+
+		// Validate job ID
+		if (!jobId) {
+			return res.status(400).json({
+				message: "Job ID is required",
+				success: false,
+			});
+		}
+
+		const job = await Job.findById(jobId);
+		if (!job) {
+			return res.status(404).json({
+				message: "Job not found",
+				success: false,
+			});
+		}
+
+		const user = await User.findById(userId);
+		if (!user) {
+			return res.status(404).json({
+				message: "User not found",
+				success: false,
+			});
+		}
+
+		const requiredBadges = job.badges || [];
+		const userBadges = user.badges || [];
+		const hasAllBadges = requiredBadges.every((badge) => userBadges.includes(badge));
+
+		return res.status(200).json({
+			success: true,
+			isEligible: hasAllBadges,
+		});
+	} catch (error) {
+		console.log(error);
+	}
+});
+
+export { adminJobs, getJobs, infoJobs, isEligible, postJobs };

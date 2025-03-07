@@ -66,7 +66,7 @@ const applyApplication = asyncHandler(async (req, res) => {
 
 		// Add the new application to the job's application array
 		job.application.push(newApplication._id);
-		defined;
+		
 		await job.save();
 
 		return res.status(201).json({
