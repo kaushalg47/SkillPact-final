@@ -10,12 +10,10 @@ const courseValidationSchema = Joi.object({
 	category: Joi.string().min(2).max(50).required(),
 	courseLevel: Joi.string().required().valid("Beginner", "Medium", "Advance"),
 	coursePrice: Joi.number().required().min(0),
-	// ?
+	// TODO FIX THUMBNAIL
 	courseThumbnail: Joi.string(),
 	isPublished: Joi.boolean(),
-	// TODO
-	// ! temp removed
-	// badges: Joi.array().items(Joi.objectId()),
+	badges: Joi.array().items(Joi.objectId()),
 });
 
 const courseUpdateValidationSchema = Joi.object({
@@ -25,11 +23,10 @@ const courseUpdateValidationSchema = Joi.object({
 	category: Joi.string().min(2).max(50),
 	courseLevel: Joi.string().valid("Beginner", "Medium", "Advance"),
 	coursePrice: Joi.number().min(0),
+	// TODO FIX THUMBNAIL
 	courseThumbnail: Joi.string(),
 	isPublished: Joi.boolean(),
-	// TODO
-	// ! Temp removed
-	// badges: Joi.array().items(Joi.objectId()),
+	badges: Joi.array().items(Joi.objectId()),
 });
 
 const lectureValidationSchema = Joi.object({

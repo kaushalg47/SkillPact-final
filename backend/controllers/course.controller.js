@@ -1,11 +1,20 @@
+import mongoose from "mongoose";
 import Badge from "../models/badgeModel.js";
 import { Course } from "../models/course.model.js";
 import { Lecture } from "../models/lecture.model.js";
 import { deleteMediaFromCloudinary, deleteVideoFromCloudinary, uploadMedia } from "../utils/cloudinary.js";
 
+const badgesExist = async (badges) => {
+	const docs = await Badge.countDocuments({ _id: { $in: badges } });
+	return docs === badges.length;
+};
+
+const uniqueBadges = (badges) => [...new Set(badges)];
+
+// TODO: FIX COURSE THUMBNAIL
 export const createCourse = async (req, res) => {
 	try {
-		const {
+		let {
 			courseTitle,
 			subTitle,
 			description,
@@ -14,8 +23,38 @@ export const createCourse = async (req, res) => {
 			coursePrice,
 			courseThumbnail,
 			isPublished = false,
+			badges = [],
 		} = req.body;
 
+		// Validate badge IDs
+		if (!badges.every((badge) => mongoose.Types.ObjectId.isValid(badge))) {
+			return res.status(400).json({
+				success: false,
+				message: "Invalid badge id",
+			});
+		}
+
+		// Remove duplicate badges
+		badges = uniqueBadges(badges);
+
+		// Check if badges exceed the limit
+		if (badges.length > 10) {
+			return res.status(400).json({
+				success: false,
+				message: "Maximum 10 badges allowed",
+			});
+		};
+		
+		// Check if all badges exist in the database
+		const allBadgesExist = await badgesExist(badges);
+		if (!allBadgesExist) {
+			return res.status(400).json({
+				success: false,
+				message: "Badge not found",
+			});
+		}
+
+		// Create a new course
 		const course = await Course.create({
 			courseTitle,
 			subTitle,
@@ -26,9 +65,8 @@ export const createCourse = async (req, res) => {
 			courseThumbnail,
 			isPublished,
 			creator: req.user._id,
+			badges,
 		});
-
-		console.log(course);
 
 		return res.status(201).json({
 			course,
@@ -131,9 +169,9 @@ export const editCourse = async (req, res) => {
 	try {
 		const courseId = req.params.courseId;
 		const thumbnail = req.file;
-		let course = res.locals.course;
+		let course = res.locals.course; // Fetched data from middleware
 
-		const {
+		let {
 			courseTitle,
 			subTitle,
 			description,
@@ -142,20 +180,40 @@ export const editCourse = async (req, res) => {
 			coursePrice,
 			courseThumbnail,
 			isPublished = false,
+			badges,
 		} = req.body;
 
-		const updateData = {
-			courseTitle,
-			subTitle,
-			description,
-			category,
-			courseLevel,
-			coursePrice,
-			courseThumbnail,
-			isPublished,
-			creator: req.user._id,
-		};
+		if (badges) {
+			// Validating if every badge is of type ObjectId
+			if (!badges.every((badge) => mongoose.Types.ObjectId.isValid(badge))) {
+				return res.status(400).json({
+					success: false,
+					message: "Invalid badge id",
+				});
+			}
 
+			// Removing duplicate badges
+			badges = uniqueBadges(badges);
+
+			if (badges.length > 10) {
+				return res.status(400).json({
+					success: false,
+					message: "Maximum 10 badges allowed",
+				});
+			};
+			
+			// Check if all badges exist in database and are valid
+			const allBadgesExist = await badgesExist(badges);
+			if (!allBadgesExist) {
+				return res.status(400).json({
+					success: false,
+					message: "Badge not found",
+				});
+			}
+		}
+
+		// If a new thumbnail is uploaded
+		let newCourseThumbnail;
 		if (thumbnail) {
 			if (course.courseThumbnail) {
 				const publicId = course.courseThumbnail.split("/").pop().split(".")[0];
@@ -163,9 +221,22 @@ export const editCourse = async (req, res) => {
 			}
 			// upload a thumbnail on Cloudinary
 			const courseThumbnail = await uploadMedia(thumbnail.path);
-			updateData.courseThumbnail = courseThumbnail?.secure_url;
+			newCourseThumbnail = courseThumbnail?.secure_url;
 		}
 
+		let updateData = {
+			courseTitle,
+			subTitle,
+			description,
+			category,
+			courseLevel,
+			coursePrice,
+			courseThumbnail: newCourseThumbnail,
+			isPublished,
+			badges,
+		};
+
+		// Updating in database
 		course = await Course.findByIdAndUpdate(courseId, updateData, { new: true, runValidators: true });
 
 		return res.status(200).json({
@@ -184,7 +255,7 @@ export const editCourse = async (req, res) => {
 
 export const getCourseById = async (req, res) => {
 	try {
-		const course = res.locals.course;
+		const course = await res.locals.course.populate("badges");
 		return res.status(200).json({
 			success: true,
 			course,
