@@ -42,14 +42,14 @@ const ErrorScreen = ({ message, retry, navigateTo }) => {
                 </Button>
               )}
               
-              <Link to={navigateTo || "/"}>
-                <Button 
-                  variant="danger"
-                  className="d-flex align-items-center gap-2"
-                >
-                  <FaHome /> Go Home
-                </Button>
-              </Link>
+              <Link to={navigateTo || "/"} style={{ textDecoration: 'none' }}>
+              <Button 
+                variant="danger"
+                className="d-flex align-items-center gap-2"
+              >
+                <FaHome /> Go Home
+              </Button>
+            </Link>
             </div>
           </div>
         </Col>
