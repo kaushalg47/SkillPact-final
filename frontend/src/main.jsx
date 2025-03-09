@@ -45,6 +45,7 @@ const router = createBrowserRouter(
       <Route path='/courses/:courseId' element={<CourseInfo/>} />
       <Route path='/course-content/:courseId' element={<CourseVideos/>}/>
       <Route path='/profile' element={<ResumeScreen/>}/>
+      <Route path='/profile/:userId' element={<ResumeScreen/>}/>
       <Route path='/company-info' element={<CompanyInfo/>}/>
       <Route path='/company-jobs' element={<CompanyJobs/>}/>
       <Route path='/company-jobs/:jobId' element={<Applicants/>}/>

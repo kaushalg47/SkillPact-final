@@ -7,10 +7,12 @@ import ErrorScreen from "../screens/ErrorScreen";
 const CourseInfo = () => {
   const { courseId } = useParams();
   const { data: course, isLoading, error } = useGetCourseDetailWithStatusQuery(courseId);
-  const badge = course?.course?.badges || "'";
 
   if (isLoading) return <Loader text="Loading course details..." />;
   if (error) return <ErrorScreen message={`Failed to load course: ${error.message}`} navigateTo="/courses" />;
+
+  const badges = course?.course?.badges || []; // Ensure it's an array
+  const badge = badges.length > 0 ? badges[0] : null; // Take the first badge if available
 
   return (
     <div className="container mt-5 mb-5">
@@ -43,12 +45,18 @@ const CourseInfo = () => {
           </div>
         </div>
 
-        {/* Prerequisites */}
+        {/* Badges */}
         <div className="col-md-6">
           <div className="card shadow-sm border-0 rounded">
             <div className="card-body p-4">
-              <img src={badge.imageUrl} alt={badge.title} className="img-fluid mb-2" />
-              <h6 className="card-title">{badge.title}</h6>
+              {badge ? (
+                <>
+                  <img src={badge.imageUrl} alt={badge.title} className="img-fluid mb-2" />
+                  <h6 className="card-title">{badge.title}</h6>
+                </>
+              ) : (
+                <p className="text-muted">No badge available.</p>
+              )}
             </div>
           </div>
         </div>

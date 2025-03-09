@@ -40,7 +40,7 @@ const styles = {
     height: 'auto',
     position: 'relative',
     borderRadius: '20px',
-    border: '2px solid #000000',
+    border: '1px solid #000000',
     background: '#FFFFFF',
     padding: '20px',
     boxSizing: 'border-box',

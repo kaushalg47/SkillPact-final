@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useGetAllPurchasedCoursesQuery } from "../slices/coursePurchaseApiSlice";
 import { useGetUserApplicationsQuery } from "../slices/applicationApiSlice";
 import { useGetUserInfoQuery } from "../slices/userInfoApiSlice";
 import { Link } from "react-router-dom";
@@ -19,6 +20,8 @@ const ResumeScreen = () => {
 		isLoading: userDataLoading,
 	} = useGetUserInfoQuery(tempData?._id);
 
+	const { data: purchasedCourses, error: purchasedCoursesError, isLoading: purchasedCoursesLoading } = useGetAllPurchasedCoursesQuery();
+
 	useEffect(() => {
 		if (tempData) {
 			setName(tempData.name || "N/A");
@@ -34,9 +37,25 @@ const ResumeScreen = () => {
 		/>;
 	}
 
+	if (purchasedCoursesLoading) return <div className="text-center mt-5">Loading...</div>;
+	if (purchasedCoursesError)
+		return (
+			<div className="text-center mt-5 text-danger">
+				Error: {purchasedCoursesError?.data?.message || purchasedCoursesError?.message || "An unknown error occurred"}
+			</div>
+		);
+
 	const applications = data?.application || [];
 	const badgesCount = userInfo?.badges?.length || 0;
 	const favoriteBadges = userInfo?.badges || [];
+
+	if (purchasedCoursesLoading) return <div className="text-center mt-5">Loading...</div>;
+	if (purchasedCoursesError)
+		return (
+			<div className="text-center mt-5 text-danger">
+				Error: {purchasedCoursesError?.data?.message || purchasedCoursesError?.message || "An unknown error occurred"}
+			</div>
+		);
 
 	return (
 		<div className="container py-4">
@@ -65,9 +84,8 @@ const ResumeScreen = () => {
 								<span className="text-muted">{badgesCount} badge(s)</span>
 							</div>
 							{userInfo.company && (
-								<p className="mt-2">
-									<Link to="/company-info">Manage your company</Link>
-								</p>
+									<Link  className="btn btn-secondary mt-3" to="/company-info">Manage your company</Link>
+								
 							)}
 						</div>
 					</div>
@@ -81,8 +99,8 @@ const ResumeScreen = () => {
 								<div className="row w-100">
 									{[
 										{ title: "Badges", count: badgesCount },
-										{ title: "Courses", count: 3 }, // Replace with dynamic data
-										{ title: "Internships", count: 2 }, // Replace with dynamic data
+										{ title: "Courses", count: purchasedCourses?.length || 0 },
+										{ title: "Internships", count: applications.filter(app => app.status === "accepted").length || 0 },
 									].map((achievement, index) => (
 										<div className="col-md-4" key={index}>
 											<div className="card bg-light h-100">
@@ -101,7 +119,7 @@ const ResumeScreen = () => {
 			</div>
 
 			<div className="mb-4">
-				<h5 className="mb-3">Favorite Badges</h5>
+				<h5 className="mb-3">Badges</h5>
 				<div className="row g-3">
 					{favoriteBadges.length > 0 ? (
 						favoriteBadges.map((badge, index) => (
@@ -120,18 +138,26 @@ const ResumeScreen = () => {
 				</div>
 			</div>
 
-			<div>
-				<h5 className="mb-3">In Progress</h5>
-				<div className="row">
-					<div className="col-md-3">
-						<div className="card shadow-sm text-center">
-							<div className="card-body">
-								<h6 className="card-title">Codelab in Progress</h6>
-								<p className="text-muted small">In Progress</p>
+
+			<div className="mt-4">
+				<h5 className="mb-3">Purchased Courses</h5>
+				{purchasedCourses?.length > 0 ? (
+					<div className="row">
+						{purchasedCourses.map((course) => (
+							<div className="col-md-4 mb-3" key={course._id}>
+								<div className="card shadow-sm">
+									<div className="card-body">
+										<h6 className="card-title">{course.title}</h6>
+										<p className="text-muted small">Instructor: {course.instructor}</p>
+										<p className="text-muted small">Status: {course.status}</p>
+									</div>
+								</div>
 							</div>
-						</div>
+						))}
 					</div>
-				</div>
+				) : (
+					<p>No purchased courses available</p>
+				)}
 			</div>
 
 			<div className="mt-4">

@@ -73,7 +73,7 @@ const JobScreen = () => {
   return (
     <div className="job-page-container">
       <div className="categories-section">
-        <h2 className="job-categories-title">Job Categories</h2>
+        <h2 className="job-categories- mb-5">Categories</h2>
         <JobCategories selectedCategories={selectedCategories} toggleCategory={toggleCategory} />
       </div>
 

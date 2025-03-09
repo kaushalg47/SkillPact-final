@@ -10,7 +10,17 @@
   width: 366px;
   height: 950px;
   background: #FFFFFF;
-  border: 2px solid #000000;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  padding: 24px;
+  margin-left: 0;
+}
+
+.post-section {
+  width: 366px;
+  height: 950px;
+  background: #FFFFFF;
+  border: 1px solid #000000;
   border-radius: 20px;
   padding: 24px;
   margin-left: 0;
@@ -26,7 +36,7 @@
   width: 150px;
   height: 145px;
   background: #FFFFFF;
-  border: 2px solid #000000;
+  border: 1px solid #000000;
   border-radius: 20px;
   text-align: center;
   display: flex;
