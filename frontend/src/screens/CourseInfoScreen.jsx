@@ -1,14 +1,16 @@
 import { useParams } from 'react-router-dom';
 import { useGetCourseDetailWithStatusQuery } from '../slices/coursePurchaseApiSlice';
 import { Link } from 'react-router-dom';
+import Loader from "../components/Loader";
+import ErrorScreen from "../screens/ErrorScreen";
 
 const CourseInfo = () => {
   const { courseId } = useParams();
   const { data: course, isLoading, error } = useGetCourseDetailWithStatusQuery(courseId);
   const badge = course?.course?.badges || "'";
 
-  if (isLoading) return <p className="text-center mt-5">Loading course details...</p>;
-  if (error) return <p className="text-danger text-center mt-5">Error: {error.message}</p>;
+  if (isLoading) return <Loader text="Loading course details..." />;
+  if (error) return <ErrorScreen message={`Failed to load course: ${error.message}`} navigateTo="/courses" />;
 
   return (
     <div className="container mt-5 mb-5">

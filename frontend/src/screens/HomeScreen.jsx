@@ -4,14 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col } from 'react-bootstrap';
 import Card from '../components/Card';
 import { useEffect, useRef } from 'react';
+import Loader from "../components/Loader";
+import ErrorScreen from "../screens/ErrorScreen";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
   const { data: jobData, error: jobError, isLoading: jobLoading } = useGetJobsQuery();
-  const { data: courseData } = useGetCoursesQuery();
+  const { data: courseData, isLoading: courseLoading, error: courseError } = useGetCoursesQuery();
   
   const jobs = jobData?.jobs || [];
-  const courses = courseData?.courses.slice(0, 5) || [];
+  const courses = courseData?.courses?.slice(0, 5) || [];
 
   const jobCarouselRef = useRef(null);
 
@@ -29,6 +31,18 @@ const HomeScreen = () => {
     }, 2000);
     return () => clearInterval(jobInterval);
   }, []);
+
+  if (jobLoading || courseLoading) {
+    return <Loader text="Loading content..." />;
+  }
+
+  if (jobError) {
+    return <ErrorScreen message="Failed to load jobs." retry={() => window.location.reload()} />;
+  }
+
+  if (courseError) {
+    return <ErrorScreen message="Failed to load courses." retry={() => window.location.reload()} />;
+  }
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif' }}>

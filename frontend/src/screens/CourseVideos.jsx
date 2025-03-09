@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import { useGetCourseByIdQuery, useGetCourseLectureQuery } from '../slices/courseApiSlice';
+import Loader from "../components/Loader";
+import ErrorScreen from "../screens/ErrorScreen";
 
 const CourseVideos = () => {
   const { courseId } = useParams();
@@ -67,9 +69,9 @@ const CourseVideos = () => {
     }
   };
 
-  if (courseLoading || lecturesLoading) return <p>Loading course content...</p>;
-  if (courseError) return <p>Error: {courseError.message}</p>;
-  if (lecturesError) return <p>Error: {lecturesError.message}</p>;
+  if (courseLoading || lecturesLoading) return <Loader text="Loading course content..." />;
+  if (courseError) return <ErrorScreen message={`Failed to load course: ${courseError.message}`} navigateTo="/courses" />;
+  if (lecturesError) return <ErrorScreen message={`Failed to load lectures: ${lecturesError.message}`} navigateTo="/courses" />;
 
   return (
     <div className="container mt-5 mb-5">
