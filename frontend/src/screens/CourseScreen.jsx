@@ -4,6 +4,8 @@ import Card from '../components/Card';
 import { useNavigate } from 'react-router-dom';
 import { FaFilter } from 'react-icons/fa';
 import '../components/styles/CourseScreen.css';
+import Loader from "../components/Loader";
+import ErrorScreen from "../screens/ErrorScreen";
 
 const CourseScreen = () => {
   const { data, error, isLoading } = useGetCoursesQuery();
@@ -13,8 +15,8 @@ const CourseScreen = () => {
   const [showFilter, setShowFilter] = useState(false);
   const navigate = useNavigate();
 
-  if (isLoading) return <div className="text-center mt-5">Loading...</div>;
-  if (error) return <div className="text-center mt-5 text-danger">Error: {error.message}</div>;
+  if (isLoading) return <Loader text="Loading courses..." />;
+  if (error) return <ErrorScreen message="Failed to load courses." retry={() => window.location.reload()} />;
 
   const courses = data?.courses || [];
 

@@ -3,7 +3,8 @@ import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { useUpdateCompanyMutation, useGetUserCompanyInfoQuery } from "../slices/companyApiSlice";
-
+import Loader from "../components/Loader";
+import ErrorScreen from "../screens/ErrorScreen";
 const checkAuthentication = (tempData, navigate) => {
 	if (!tempData) {
 		toast.error("Login Required");
@@ -43,9 +44,8 @@ const EditCompany = () => {
 		}
 	}, [data]);
 
-	if (isLoading || !companyInfo) return <p>Loading...</p>;
-
-	if (!companyInfo) return <p>Company Not Found</p>;
+	if (isLoading || !companyInfo) return <Loader text="Loading company information..." />;
+	if (!companyInfo) return <ErrorScreen message="Company Not Found" navigateTo="/company-register" />;
 
 	const handleChange = (e) => {
 		setFormData({

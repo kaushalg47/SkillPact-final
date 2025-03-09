@@ -3,7 +3,8 @@ import { useSelector } from "react-redux";
 import { useGetUserApplicationsQuery } from "../slices/applicationApiSlice";
 import { useGetUserInfoQuery } from "../slices/userInfoApiSlice";
 import { Link } from "react-router-dom";
-
+import Loader from '../components/Loader';
+import ErrorScreen from './ErrorScreen';
 const ResumeScreen = () => {
 	const {
 		data,
@@ -23,16 +24,15 @@ const ResumeScreen = () => {
 			setName(tempData.name || "N/A");
 		}
 	}, [tempData]);
+	if (applicationDataLoading || userDataLoading) {
+		return <Loader text="Loading your profile information..." />;
+	}
 
-	if (applicationDataLoading || userDataLoading) return <div className="text-center mt-5">Loading...</div>;
-	if (applicationError || userDataError)
-		return (
-			<div className="text-center mt-5 text-danger">
-				Error: {applicationError?.message ||
-					userDataError?.message ||
-					"An unknown error occurred"}
-			</div>
-		);
+	if (applicationError || userDataError) {
+		return <ErrorScreen message="Failed to load your profile data." 
+		retry={() => window.location.reload()} 
+		/>;
+	}
 
 	const applications = data?.application || [];
 	const badgesCount = userInfo?.badges?.length || 0;
