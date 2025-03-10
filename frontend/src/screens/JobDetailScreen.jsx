@@ -7,6 +7,7 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
 import Loader from '../components/Loader';
 import ErrorScreen from './ErrorScreen';
+
 const JobDetailPage = () => {
   const { jobId } = useParams();
   const { data, error, isLoading, refetch } = useGetJobByIdQuery(jobId);
@@ -150,7 +151,7 @@ const JobDetailPage = () => {
           position: 'relative',
           minHeight: '595px'
         }}>
-          <p style={{ fontSize: '25px', fontWeight: '350', marginTop: '10px' }}>Click here to apply</p>
+          <p style={{ fontSize: '25px', fontWeight: '350', marginTop: '2px' }}>Click here to apply</p>
           <button 
             style={{
               width: '210px',
@@ -161,7 +162,7 @@ const JobDetailPage = () => {
               fontSize: '28px',
               color: 'black',
               cursor: 'pointer',
-              marginTop: '20px',
+              marginTop: '7px',
             }} 
             onClick={handleApply} 
             disabled={isApplying}
@@ -190,26 +191,75 @@ const JobDetailPage = () => {
               display: 'flex', 
               flexWrap: 'wrap', 
               justifyContent: 'center', 
-              gap: '10px', 
+              gap: '15px', 
               marginTop: '10px' 
             }}>
-              <span style={{ width: '90px', height: '80px', background: '#D9D9D9', borderRadius: '10px' }}></span>
-              <span style={{ width: '90px', height: '80px', background: '#D9D9D9', borderRadius: '10px' }}></span>
-              <span style={{ width: '90px', height: '80px', background: '#D9D9D9', borderRadius: '10px' }}></span>
+              {job.badges && job.badges.length > 0 ? (
+                job.badges.map((badge) => (
+                  <div key={badge._id} style={{ 
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    width: '90px'
+                  }}>
+                    {badge.imageUrl ? (
+                      <img 
+                        src={badge.imageUrl} 
+                        alt={badge.title} 
+                        style={{ 
+                          width: '85px', 
+                          height: '75px', 
+                          borderRadius: '10px',
+                          objectFit: 'contain'
+                        }} 
+                      />
+                    ) : (
+                      <div style={{ 
+                        width: '90px', 
+                        height: '80px', 
+                        background: '#E6E6E6',
+                        borderRadius: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '12px'
+                      }}>
+                        No Image
+                      </div>
+                    )}
+                    <p style={{ 
+                      fontSize: '12px', 
+                      textAlign: 'center',
+                      marginTop: '5px',
+                      fontWeight: '500'
+                    }}>
+                      {badge.title}
+                    </p>
+                  </div>
+                ))
+              ) : (
+                <>
+                  <span style={{ width: '90px', height: '80px', background: '#E6E6E6', borderRadius: '10px' }}></span>
+                  <span style={{ width: '90px', height: '80px', background: '#E6E6E6', borderRadius: '10px' }}></span>
+                </>
+              )}
             </div>
           </div>
+
+
+
           
-          <div style={{ marginTop: '30px', width: '100%' }}>
+          <div style={{ marginTop: '0px', width: '100%' }}>
             <h4 style={{ fontSize: '20px', fontWeight: '400', textAlign: 'center' }}>Your Badges:</h4>
             <div style={{ 
               display: 'flex', 
               flexWrap: 'wrap', 
               justifyContent: 'center', 
-              gap: '10px', 
+              gap: '15px', 
               marginTop: '10px' 
             }}>
-              <span style={{ width: '90px', height: '80px', background: '#D9D9D9', borderRadius: '10px' }}></span>
-              <span style={{ width: '90px', height: '80px', background: '#D9D9D9', borderRadius: '10px' }}></span>
+              <span style={{ width: '90px', height: '80px', background: '#E6E6E6', borderRadius: '10px' }}></span>
+              <span style={{ width: '90px', height: '80px', background: '#E6E6E6', borderRadius: '10px' }}></span>
             </div>
           </div>
         </div>

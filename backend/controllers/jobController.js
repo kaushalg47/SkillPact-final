@@ -113,26 +113,39 @@ const postJobs = asyncHandler(async (req, res) => {
 	}
 });
 
-// @desc    fetch job details
-// @route   GET /api/jobs/info-jobs/:id
-// @access  Public
+// @desc fetch job details
+// @route GET /api/jobs/info-jobs/:id
+// @access Public
 const infoJobs = asyncHandler(async (req, res) => {
 	try {
-		const jobId = req.params.id;
-		const job = await Job.findById(jobId).populate({
-			path: "application",
+	  const jobId = req.params.id;
+	  const job = await Job.findById(jobId)
+		.populate({
+		  path: "application",
+		})
+		.populate({
+		  path: "badges",
+		  select: "title imageUrl" // Make sure to select the imageUrl field
 		});
-		if (!job) {
-			return res.status(404).json({
-				message: "Jobs not found.",
-				success: false,
-			});
-		}
-		return res.status(200).json({ job, success: true });
+		
+	  if (!job) {
+		return res.status(404).json({
+		  message: "Jobs not found.",
+		  success: false,
+		});
+	  }
+	  
+	  return res.status(200).json({ job, success: true });
 	} catch (error) {
-		console.log(error);
+	  console.log(error);
+	  return res.status(500).json({
+		message: "Server error",
+		success: false,
+	  });
 	}
-});
+  });
+  
+  
 
 // @desc    fetch all jobs as an admin
 // @route   GET /api/jobs/admin-jobs

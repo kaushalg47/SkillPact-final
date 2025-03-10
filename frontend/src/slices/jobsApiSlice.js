@@ -1,4 +1,5 @@
 import { apiSlice } from './apiSlice';
+
 const JOB_URL = '/api/jobs';
 
 export const jobApiSlice = apiSlice.injectEndpoints({
@@ -7,9 +8,8 @@ export const jobApiSlice = apiSlice.injectEndpoints({
       query: () => `${JOB_URL}/`
     }),
     getJobById: builder.query({
-      query: (id) => `${JOB_URL}/${id}`, // Replace with your endpoint to get a single job by ID
+      query: (id) => `${JOB_URL}/${id}`,
     }),
-    // Added routes for posting jobs and admin jobs
     postJob: builder.mutation({
       query: (jobData) => ({
         url: `${JOB_URL}/`,
@@ -26,7 +26,6 @@ export const jobApiSlice = apiSlice.injectEndpoints({
 export const {
   useGetJobsQuery,
   useGetJobByIdQuery,
-  // Export additional hooks
   usePostJobMutation,
   useAdminJobsQuery,
 } = jobApiSlice;
