@@ -23,6 +23,9 @@ const getJobs = asyncHandler(async (req, res) => {
 			.populate({
 				path: "badges", // Adjust the populate path if required
 			})
+			.populate({
+				path: "company", // Adjust the populate path if required
+			})
 			.sort({ createdAt: -1 });
 
 		// If no jobs found, return a 404 response

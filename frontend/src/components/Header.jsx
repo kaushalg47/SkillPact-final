@@ -101,14 +101,15 @@ const Header = () => {
                       color: '#000000',
                       marginRight: '20px'  // Using margin instead of absolute positioning
                     }}>
-                    {userInfo.company && (
-                      <LinkContainer to='/company-info'>
-                        <NavDropdown.Item>Company</NavDropdown.Item>
-                      </LinkContainer>
-                    )}  
+                    
                     <LinkContainer to='/profile'>
                       <NavDropdown.Item>Profile</NavDropdown.Item>
                     </LinkContainer>
+                    {userInfo.company && (
+                      <LinkContainer to='/company-info'>
+                        <NavDropdown.Item>Manage Company</NavDropdown.Item>
+                      </LinkContainer>
+                    )}  
                     <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
                   </NavDropdown>
                 </>

@@ -103,7 +103,11 @@ const CourseVideos = () => {
       <h3 className="mt-4">Upcoming Videos</h3>
       <ul className="list-group">
         {Array.isArray(lectures?.lectures) && lectures.lectures.map((video, index) => (
-          <li key={video._id} className={`list-group-item list-group-item-action ${index === currentVideo ? 'active' : ''}`} onClick={() => setCurrentVideo(index)}>
+          <li 
+            key={video._id} 
+            className={`list-group-item list-group-item-action ${index === currentVideo ? 'active' : ''} ${progress?.data?.progress.includes(video._id) ? 'text-muted' : ''}`} 
+            onClick={() => setCurrentVideo(index)}
+          >
             {video.lectureTitle}
           </li>
         ))}

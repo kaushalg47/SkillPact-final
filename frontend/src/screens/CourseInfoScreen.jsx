@@ -11,9 +11,7 @@ const CourseInfo = () => {
   if (isLoading) return <Loader text="Loading course details..." />;
   if (error) return <ErrorScreen message={`Failed to load course: ${error.message}`} navigateTo="/courses" />;
 
-  const badges = course?.course?.badges || []; // Ensure it's an array
-  const badge = badges.length > 0 ? badges[0] : null; // Take the first badge if available
-
+  
   return (
     <div className="container mt-5 mb-5">
       {/* Course Header */}
@@ -49,13 +47,54 @@ const CourseInfo = () => {
         <div className="col-md-6">
           <div className="card shadow-sm border-0 rounded">
             <div className="card-body p-4">
-              {badge ? (
-                <>
-                  <img src={badge.imageUrl} alt={badge.title} className="img-fluid mb-2" />
-                  <h6 className="card-title">{badge.title}</h6>
-                </>
+            {course.course.badges && course.course.badges.length > 0 ? (
+                course.course.badges.map((badge) => (
+                  <div key={badge._id} style={{ 
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    width: '90px'
+                  }}>
+                    {badge.imageUrl ? (
+                      <img 
+                        src={badge.imageUrl} 
+                        alt={badge.title} 
+                        style={{ 
+                          width: '85px', 
+                          height: '75px', 
+                          borderRadius: '10px',
+                          objectFit: 'contain'
+                        }} 
+                      />
+                    ) : (
+                      <div style={{ 
+                        width: '90px', 
+                        height: '80px', 
+                        background: '#E6E6E6',
+                        borderRadius: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '12px'
+                      }}>
+                        No Image
+                      </div>
+                    )}
+                    <p style={{ 
+                      fontSize: '12px', 
+                      textAlign: 'center',
+                      marginTop: '5px',
+                      fontWeight: '500'
+                    }}>
+                      {badge.title}
+                    </p>
+                  </div>
+                ))
               ) : (
-                <p className="text-muted">No badge available.</p>
+                <>
+                  <span style={{ width: '90px', height: '80px', background: '#E6E6E6', borderRadius: '10px' }}></span>
+                  <span style={{ width: '90px', height: '80px', background: '#E6E6E6', borderRadius: '10px' }}></span>
+                </>
               )}
             </div>
           </div>

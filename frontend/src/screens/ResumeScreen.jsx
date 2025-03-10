@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useGetAllPurchasedCoursesQuery } from "../slices/coursePurchaseApiSlice";
 import { useGetUserApplicationsQuery } from "../slices/applicationApiSlice";
-import { useGetUserInfoQuery } from "../slices/userInfoApiSlice";
+import { useGetUserProfileQuery } from "../slices/usersApiSlice";
 import { Link } from "react-router-dom";
 import Loader from '../components/Loader';
 import ErrorScreen from './ErrorScreen';
@@ -18,7 +18,7 @@ const ResumeScreen = () => {
 		data: userInfo,
 		error: userDataError,
 		isLoading: userDataLoading,
-	} = useGetUserInfoQuery(tempData?._id);
+	} = useGetUserProfileQuery(tempData?._id);
 
 	const { data: purchasedCourses, error: purchasedCoursesError, isLoading: purchasedCoursesLoading } = useGetAllPurchasedCoursesQuery();
 
@@ -63,16 +63,15 @@ const ResumeScreen = () => {
 				<div className="col-md-4">
 					<div className="card shadow-sm h-100">
 						<div className="card-body">
-							<div className="profile-image">K</div>
 							<h4 className="card-title">{name}</h4>
-							<p className="text-muted">{userInfo?.bio || "No bio available"}</p>
+							<p className="text-muted">{userInfo?.email || "No bio available"}</p>
 							<center>
 								<a
-									href="https://g.dev/kaushalg47"
+									href={`/profile/${userInfo?._id}`}
 									className="text-decoration-none mb-3 d-block"
 									target="_blank"
 									rel="noopener noreferrer">
-									g.dev/kaushalg47
+									pubic link
 								</a>
 							</center>
 							<div className="d-flex align-items-center mb-2">
@@ -84,7 +83,7 @@ const ResumeScreen = () => {
 								<span className="text-muted">{badgesCount} badge(s)</span>
 							</div>
 							{userInfo.company && (
-									<Link  className="btn btn-secondary mt-3" to="/company-info">Manage your company</Link>
+									<Link  className="btn btn-secondary mt-3" to="/profile/edit">Edit profile</Link>
 								
 							)}
 						</div>
@@ -94,7 +93,7 @@ const ResumeScreen = () => {
 				<div className="col-md-8">
 					<div className="card shadow-sm h-100">
 						<div className="card-body equal-height">
-							<h5 className="card-title">Achievements</h5>
+							<h5 className="card-title mb-5">Achievements</h5>
 							<div className="achievement-stats">
 								<div className="row w-100">
 									{[
@@ -133,7 +132,7 @@ const ResumeScreen = () => {
 							</div>
 						))
 					) : (
-						<p>No favorite badges available</p>
+						<p className="text-muted text-center">No favorite badges available</p>
 					)}
 				</div>
 			</div>
@@ -156,7 +155,7 @@ const ResumeScreen = () => {
 						))}
 					</div>
 				) : (
-					<p>No purchased courses available</p>
+					<p className="text-muted text-center">No purchased courses available</p>
 				)}
 			</div>
 
@@ -177,7 +176,7 @@ const ResumeScreen = () => {
 						))}
 					</div>
 				) : (
-					<p>Not applied for any jobs yet</p>
+					<p className="text-muted text-center">Not applied for any jobs yet</p>
 				)}
 			</div>
 		</div>

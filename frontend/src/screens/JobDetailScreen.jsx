@@ -83,7 +83,7 @@ const JobDetailPage = () => {
             <h2>{job.title}</h2>
             <div style={{ marginTop: '15px' }}>
               <h5>Company:</h5>
-              <p>{job.company}</p>
+              <p>{job.company?.name}</p>
             </div>
             <div style={{ marginTop: '15px' }}>
               <h5>Location:</h5>
@@ -249,19 +249,7 @@ const JobDetailPage = () => {
 
 
           
-          <div style={{ marginTop: '0px', width: '100%' }}>
-            <h4 style={{ fontSize: '20px', fontWeight: '400', textAlign: 'center' }}>Your Badges:</h4>
-            <div style={{ 
-              display: 'flex', 
-              flexWrap: 'wrap', 
-              justifyContent: 'center', 
-              gap: '15px', 
-              marginTop: '10px' 
-            }}>
-              <span style={{ width: '90px', height: '80px', background: '#E6E6E6', borderRadius: '10px' }}></span>
-              <span style={{ width: '90px', height: '80px', background: '#E6E6E6', borderRadius: '10px' }}></span>
-            </div>
-          </div>
+          
         </div>
       </div>
       <ToastContainer position="top-right" />
