@@ -4,15 +4,25 @@ const Footer = () => {
   return (
     <footer style={styles.footer}>
       <div style={styles.container}>
-        <div style={styles.contactInfo}>
+      <div style={styles.contactInfo}>
           <h4>Contact Us</h4>
           <p>Phone: (123) 456-7890</p>
           <p>Email: info@company.com</p>
           <p>Address: 123 Main St, Anytown, USA</p>
         </div>
-        <div style={styles.copyright}>
-          <p>&copy; {new Date().getFullYear()} Company Name. All rights reserved.</p>
+        <div style={styles.quickLinks}>
+          <h4>Quick Links</h4>
+          <ul style={{ listStyle: 'none', padding: 0 }}>
+            <li><a href="#home" style={styles.link}>Home</a></li>
+            <li><a href="#about" style={styles.link}>About</a></li>
+            <li><a href="#services" style={styles.link}>Services</a></li>
+            <li><a href="#contact" style={styles.link}>Contact</a></li>
+          </ul>
         </div>
+        
+      </div>
+      <div style={styles.copyright}>
+        <p>&copy; {new Date().getFullYear()} Company Name. All rights reserved.</p>
       </div>
     </footer>
   );
@@ -20,7 +30,6 @@ const Footer = () => {
 
 const styles = {
   footer: {
-    margin: '5',
     backgroundColor: '#333',
     color: '#fff',
     padding: '20px 0',
@@ -29,16 +38,26 @@ const styles = {
     textAlign: 'center',
   },
   container: {
+    display: 'flex',
+    justifyContent: 'space-between',
     maxWidth: '1200px',
     margin: '0 auto',
     padding: '0 20px',
   },
+  quickLinks: {
+    textAlign: 'left',
+  },
   contactInfo: {
-    marginBottom: '10px',
+    textAlign: 'left',
+  },
+  link: {
+    color: '#fff',
+    textDecoration: 'none',
   },
   copyright: {
     borderTop: '1px solid #444',
     paddingTop: '10px',
+    marginTop: '20px',
   },
 };
 

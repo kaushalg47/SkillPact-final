@@ -131,7 +131,7 @@ const JobDetailPage = () => {
               }} 
             />
             <div style={{ display: 'flex', flexDirection: 'column' }}>
-              <h3 style={{ fontSize: '22px', fontWeight: '600' }}>{job.company}</h3>
+              <h3 style={{ fontSize: '22px', fontWeight: '600' }}>{job.company.name}</h3>
               <p>{job.title}</p>
             </div>
           </div>
@@ -246,10 +246,6 @@ const JobDetailPage = () => {
             </div>
           </div>
 
-
-
-          
-          
         </div>
       </div>
       <ToastContainer position="top-right" />

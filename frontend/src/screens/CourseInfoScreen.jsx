@@ -33,7 +33,7 @@ const CourseInfo = () => {
       {/* Course Details */}
       <div className="row mt-4">
         <div className="col-md-6">
-          <div className="card shadow-sm border-0 rounded">
+          <div className="card shadow-sm border-0 rounded h-100">
             <div className="card-body p-4">
               <h5 className="fw-bold">Course Level</h5>
               <p className="text-muted">{course.course.courseLevel}</p>
@@ -45,63 +45,20 @@ const CourseInfo = () => {
 
         {/* Badges */}
         <div className="col-md-6">
-          <div className="card shadow-sm border-0 rounded">
-            <div className="card-body p-4">
-            {course.course.badges && course.course.badges.length > 0 ? (
-                course.course.badges.map((badge) => (
-                  <div key={badge._id} style={{ 
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    width: '90px'
-                  }}>
-                    {badge.imageUrl ? (
-                      <img 
-                        src={badge.imageUrl} 
-                        alt={badge.title} 
-                        style={{ 
-                          width: '85px', 
-                          height: '75px', 
-                          borderRadius: '10px',
-                          objectFit: 'contain'
-                        }} 
-                      />
-                    ) : (
-                      <div style={{ 
-                        width: '90px', 
-                        height: '80px', 
-                        background: '#E6E6E6',
-                        borderRadius: '10px',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        fontSize: '12px'
-                      }}>
-                        No Image
-                      </div>
-                    )}
-                    <p style={{ 
-                      fontSize: '12px', 
-                      textAlign: 'center',
-                      marginTop: '5px',
-                      fontWeight: '500'
-                    }}>
-                      {badge.title}
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <>
-                  <span style={{ width: '90px', height: '80px', background: '#E6E6E6', borderRadius: '10px' }}></span>
-                  <span style={{ width: '90px', height: '80px', background: '#E6E6E6', borderRadius: '10px' }}></span>
-                </>
-              )}
+          <div className="card shadow-sm border-0 rounded h-100">
+            <div className="card-body p-4 text-center">
+              <img 
+                src={course?.course?.badges[0]?.imageUrl} // Ensure the first badge image URL is used
+                alt="Badge"
+                className="me-2"
+                style={{ width: "110px", height: "110px" }} // Make the badge bigger
+              />
+              <br></br>
+              <p className="text-muted">{course?.course?.badges[0]?.title}</p>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Video Preview */}
       <div className="card mt-4 shadow-sm border-0 rounded">
         <div className="card-body p-4 text-center">
           <h5 className="fw-bold mb-3">Course Preview</h5>

@@ -55,9 +55,9 @@ const getJobs = asyncHandler(async (req, res) => {
 // @access  Authenticated
 const postJobs = asyncHandler(async (req, res) => {
 	try {
-		const { title, description, badges, startsOn, category } = req.body;
+		const { title, description, stipend, duration, location, position, minqualification, badges, startsOn, category } = req.body;
 
-		console.log(title, description, badges, startsOn, category);
+		console.log(title, description, stipend, duration, location, position, minqualification, badges, startsOn, category);
 
 		const userId = req.user._id;
 		console.log(userId);
@@ -68,7 +68,7 @@ const postJobs = asyncHandler(async (req, res) => {
 			});
 		}
 
-		if (!title || !description || !startsOn || !category) {
+		if (!title || !description || !startsOn || !category || !stipend || !duration || !location || !position || !minqualification) {
 			return res.status(400).json({
 				message: "Something is missing",
 				success: false,
@@ -99,6 +99,11 @@ const postJobs = asyncHandler(async (req, res) => {
 			title,
 			description,
 			createdby: userId,
+			stipend,
+			duration,
+			location,
+			position,
+			minqualification,
 			company, // Company is a required parameter in database
 			category,
 			startsOn,
@@ -125,6 +130,10 @@ const infoJobs = asyncHandler(async (req, res) => {
 	  const job = await Job.findById(jobId)
 		.populate({
 		  path: "application",
+		})
+		.populate({
+			path: "company",
+			select: "name"
 		})
 		.populate({
 		  path: "badges",

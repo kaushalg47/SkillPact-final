@@ -14,7 +14,7 @@ const Card = ({ image, title, role, location, company, duration, startDate, onCl
       onMouseLeave={() => setIsHovered(false)}
     >
       <div style={styles.headerContainer}>
-        <img src={image} alt={`${title} image`} style={styles.image} />
+        {/* <img src={image} alt={`${title} image`} style={styles.image} /> */}
         <p style={styles.company}>{company}</p>
       </div>
       <h3 style={styles.title}>{title}</h3>

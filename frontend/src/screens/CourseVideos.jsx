@@ -51,9 +51,16 @@ const CourseVideos = () => {
     }
   };
 
-  const checkCourseCompletion = (progressData) => {
+  const checkCourseCompletion = async (progressData) => {
     if (progressData.data?.progress.length === lectures?.lectures?.length) {
       setCourseCompleted(true);
+      await fetch(`/api/badges/add-badge`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ badgeId: course?.course?.badges[0]?._id }),
+      });
     }
   };
 
@@ -75,7 +82,6 @@ const CourseVideos = () => {
 
   return (
     <div className="container mt-5 mb-5">
-      
       <h2 className="text-center mb-4">Course Content - {course?.course?.courseTitle}</h2>
       
       {progress && lectures && (
@@ -113,15 +119,21 @@ const CourseVideos = () => {
         ))}
       </ul>
       {courseCompleted && (
-        <div className="alert alert-success mt-4 d-flex align-items-center">
-        <img 
-          src={course?.course?.badges[0]?.imageUrl} // Ensure the first badge image URL is used
-          alt="Badge"
-          className="me-2"
-          style={{ width: "30px", height: "30px" }}
-        />
-        Congrats on completing this course!
-      </div>
+        <div className="modal show d-block" tabIndex="-1">
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-body text-center">
+                <img 
+                  src={course?.course?.badges[0]?.imageUrl} // Ensure the first badge image URL is used
+                  alt="Badge"
+                  className="mb-3"
+                  style={{ width: "100px", height: "100px" }}
+                />
+                <h4>Congrats on completing this course!</h4>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

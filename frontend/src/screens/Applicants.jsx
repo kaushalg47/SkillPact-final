@@ -52,7 +52,7 @@ const Applicants = () => {
   }
 
   if (applicants.length === 0) {
-    return <ErrorScreen message="No applicants found for this job yet." navigateTo="/company-jobs" />;
+    return <center><p className="text-muted">No applicants found for this job yet</p></center>;
   }
 
   // Helper function to get badge variant based on status
@@ -93,7 +93,15 @@ const Applicants = () => {
                   >
                     {data.applicant.name.charAt(0).toUpperCase()}
                   </div>
-                  <span className="fw-medium">{data.applicant.name}</span>
+                  <span className="fw-medium">
+                    <a
+                      href={`http://localhost:3000/profile/${data?.applicant._id}`}
+                      className="text-black text-decoration-none hover:text-muted"
+                    >
+                      {data.applicant.name}
+                    </a>
+                  </span>
+
                   <Badge 
                     bg={getStatusVariant(data.status)} 
                     className="ms-3 text-capitalize"

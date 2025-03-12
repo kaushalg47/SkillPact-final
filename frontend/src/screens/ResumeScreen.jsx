@@ -6,6 +6,7 @@ import { useGetUserProfileQuery } from "../slices/usersApiSlice";
 import { Link } from "react-router-dom";
 import Loader from '../components/Loader';
 import ErrorScreen from './ErrorScreen';
+import { Copy } from "lucide-react";
 const ResumeScreen = () => {
 	const {
 		data,
@@ -21,6 +22,16 @@ const ResumeScreen = () => {
 	} = useGetUserProfileQuery(tempData?._id);
 
 	const { data: purchasedCourses, error: purchasedCoursesError, isLoading: purchasedCoursesLoading } = useGetAllPurchasedCoursesQuery();
+
+	const displayLinkCode = `/profile/${userInfo?.name}`;
+	const linkCode = `http://localhost:3000/profile/${userInfo?._id}`;
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(linkCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
 	useEffect(() => {
 		if (tempData) {
@@ -66,13 +77,13 @@ const ResumeScreen = () => {
 							<h4 className="card-title">{name}</h4>
 							<p className="text-muted">{userInfo?.email || "No bio available"}</p>
 							<center>
-								<a
-									href={`/profile/${userInfo?._id}`}
-									className="text-decoration-none mb-3 d-block"
-									target="_blank"
-									rel="noopener noreferrer">
-									pubic link
-								</a>
+								<div className="d-flex align-items-center justify-content-center">
+									<code className="text-sm text-gray-700 p-2 bg-white rounded-md border">{displayLinkCode}</code>
+									<button className="ml-2 p-2 bg-white rounded" onClick={copyToClipboard}>
+										<Copy size={16} />
+									</button>
+								</div>
+								{copied && <span className="ml-2 text-green-500 text-sm">Copied!</span>}
 							</center>
 							<div className="d-flex align-items-center mb-2">
 								<span className="me-2">📍</span>
@@ -82,10 +93,8 @@ const ResumeScreen = () => {
 								<span className="me-2">🏆</span>
 								<span className="text-muted">{badgesCount} badge(s)</span>
 							</div>
-							{userInfo.company && (
-									<Link  className="btn btn-secondary mt-3" to="/profile/edit">Edit profile</Link>
-								
-							)}
+							
+							<Link className="btn btn-secondary mt-3" to="/profile/edit">Edit profile</Link>
 						</div>
 					</div>
 				</div>
@@ -136,7 +145,6 @@ const ResumeScreen = () => {
 					)}
 				</div>
 			</div>
-
 
 			<div className="mt-4">
 				<h5 className="mb-3">Purchased Courses</h5>

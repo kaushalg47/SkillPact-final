@@ -64,7 +64,7 @@ const PublicResumeScreen = () => {
             <div className="card-body">
               <h4 className="card-title">{name}</h4>
               <p className="text-muted">{userInfo?.email || "No email available"}</p>
-              <center>
+              {/* <center>
                 <a
                   href="https://g.dev/kaushalg47"
                   className="text-decoration-none mb-3 d-block"
@@ -72,7 +72,7 @@ const PublicResumeScreen = () => {
                   rel="noopener noreferrer">
                   g.dev/kaushalg47
                 </a>
-              </center>
+              </center> */}
               <div className="d-flex align-items-center mb-2">
                 <span className="me-2">📍</span>
                 <span className="text-muted">{userInfo?.location || "Not provided"}</span>

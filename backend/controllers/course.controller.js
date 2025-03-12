@@ -191,7 +191,7 @@ export const getCourseById = async (req, res) => {
 			return res.status(404).json({
 				message: "Course not found!",
 			});
-			
+
 		}
 		return res.status(200).json({
 			course,
