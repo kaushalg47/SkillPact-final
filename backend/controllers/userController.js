@@ -17,6 +17,7 @@ const authUser = asyncHandler(async (req, res) => {
 			_id: user._id,
 			name: user.name,
 			email: user.email,
+			company: user.company,
 		});
 	} else {
 		res.status(401);
@@ -80,6 +81,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 			name: user.name,
 			email: user.email,
 			badges: user.badges,
+			company: user.company,
 		});
 	} else {
 		res.status(404);

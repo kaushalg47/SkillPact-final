@@ -2,24 +2,21 @@ import { useState, useEffect } from 'react';
 import { Form, Button, Row, Col } from 'react-bootstrap';
 import FormContainer from '../components/FormContainer';
 import Loader from '../components/Loader';
-// import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Link, useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { useRegisterMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { toast } from 'react-toastify';
+import ErrorScreen from './ErrorScreen';
 
 const RegisterScreen = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const [register, { isLoading }] = useRegisterMutation();
-
+  const [register, { isLoading, error }] = useRegisterMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -30,7 +27,6 @@ const RegisterScreen = () => {
 
   const submitHandler = async (e) => {
     e.preventDefault();
-
     if (password !== confirmPassword) {
       toast.error('Passwords do not match');
     } else {
@@ -43,6 +39,11 @@ const RegisterScreen = () => {
       }
     }
   };
+
+  if (error) {
+    return <ErrorScreen message="Registration failed. Please try again." navigateTo="/register" />;
+  }
+
   return (
     <FormContainer>
       <h1>Register</h1>
@@ -50,7 +51,7 @@ const RegisterScreen = () => {
         <Form.Group className='my-2' controlId='name'>
           <Form.Label>Name</Form.Label>
           <Form.Control
-            type='name'
+            type='text'
             placeholder='Enter name'
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -76,6 +77,7 @@ const RegisterScreen = () => {
             onChange={(e) => setPassword(e.target.value)}
           ></Form.Control>
         </Form.Group>
+
         <Form.Group className='my-2' controlId='confirmPassword'>
           <Form.Label>Confirm Password</Form.Label>
           <Form.Control
@@ -86,16 +88,20 @@ const RegisterScreen = () => {
           ></Form.Control>
         </Form.Group>
 
-        <Button type='submit' variant='primary' className='mt-3'>
+        <Button
+          disabled={isLoading}
+          type='submit'
+          variant='primary'
+          className='mt-3'
+        >
           Register
         </Button>
-
         {isLoading && <Loader />}
       </Form>
 
       <Row className='py-3'>
         <Col>
-          Already have an account? <Link to={`/login`}>Login</Link>
+          Already have an account? <Link to='/login'>Login</Link>
         </Col>
       </Row>
     </FormContainer>

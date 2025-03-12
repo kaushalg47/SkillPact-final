@@ -10,7 +10,15 @@
   width: 366px;
   height: 950px;
   background: #FFFFFF;
-  border: 2px solid #000000;
+  border: 1px solid #000000;
+  border-radius: 20px;
+  padding: 24px;
+  margin-left: 0;
+}
+
+.post-section {
+  background: #FFFFFF;
+  border: 1px solid #000000;
   border-radius: 20px;
   padding: 24px;
   margin-left: 0;
@@ -26,7 +34,7 @@
   width: 150px;
   height: 145px;
   background: #FFFFFF;
-  border: 2px solid #000000;
+  border: 1px solid #000000;
   border-radius: 20px;
   text-align: center;
   display: flex;
@@ -40,7 +48,7 @@
 .category-item.selected {
   --blur: 1.75rem;
   --box-blur: calc(0.5 * var(--blur));
-  --color: #D8BFD8;
+  --color: rgb(48, 134, 177);
   
   border: 2px solid var(--color);
   box-shadow: 0 0 var(--box-blur) var(--color), 0 0 var(--blur) rgba(216, 191, 216, 0.5);

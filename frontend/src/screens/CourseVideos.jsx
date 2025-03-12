@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import ReactPlayer from 'react-player';
 import { useGetCourseByIdQuery, useGetCourseLectureQuery } from '../slices/courseApiSlice';
+import Loader from "../components/Loader";
+import ErrorScreen from "../screens/ErrorScreen";
 
 const CourseVideos = () => {
   const { courseId } = useParams();
@@ -49,9 +51,16 @@ const CourseVideos = () => {
     }
   };
 
-  const checkCourseCompletion = (progressData) => {
+  const checkCourseCompletion = async (progressData) => {
     if (progressData.data?.progress.length === lectures?.lectures?.length) {
       setCourseCompleted(true);
+      await fetch(`/api/badges/add-badge`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ badgeId: course?.course?.badges[0]?._id }),
+      });
     }
   };
 
@@ -67,13 +76,12 @@ const CourseVideos = () => {
     }
   };
 
-  if (courseLoading || lecturesLoading) return <p>Loading course content...</p>;
-  if (courseError) return <p>Error: {courseError.message}</p>;
-  if (lecturesError) return <p>Error: {lecturesError.message}</p>;
+  if (courseLoading || lecturesLoading) return <Loader text="Loading course content..." />;
+  if (courseError) return <ErrorScreen message={`Failed to load course: ${courseError.message}`} navigateTo="/courses" />;
+  if (lecturesError) return <ErrorScreen message={`Failed to load lectures: ${lecturesError.message}`} navigateTo="/courses" />;
 
   return (
     <div className="container mt-5 mb-5">
-      
       <h2 className="text-center mb-4">Course Content - {course?.course?.courseTitle}</h2>
       
       {progress && lectures && (
@@ -101,21 +109,31 @@ const CourseVideos = () => {
       <h3 className="mt-4">Upcoming Videos</h3>
       <ul className="list-group">
         {Array.isArray(lectures?.lectures) && lectures.lectures.map((video, index) => (
-          <li key={video._id} className={`list-group-item list-group-item-action ${index === currentVideo ? 'active' : ''}`} onClick={() => setCurrentVideo(index)}>
+          <li 
+            key={video._id} 
+            className={`list-group-item list-group-item-action ${index === currentVideo ? 'active' : ''} ${progress?.data?.progress.includes(video._id) ? 'text-muted' : ''}`} 
+            onClick={() => setCurrentVideo(index)}
+          >
             {video.lectureTitle}
           </li>
         ))}
       </ul>
       {courseCompleted && (
-        <div className="alert alert-success mt-4 d-flex align-items-center">
-        <img 
-          src={course?.course?.badges[0]?.imageUrl} // Ensure the first badge image URL is used
-          alt="Badge"
-          className="me-2"
-          style={{ width: "30px", height: "30px" }}
-        />
-        Congrats on completing this course!
-      </div>
+        <div className="modal show d-block" tabIndex="-1">
+          <div className="modal-dialog modal-dialog-centered">
+            <div className="modal-content">
+              <div className="modal-body text-center">
+                <img 
+                  src={course?.course?.badges[0]?.imageUrl} // Ensure the first badge image URL is used
+                  alt="Badge"
+                  className="mb-3"
+                  style={{ width: "100px", height: "100px" }}
+                />
+                <h4>Congrats on completing this course!</h4>
+              </div>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

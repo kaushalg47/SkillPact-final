@@ -16,7 +16,8 @@ import Form, {
   CancelButton,
   LinkButton
 } from "../components/Form";
-
+import Loader from "../components/Loader";
+import ErrorScreen from "../screens/ErrorScreen";
 const CompanyInfo = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -102,46 +103,11 @@ const CompanyInfo = () => {
   };
 
   if (isLoading) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '70vh' 
-      }}>
-        <p style={{ fontSize: '1.2rem' }}>Loading company information...</p>
-      </div>
-    );
+    return <Loader text="Loading company information..." />;
   }
 
   if (!data || !data.company) {
-    return (
-      <div style={{ 
-        display: 'flex', 
-        flexDirection: 'column',
-        justifyContent: 'center', 
-        alignItems: 'center', 
-        height: '70vh',
-        gap: '1rem'
-      }}>
-        <p style={{ fontSize: '1.2rem' }}>Company profile not found or not yet created.</p>
-        <button 
-          onClick={() => navigate('/create-company')}
-          style={{
-            padding: '0.75rem 2rem',
-            backgroundColor: '#4299e1',
-            color: 'white',
-            fontWeight: 600,
-            border: 'none',
-            borderRadius: '6px',
-            cursor: 'pointer',
-            fontSize: '1rem',
-          }}
-        >
-          Create Company Profile
-        </button>
-      </div>
-    );
+    return <ErrorScreen message="Company profile not found or not yet created." navigateTo="/company-register" />;
   }
 
   return (

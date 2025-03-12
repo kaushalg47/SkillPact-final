@@ -30,18 +30,11 @@ export const addBadge = async (req, res) => {
 };
 export const addBadgeToUser = async (req, res) => {
   try {
-    const { badgeTitle } = req.body;
+    const { badgeId } = req.body;
     const userId = req.user._id;
 
-
-    // Validate the badge title against the allowed enum values
-    const validTitles = ["Team Player", "Innovative", "Leadership"];
-    if (!validTitles.includes(badgeTitle)) {
-      return res.status(400).json({ message: "Invalid badge title" });
-    }
-
-    // Find the badge by title
-    const badge = await Badge.findOne({ title: badgeTitle });
+    // Find the badge by ID
+    const badge = await Badge.findById(badgeId);
     if (!badge) {
       return res.status(404).json({ message: "Badge not found" });
     }

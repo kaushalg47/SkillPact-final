@@ -4,6 +4,8 @@ import Card from '../components/Card';
 import { useNavigate } from 'react-router-dom';
 import { FaFilter } from 'react-icons/fa';
 import '../components/styles/CourseScreen.css';
+import Loader from "../components/Loader";
+import ErrorScreen from "../screens/ErrorScreen";
 
 const CourseScreen = () => {
   const { data, error, isLoading } = useGetCoursesQuery();
@@ -11,17 +13,21 @@ const CourseScreen = () => {
   const [filter, setFilter] = useState('');
   const [sortOrder, setSortOrder] = useState('asc');
   const [showFilter, setShowFilter] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState('All');
   const navigate = useNavigate();
 
-  if (isLoading) return <div className="text-center mt-5">Loading...</div>;
-  if (error) return <div className="text-center mt-5 text-danger">Error: {error.message}</div>;
+  if (isLoading) return <Loader text="Loading courses..." />;
+  if (error) return <ErrorScreen message="Failed to load courses." retry={() => window.location.reload()} />;
 
   const courses = data?.courses || [];
+  const categories = ['All', 'software', 'AI/ML', 'Blockchain']; // Replace with actual categories
 
-  // Filter courses based on title
-  const filteredCourses = courses.filter((course) =>
-    course.courseTitle.toLowerCase().includes(filter.toLowerCase())
-  );
+  // Filter courses based on title and category
+  const filteredCourses = courses.filter((course) => {
+    const matchesCategory = selectedCategory === 'All' || course.category === selectedCategory;
+    const matchesFilter = course.courseTitle.toLowerCase().includes(filter.toLowerCase());
+    return matchesCategory && matchesFilter;
+  });
 
   // Sort courses by title
   const sortedCourses = [...filteredCourses].sort((a, b) => {
@@ -61,6 +67,20 @@ const CourseScreen = () => {
               </div>
             )}
           </div>
+        </div>
+
+        <center><h3 className='m-5'>Get top courses</h3></center>
+
+        <div className="mb-3 text-center">
+          {categories.map((category) => (
+            <button
+              key={category}
+              className={`btn btn-outline-primary me-3 ${selectedCategory === category ? 'active' : ''}`}
+              onClick={() => setSelectedCategory(category)}
+            >
+              {category}
+            </button>
+          ))}
         </div>
 
         <div className="course-grid">

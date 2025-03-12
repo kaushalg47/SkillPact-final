@@ -5,6 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { FaFilter } from 'react-icons/fa';
 import PropTypes from 'prop-types';
 import '../components/styles/JobScreen.css';
+import Loader from '../components/Loader';
+import ErrorScreen from './ErrorScreen';
 
 const JobCategories = ({ selectedCategories, toggleCategory }) => {
   const categories = [
@@ -35,8 +37,17 @@ const JobScreen = () => {
   const navigate = useNavigate();
   const [showFilter, setShowFilter] = useState(false);
 
-  if (isLoading) return <div className="text-center mt-5">Loading...</div>;
-  if (error) return <div className="text-center mt-5 text-danger">Error: {error.message}</div>;
+  if (isLoading) {
+    return <Loader text="Loading jobs..." />;
+  }
+  
+  if (error) {
+    return <ErrorScreen 
+      message="Failed to load jobs. Please try again." 
+      retry={() => window.location.reload()} 
+    />;
+  }
+  
 
   const jobs = data?.jobs || [];
 
@@ -62,7 +73,7 @@ const JobScreen = () => {
   return (
     <div className="job-page-container">
       <div className="categories-section">
-        <h2 className="job-categories-title">Job Categories</h2>
+        <h2 className="job-categories- mb-5">Categories</h2>
         <JobCategories selectedCategories={selectedCategories} toggleCategory={toggleCategory} />
       </div>
 

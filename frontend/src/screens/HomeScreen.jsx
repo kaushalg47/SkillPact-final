@@ -4,15 +4,16 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button, Card as BootstrapCard } from 'react-bootstrap';
 import { useEffect, useRef, useState } from 'react';
 import Card from '../components/Card';
+import Loader from "../components/Loader";
+import ErrorScreen from "../screens/ErrorScreen";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
   const { data: jobData, error: jobError, isLoading: jobLoading } = useGetJobsQuery();
-  const { data: courseData } = useGetCoursesQuery();
-  
+  const { data: courseData, isLoading: courseLoading, error: courseError } = useGetCoursesQuery();
+
   const jobs = jobData?.jobs || [];
   const allCourses = courseData?.courses || [];
-  
   const [filteredCourses, setFilteredCourses] = useState(allCourses);
   const [activeCategory, setActiveCategory] = useState('All');
 
@@ -20,12 +21,16 @@ const HomeScreen = () => {
 
   const filterCourses = (category) => {
     setActiveCategory(category);
-    if (category === 'All') {
-      setFilteredCourses(allCourses);
-    } else {
-      setFilteredCourses(allCourses.filter(course => course.category === category.toLowerCase()));
-    }
+    setFilteredCourses(
+      category === 'All'
+        ? allCourses
+        : allCourses.filter(course => course.category === category.toLowerCase())
+    );
   };
+
+  if (jobLoading || courseLoading) return <Loader text="Loading content..." />;
+  if (jobError) return <ErrorScreen message="Failed to load jobs." retry={() => window.location.reload()} />;
+  if (courseError) return <ErrorScreen message="Failed to load courses." retry={() => window.location.reload()} />;
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8f9fa' }}>
@@ -34,13 +39,14 @@ const HomeScreen = () => {
           <h1 className='fw-bold display-4'>Explore Internships & Courses</h1>
         </div>
       </section>
-      
+
+      {/* Courses Section */}
       <Container className='my-5'>
         <h2 className='text-center text-dark fw-bold mb-4' style={{ fontSize: '2rem' }}>Trending Courses</h2>
         <div className='d-flex justify-content-center gap-3 mb-4 flex-wrap'>
           {categories.map((category) => (
-            <Button 
-              key={category} 
+            <Button
+              key={category}
               variant={activeCategory === category ? 'dark' : 'outline-secondary'}
               onClick={() => filterCourses(category)}
             >
@@ -74,7 +80,8 @@ const HomeScreen = () => {
           <Button variant='primary' onClick={() => navigate('/courses')}>Know More</Button>
         </div>
       </Container>
-      
+
+      {/* Jobs Section */}
       <Container className='my-5'>
         <h2 className='text-center text-dark fw-bold mb-4' style={{ fontSize: '2rem' }}>Featured Jobs</h2>
         <Row className='d-flex flex-wrap justify-content-center'>
@@ -100,7 +107,8 @@ const HomeScreen = () => {
           ))}
         </Row>
       </Container>
-      
+
+      {/* Footer */}
       <footer className='text-center py-3' style={{ background: '#343a40', color: '#ffffff', fontFamily: 'Lora, serif', fontSize: '1.2rem' }}>
         @skilledity 2025
       </footer>
