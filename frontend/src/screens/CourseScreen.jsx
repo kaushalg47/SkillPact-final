@@ -37,7 +37,7 @@ const CourseScreen = () => {
   });
 
   return (
-    <div className="course-page-container">
+    <div className="course-page-container" style={{ backgroundColor: '#f8f9fa' }}>
       <div className="course-main-content">
         <div className="course-search-container">
           <input
@@ -68,10 +68,7 @@ const CourseScreen = () => {
             )}
           </div>
         </div>
-
-        <center><h3 className='m-5'>Get top courses</h3></center>
-
-        <div className="mb-3 text-center">
+        <div className="mb-3 text-start">
           {categories.map((category) => (
             <button
               key={category}
@@ -82,6 +79,10 @@ const CourseScreen = () => {
             </button>
           ))}
         </div>
+
+        <center><h3 className='my-5 text-start'>Get top courses</h3></center>
+
+        
 
         <div className="course-grid">
           {sortedCourses.length > 0 ? (

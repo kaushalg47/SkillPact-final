@@ -29,8 +29,7 @@ const Header = () => {
         collapseOnSelect 
         style={{
           background: '#FFFFFF',
-          height: '70px',  // Decreased from 90px
-          border: '1px solid #000000',
+          height: '60px',  // Decreased from 90px
           boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.25)'
         }}
       >
@@ -48,19 +47,19 @@ const Header = () => {
                 height: '45px',
                 marginLeft: '36px',
                 fontFamily: 'Inter',
-                fontWeight: '400',
+                fontWeight: '800',
                 fontSize: '35px',
-                lineHeight: '42.36px'
+                lineHeight: '42.36px',
+                color: '#0000FF'
               }}>
-              SkillPact
+              <p className='text-bold color-blue'>SkillPact</p>
             </Navbar.Brand>
           </LinkContainer>
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
-            <Nav className='ms-auto' style={{ position: 'relative' }}>  {/* Added position relative */}
+            <Nav className='ms-auto align-items-center' style={{ position: 'relative' }}>  {/* Added align-items-center */}
               {userInfo ? (
                 <>
-                  
                   <LinkContainer to='/jobs'>
                     <Nav.Link 
                       style={{
@@ -72,7 +71,7 @@ const Header = () => {
                         color: '#000000',
                         marginLeft: '20px'  // Using margin instead of absolute positioning
                       }}>
-                      <FaSignInAlt /> Jobs
+                      Jobs
                     </Nav.Link>
                   </LinkContainer>
                   <LinkContainer to='/courses'>
@@ -86,7 +85,7 @@ const Header = () => {
                         color: '#000000',
                         marginLeft: '20px'  // Using margin instead of absolute positioning
                       }}>
-                      <FaSignInAlt /> Courses
+                      Courses
                     </Nav.Link>
                   </LinkContainer>
                   <NavDropdown 
@@ -96,7 +95,7 @@ const Header = () => {
                       fontFamily: 'Inter',
                       fontStyle: 'normal',
                       fontWeight: '400',
-                      fontSize: '28px',
+                      fontSize: '20px',
                       lineHeight: '34px',
                       color: '#000000',
                       marginRight: '20px'  // Using margin instead of absolute positioning

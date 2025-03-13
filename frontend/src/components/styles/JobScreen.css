@@ -1,3 +1,7 @@
+* {
+  font-family: 'Poppins', sans-serif;
+}
+
 .job-page-container {
   max-width: 1500px;
   margin-left: 0;
@@ -10,10 +14,10 @@
   width: 366px;
   height: 950px;
   background: #FFFFFF;
-  border: 1px solid #000000;
   border-radius: 20px;
   padding: 24px;
   margin-left: 0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
 .post-section {
@@ -34,7 +38,6 @@
   width: 150px;
   height: 145px;
   background: #FFFFFF;
-  border: 1px solid #000000;
   border-radius: 20px;
   text-align: center;
   display: flex;
@@ -43,6 +46,7 @@
   font-weight: bold;
   cursor: pointer;
   transition: 0.3s ease-in-out;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1), 0 -2px 6px rgba(0, 0, 0, 0.1), 2px 0 6px rgba(0, 0, 0, 0.1), -2px 0 6px rgba(0, 0, 0, 0.1);
 }
 
 .category-item.selected {
@@ -72,22 +76,22 @@
 }
 
 .search-bar {
-  width: 500px;
+  width: calc(100% - 61px); /* Adjusted width to account for the filter button */
   height: 45px;
-  background: #D9D9D9;
-  border: none;
-  border-radius: 25px;
+  background: #FFFFFF;
+  border: 1px solid #000000;
+  border-radius: 5px;
   padding: 0 24px;
   font-size: 16px;
   flex-grow: 1;
 }
 
 .filter-button {
-  width: 160px;
+  width: 45px;
   height: 45px;
-  background: #D9D9D9;
-  border: none;
-  border-radius: 25px;
+  background: #FFFFFF;
+  border: 1px solid #000000;
+  border-radius: 5px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -99,21 +103,21 @@
   top: 55px;
   right: 0;
   background: white;
-  border-radius: 12px;
+  border-radius: 5px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   z-index: 1000;
   padding: 8px;
   min-width: 160px;
-  border: 2px solid #000000;
+  border: 1px solid #000000;
 }
 
 .sort-select {
   width: 100%;
   height: 40px;
   padding: 0 16px;
-  border-radius: 20px;
-  border: 2px solid #000000;
-  background: #D9D9D9;
+  border-radius: 5px;
+  border: 1px solid #000000;
+  background: #FFFFFF;
   cursor: pointer;
   font-size: 16px;
 }
@@ -122,7 +126,7 @@
   display: grid;
   grid-template-columns: repeat(3, 300px);
   gap: 50px;
-  justify-content: start;
+  justify-content: center;
 }
 
 @media (max-width: 1400px) {

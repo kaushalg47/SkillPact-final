@@ -2,12 +2,11 @@ import { useGetJobsQuery } from '../slices/jobsApiSlice';
 import { useGetCoursesQuery } from '../slices/courseApiSlice';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button, Card as BootstrapCard } from 'react-bootstrap';
-import { useEffect, useRef, useState } from 'react';
-import Card from '../components/Card';
+import { useState } from 'react';
 
 const HomeScreen = () => {
   const navigate = useNavigate();
-  const { data: jobData, error: jobError, isLoading: jobLoading } = useGetJobsQuery();
+  const { data: jobData } = useGetJobsQuery();
   const { data: courseData } = useGetCoursesQuery();
   
   const jobs = jobData?.jobs || [];

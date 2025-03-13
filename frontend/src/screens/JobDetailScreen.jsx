@@ -56,7 +56,7 @@ const JobDetailPage = () => {
   }
 
   return (
-    <Container fluid style={{ maxWidth: '1728px', padding: '20px' }}>
+    <Container fluid style={{ maxWidth: '1728px', padding: '20px',backgroundColor: '#f8f9fa'}}>
       <div style={{ 
         display: 'flex', 
         flexDirection: windowWidth <= 1024 ? 'column' : 'row',
@@ -73,14 +73,17 @@ const JobDetailPage = () => {
           {/* Job Description */}
           <div style={{ 
             width: '100%',
-            height: '445px',
             background: '#FFFFFF',
-            border: '2px solid #000000',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
             borderRadius: '20px',
             padding: '20px',
             overflowY: 'auto' // Add scroll if content exceeds height
           }}>
             <h2>{job.title}</h2>
+            <div style={{ marginTop: '15px' }}>
+              <h5>Category:</h5>
+              <p>{job.category}</p>
+            </div>
             <div style={{ marginTop: '15px' }}>
               <h5>Company:</h5>
               <p>{job.company?.name}</p>
@@ -92,6 +95,26 @@ const JobDetailPage = () => {
             <div style={{ marginTop: '15px' }}>
               <h5>Job Description:</h5>
               <p>{job.description}</p>
+            </div>
+            <div style={{ marginTop: '15px' }}>
+              <h5>Minimum Qualification:</h5>
+              <p>{job.minimumQualification}</p>
+            </div>
+            <div style={{ marginTop: '15px' }}>
+              <h5>Position:</h5>
+              <p>{job.position}</p>
+            </div>
+            <div style={{ marginTop: '15px' }}>
+              <h5>Duration:</h5>
+              <p>{job.duration}</p>
+            </div>
+            <div style={{ marginTop: '15px' }}>
+              <h5>Starts On:</h5>
+              <p>{job.startsOn}</p>
+            </div>
+            <div style={{ marginTop: '15px' }}>
+              <h5>Stipend:</h5>
+              <p>{job.stipend}</p>
             </div>
             <div style={{ marginTop: '15px' }}>
               <h5>Requirements:</h5>
@@ -106,15 +129,13 @@ const JobDetailPage = () => {
               </ul>
             </div>
           </div>
-
-          {/* Company Info */}
           <div style={{ 
             width: '100%',
             display: 'flex',
             flexDirection: windowWidth <= 768 ? 'column' : 'row',
             alignItems: 'center',
             background: '#FFFFFF',
-            border: '2px solid #000000',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
             borderRadius: '20px',
             padding: '15px',
             gap: '15px',
@@ -141,51 +162,69 @@ const JobDetailPage = () => {
         <div style={{ 
           flex: windowWidth <= 1024 ? 'none' : 'none',
           width: windowWidth <= 1024 ? '100%' : '320px', // Reduced width
-          background: '#FFFFFF',
-          border: '2px solid #000000',
-          borderRadius: '20px',
-          padding: '20px',
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
-          position: 'relative',
-          minHeight: '595px'
+          gap: '20px'
         }}>
-          <p style={{ fontSize: '25px', fontWeight: '350', marginTop: '2px' }}>Click here to apply</p>
-          <button 
-            style={{
-              width: '210px',
-              height: '45px',
-              background: '#D9D9D9',
-              border: 'none',
-              borderRadius: '10px',
-              fontSize: '28px',
-              color: 'black',
-              cursor: 'pointer',
-              marginTop: '7px',
-            }} 
-            onClick={handleApply} 
-            disabled={isApplying}
-          >
-            {isApplying ? "Applying..." : "Enroll"}
-          </button>
-          
-          <div style={{
-            width: '130px',
-            height: '30px',
-            background: '#B9E4C2',
-            fontSize: '12px',
-            fontWeight: 'bold',
-            color: '#106516',
-            padding: '8px 15px',
-            borderRadius: '10px',
-            textAlign: 'center',
-            marginTop: '20px',
+          {/* Enroll and Eligible Card */}
+          <div style={{ 
+            background: '#FFFFFF',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '20px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            position: 'relative',
+            minHeight: '200px'
           }}>
-            Eligible ✅
+            <p style={{ fontSize: '25px', fontWeight: '350', marginTop: '2px' }}>Click here to apply</p>
+            <button 
+              style={{
+                width: '210px',
+                height: '45px',
+                background: '#D9D9D9',
+                border: 'none',
+                borderRadius: '10px',
+                fontSize: '28px',
+                color: 'black',
+                cursor: 'pointer',
+                marginTop: '7px',
+              }} 
+              onClick={handleApply} 
+              disabled={isApplying}
+            >
+              {isApplying ? "Applying..." : "Enroll"}
+            </button>
+            
+            <div style={{
+              width: '130px',
+              height: '30px',
+              background: '#B9E4C2',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#106516',
+              padding: '8px 15px',
+              borderRadius: '10px',
+              textAlign: 'center',
+              marginTop: '20px',
+            }}>
+              Eligible ✅
+            </div>
           </div>
-          
-          <div style={{ marginTop: '30px', width: '100%' }}>
+
+          {/* Badges Card */}
+          <div style={{ 
+            background: '#FFFFFF',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '20px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            position: 'relative',
+            minHeight: '200px'
+          }}>
             <h4 style={{ fontSize: '20px', fontWeight: '400', textAlign: 'center' }}>Required Badges:</h4>
             <div style={{ 
               display: 'flex', 
@@ -245,7 +284,6 @@ const JobDetailPage = () => {
               )}
             </div>
           </div>
-
         </div>
       </div>
       <ToastContainer position="top-right" />
