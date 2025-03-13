@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-// import { Link, useNavigate } from 'react-router-dom';
 import { Form, Button } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import FormContainer from '../components/FormContainer';
@@ -7,18 +6,16 @@ import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
 import { useUpdateUserMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
+import ErrorScreen from './ErrorScreen';
 
 const ProfileScreen = () => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-
   const dispatch = useDispatch();
-
   const { userInfo } = useSelector((state) => state.auth);
-
-  const [updateProfile, { isLoading }] = useUpdateUserMutation();
+  const [updateProfile, { isLoading, error }] = useUpdateUserMutation();
 
   useEffect(() => {
     setName(userInfo.name);
@@ -45,20 +42,25 @@ const ProfileScreen = () => {
       }
     }
   };
+
+  if (error) {
+    return <ErrorScreen message="Failed to update profile. Please try again." retry={() => window.location.reload()} />;
+  }
+
   return (
     <FormContainer>
       <h1>Update Profile</h1>
-
-      <Form onSubmit={submitHandler}>
+      <Form onSubmit={submitHandler} className='m-3'>
         <Form.Group className='my-2' controlId='name'>
           <Form.Label>Name</Form.Label>
           <Form.Control
-            type='name'
+            type='text'
             placeholder='Enter name'
             value={name}
             onChange={(e) => setName(e.target.value)}
           ></Form.Control>
         </Form.Group>
+
         <Form.Group className='my-2' controlId='email'>
           <Form.Label>Email Address</Form.Label>
           <Form.Control
@@ -68,6 +70,7 @@ const ProfileScreen = () => {
             onChange={(e) => setEmail(e.target.value)}
           ></Form.Control>
         </Form.Group>
+
         <Form.Group className='my-2' controlId='password'>
           <Form.Label>Password</Form.Label>
           <Form.Control
@@ -91,7 +94,6 @@ const ProfileScreen = () => {
         <Button type='submit' variant='primary' className='mt-3'>
           Update
         </Button>
-
         {isLoading && <Loader />}
       </Form>
     </FormContainer>

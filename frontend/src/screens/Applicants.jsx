@@ -3,7 +3,9 @@ import { useParams } from "react-router-dom";
 import { useGetApplicantDetailsQuery } from "../slices/applicantsApiSlice";
 import { useGetUserCompanyInfoQuery } from "../slices/companyApiSlice";
 import { useUpdateApplicationStatusMutation } from "../slices/applicantsApiSlice";
-import "../components/styles/Applicants.css";
+import Loader from "../components/Loader";
+import ErrorScreen from "../screens/ErrorScreen";
+import { Container, Row, Col, Button, Card, Badge} from "react-bootstrap";
 
 const Applicants = () => {
   const { jobId } = useParams();
@@ -19,7 +21,7 @@ const Applicants = () => {
     } else {
       setApplicants([]);
     }
-  }, [data]);  
+  }, [data]);
 
   const toggleExpand = (id) => {
     setExpandedId(expandedId === id ? null : id);
@@ -29,9 +31,9 @@ const Applicants = () => {
     try {
       await updateStatus({ applicationId, status: newStatus }).unwrap();
       // Update local state after successful status update
-      setApplicants(prevApplicants => 
-        prevApplicants.map(application => 
-          application._id === applicationId 
+      setApplicants(prevApplicants =>
+        prevApplicants.map(application =>
+          application._id === applicationId
             ? { ...application, status: newStatus }
             : application
         )
@@ -42,119 +44,146 @@ const Applicants = () => {
   };
 
   if (isLoading || !applicants) {
-    return <p className="loading-message">Loading...</p>;
+    return <Loader text="Loading applicants..." />;
   }
 
   if (isError) {
-    return <p className="error-message">Some Error occurred</p>;
+    return <ErrorScreen message="Failed to load applicants." retry={() => window.location.reload()} />;
   }
 
   if (applicants.length === 0) {
-    return <p className="empty-message">No applicants</p>;
+    return <center><p className="text-muted">No applicants found for this job yet</p></center>;
   }
 
+  // Helper function to get badge variant based on status
+  const getStatusVariant = (status) => {
+    switch (status) {
+      case 'accepted': return 'success';
+      case 'rejected': return 'danger';
+      case 'pending': return 'warning';
+      default: return 'secondary';
+    }
+  };
+
   return (
-    <div className="applicants-container">
-      <h2 className="applicants-title">Applicants</h2>
+    <Container className="py-4">
+      <h2 className="mb-4 fw-bold">Applicants</h2>
 
-      <div className="applicants-list">
-        {applicants.map((data) => (
-          <div key={data.applicant.email} className="applicant-item">
-            {/* Basic Info Row - Always Visible */}
-            <div 
-              className="applicant-header"
-              onClick={() => toggleExpand(data.applicant.email)}
+      <Card className="shadow-sm">
+        <Card.Body>
+          {applicants.map((data) => (
+            <Card 
+              key={data.applicant.email} 
+              className="mb-3 border"
             >
-              <div className="applicant-main-info">
-                {/* Profile Initial Circle */}
-                <div className="applicant-initial">
-                  {data.applicant.name.charAt(0).toUpperCase()}
+              <Card.Header 
+                className="d-flex justify-content-between align-items-center"
+                onClick={() => toggleExpand(data.applicant.email)}
+                style={{ cursor: 'pointer' }}
+              >
+                <div className="d-flex align-items-center">
+                  <div 
+                    className="rounded-circle d-flex justify-content-center align-items-center me-3 text-primary"
+                    style={{ 
+                      width: '40px', 
+                      height: '40px', 
+                      backgroundColor: '#dbeafe',
+                      fontWeight: 'bold'
+                    }}
+                  >
+                    {data.applicant.name.charAt(0).toUpperCase()}
+                  </div>
+                  <span className="fw-medium">
+                    <a
+                      href={`http://localhost:3000/profile/${data?.applicant._id}`}
+                      className="text-black text-decoration-none hover:text-muted"
+                    >
+                      {data.applicant.name}
+                    </a>
+                  </span>
+
+                  <Badge 
+                    bg={getStatusVariant(data.status)} 
+                    className="ms-3 text-capitalize"
+                  >
+                    {data.status}
+                  </Badge>
                 </div>
+                <Button variant="light" size="sm">
+                  {expandedId === data.applicant.email ? "▲" : "▼"}
+                </Button>
+              </Card.Header>
 
-                {/* Name */}
-                <div className="applicant-name">
-                  {data.applicant.name}
-                </div>
-
-                {/* Status Badge */}
-                <div className={`applicant-status ${data.status}`}>
-                  {data.status}
-                </div>
-              </div>
-
-              {/* Expand/Collapse Button */}
-              <button className="expand-btn">
-                {expandedId === data.applicant.email ? "▲" : "▼"}
-              </button>
-            </div>
-
-            {/* Expanded Details */}
-            {expandedId === data.applicant.email && (
-              <div className="applicant-details">
-                <div className="details-grid">
-                  <div className="detail-label">Email:</div>
-                  <div className="detail-value">{data.applicant.email}</div>
+              {expandedId === data.applicant.email && (
+                <Card.Body className="bg-light">
+                  <Row className="mb-2">
+                    <Col xs={12} md={3} className="fw-medium text-muted">Email:</Col>
+                    <Col xs={12} md={9}>{data.applicant.email}</Col>
+                  </Row>
 
                   {data.applicant.phone && (
-                    <>
-                      <div className="detail-label">Phone:</div>
-                      <div className="detail-value">{data.applicant.phone}</div>
-                    </>
+                    <Row className="mb-2">
+                      <Col xs={12} md={3} className="fw-medium text-muted">Phone:</Col>
+                      <Col xs={12} md={9}>{data.applicant.phone}</Col>
+                    </Row>
                   )}
 
                   {data.applicant.location && (
-                    <>
-                      <div className="detail-label">Location:</div>
-                      <div className="detail-value">{data.applicant.location}</div>
-                    </>
+                    <Row className="mb-2">
+                      <Col xs={12} md={3} className="fw-medium text-muted">Location:</Col>
+                      <Col xs={12} md={9}>{data.applicant.location}</Col>
+                    </Row>
                   )}
 
                   {data.resume && (
-                    <>
-                      <div className="detail-label">Resume:</div>
-                      <div className="detail-value">
-                        <a href={data.resume} target="_blank" rel="noopener noreferrer" className="resume-link">
+                    <Row className="mb-2">
+                      <Col xs={12} md={3} className="fw-medium text-muted">Resume:</Col>
+                      <Col xs={12} md={9}>
+                        <a href={data.resume} target="_blank" rel="noopener noreferrer" className="text-primary fw-medium text-decoration-none">
                           View Resume
                         </a>
-                      </div>
-                    </>
+                      </Col>
+                    </Row>
                   )}
 
                   {/* Status Update Buttons for Company Admin */}
                   {companyInfo && (
-                    <div className="status-update-buttons">
-                      <div className="detail-label">Update Status:</div>
-                      <div className="detail-value">
-                        <div className="btn-group">
-                          <button
-                            className={`btn btn-sm ${data.status === 'accepted' ? 'btn-success' : 'btn-outline-success'}`}
+                    <Row className="mt-3 pt-3 border-top">
+                      <Col xs={12} md={3} className="fw-medium text-muted">Update Status:</Col>
+                      <Col xs={12} md={9}>
+                        <div className="d-flex gap-2 flex-wrap">
+                          <Button
+                            variant={data.status === 'accepted' ? 'success' : 'outline-success'}
+                            size="sm"
                             onClick={() => handleStatusUpdate(data._id, 'accepted')}
                           >
                             Accept
-                          </button>
-                          <button
-                            className={`btn btn-sm ${data.status === 'rejected' ? 'btn-danger' : 'btn-outline-danger'}`}
+                          </Button>
+                          <Button
+                            variant={data.status === 'rejected' ? 'danger' : 'outline-danger'}
+                            size="sm"
                             onClick={() => handleStatusUpdate(data._id, 'rejected')}
                           >
                             Reject
-                          </button>
-                          <button
-                            className={`btn btn-sm ${data.status === 'pending' ? 'btn-warning' : 'btn-outline-warning'}`}
+                          </Button>
+                          <Button
+                            variant={data.status === 'pending' ? 'warning' : 'outline-warning'}
+                            size="sm"
                             onClick={() => handleStatusUpdate(data._id, 'pending')}
                           >
                             Pending
-                          </button>
+                          </Button>
                         </div>
-                      </div>
-                    </div>
+                      </Col>
+                    </Row>
                   )}
-                </div>
-              </div>
-            )}
-          </div>
-        ))}
-      </div>
-    </div>
+                </Card.Body>
+              )}
+            </Card>
+          ))}
+        </Card.Body>
+      </Card>
+    </Container>
   );
 };
 

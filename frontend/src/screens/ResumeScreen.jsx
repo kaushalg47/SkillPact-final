@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { useGetAllPurchasedCoursesQuery } from "../slices/coursePurchaseApiSlice";
 import { useGetUserApplicationsQuery } from "../slices/applicationApiSlice";
-import { useGetUserInfoQuery } from "../slices/userInfoApiSlice";
+import { useGetUserProfileQuery } from "../slices/usersApiSlice";
 import { Link } from "react-router-dom";
-
+import Loader from '../components/Loader';
+import ErrorScreen from './ErrorScreen';
+import { Copy } from "lucide-react";
 const ResumeScreen = () => {
 	const {
 		data,
@@ -16,21 +19,40 @@ const ResumeScreen = () => {
 		data: userInfo,
 		error: userDataError,
 		isLoading: userDataLoading,
-	} = useGetUserInfoQuery(tempData?._id);
+	} = useGetUserProfileQuery(tempData?._id);
+
+	const { data: purchasedCourses, error: purchasedCoursesError, isLoading: purchasedCoursesLoading } = useGetAllPurchasedCoursesQuery();
+
+	const displayLinkCode = `/profile/${userInfo?.name}`;
+	const linkCode = `http://localhost:3000/profile/${userInfo?._id}`;
+  const [copied, setCopied] = useState(false);
+
+  const copyToClipboard = () => {
+    navigator.clipboard.writeText(linkCode);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
 
 	useEffect(() => {
 		if (tempData) {
 			setName(tempData.name || "N/A");
 		}
 	}, [tempData]);
+	if (applicationDataLoading || userDataLoading) {
+		return <Loader text="Loading your profile information..." />;
+	}
 
-	if (applicationDataLoading || userDataLoading) return <div className="text-center mt-5">Loading...</div>;
-	if (applicationError || userDataError)
+	if (applicationError || userDataError) {
+		return <ErrorScreen message="Failed to load your profile data." 
+		retry={() => window.location.reload()} 
+		/>;
+	}
+
+	if (purchasedCoursesLoading) return <div className="text-center mt-5">Loading...</div>;
+	if (purchasedCoursesError)
 		return (
 			<div className="text-center mt-5 text-danger">
-				Error: {applicationError?.message ||
-					userDataError?.message ||
-					"An unknown error occurred"}
+				Error: {purchasedCoursesError?.data?.message || purchasedCoursesError?.message || "An unknown error occurred"}
 			</div>
 		);
 
@@ -38,23 +60,30 @@ const ResumeScreen = () => {
 	const badgesCount = userInfo?.badges?.length || 0;
 	const favoriteBadges = userInfo?.badges || [];
 
+	if (purchasedCoursesLoading) return <div className="text-center mt-5">Loading...</div>;
+	if (purchasedCoursesError)
+		return (
+			<div className="text-center mt-5 text-danger">
+				Error: {purchasedCoursesError?.data?.message || purchasedCoursesError?.message || "An unknown error occurred"}
+			</div>
+		);
+
 	return (
 		<div className="container py-4">
 			<div className="row mb-4">
 				<div className="col-md-4">
 					<div className="card shadow-sm h-100">
 						<div className="card-body">
-							<div className="profile-image">K</div>
 							<h4 className="card-title">{name}</h4>
-							<p className="text-muted">{userInfo?.bio || "No bio available"}</p>
+							<p className="text-muted">{userInfo?.email || "No bio available"}</p>
 							<center>
-								<a
-									href="https://g.dev/kaushalg47"
-									className="text-decoration-none mb-3 d-block"
-									target="_blank"
-									rel="noopener noreferrer">
-									g.dev/kaushalg47
-								</a>
+								<div className="d-flex align-items-center justify-content-center">
+									<code className="text-sm text-gray-700 p-2 bg-white rounded-md border">{displayLinkCode}</code>
+									<button className="ml-2 p-2 bg-white rounded" onClick={copyToClipboard}>
+										<Copy size={16} />
+									</button>
+								</div>
+								{copied && <span className="ml-2 text-green-500 text-sm">Copied!</span>}
 							</center>
 							<div className="d-flex align-items-center mb-2">
 								<span className="me-2">📍</span>
@@ -64,11 +93,8 @@ const ResumeScreen = () => {
 								<span className="me-2">🏆</span>
 								<span className="text-muted">{badgesCount} badge(s)</span>
 							</div>
-							{userInfo.company && (
-								<p className="mt-2">
-									<Link to="/company-info">Manage your company</Link>
-								</p>
-							)}
+							
+							<Link className="btn btn-secondary mt-3" to="/profile/edit">Edit profile</Link>
 						</div>
 					</div>
 				</div>
@@ -76,13 +102,13 @@ const ResumeScreen = () => {
 				<div className="col-md-8">
 					<div className="card shadow-sm h-100">
 						<div className="card-body equal-height">
-							<h5 className="card-title">Achievements</h5>
+							<h5 className="card-title mb-5">Achievements</h5>
 							<div className="achievement-stats">
 								<div className="row w-100">
 									{[
 										{ title: "Badges", count: badgesCount },
-										{ title: "Courses", count: 3 }, // Replace with dynamic data
-										{ title: "Internships", count: 2 }, // Replace with dynamic data
+										{ title: "Courses", count: purchasedCourses?.length || 0 },
+										{ title: "Internships", count: applications.filter(app => app.status === "accepted").length || 0 },
 									].map((achievement, index) => (
 										<div className="col-md-4" key={index}>
 											<div className="card bg-light h-100">
@@ -101,7 +127,7 @@ const ResumeScreen = () => {
 			</div>
 
 			<div className="mb-4">
-				<h5 className="mb-3">Favorite Badges</h5>
+				<h5 className="mb-3">Badges</h5>
 				<div className="row g-3">
 					{favoriteBadges.length > 0 ? (
 						favoriteBadges.map((badge, index) => (
@@ -115,23 +141,30 @@ const ResumeScreen = () => {
 							</div>
 						))
 					) : (
-						<p>No favorite badges available</p>
+						<p className="text-muted text-center">No favorite badges available</p>
 					)}
 				</div>
 			</div>
 
-			<div>
-				<h5 className="mb-3">In Progress</h5>
-				<div className="row">
-					<div className="col-md-3">
-						<div className="card shadow-sm text-center">
-							<div className="card-body">
-								<h6 className="card-title">Codelab in Progress</h6>
-								<p className="text-muted small">In Progress</p>
+			<div className="mt-4">
+				<h5 className="mb-3">Purchased Courses</h5>
+				{purchasedCourses?.length > 0 ? (
+					<div className="row">
+						{purchasedCourses.map((course) => (
+							<div className="col-md-4 mb-3" key={course._id}>
+								<div className="card shadow-sm">
+									<div className="card-body">
+										<h6 className="card-title">{course.title}</h6>
+										<p className="text-muted small">Instructor: {course.instructor}</p>
+										<p className="text-muted small">Status: {course.status}</p>
+									</div>
+								</div>
 							</div>
-						</div>
+						))}
 					</div>
-				</div>
+				) : (
+					<p className="text-muted text-center">No purchased courses available</p>
+				)}
 			</div>
 
 			<div className="mt-4">
@@ -151,7 +184,7 @@ const ResumeScreen = () => {
 						))}
 					</div>
 				) : (
-					<p>Not applied for any jobs yet</p>
+					<p className="text-muted text-center">Not applied for any jobs yet</p>
 				)}
 			</div>
 		</div>

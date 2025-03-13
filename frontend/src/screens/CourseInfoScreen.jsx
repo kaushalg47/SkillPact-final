@@ -1,15 +1,17 @@
 import { useParams } from 'react-router-dom';
 import { useGetCourseDetailWithStatusQuery } from '../slices/coursePurchaseApiSlice';
 import { Link } from 'react-router-dom';
+import Loader from "../components/Loader";
+import ErrorScreen from "../screens/ErrorScreen";
 
 const CourseInfo = () => {
   const { courseId } = useParams();
   const { data: course, isLoading, error } = useGetCourseDetailWithStatusQuery(courseId);
-  const badge = course?.course?.badges || "'";
 
-  if (isLoading) return <p className="text-center mt-5">Loading course details...</p>;
-  if (error) return <p className="text-danger text-center mt-5">Error: {error.message}</p>;
+  if (isLoading) return <Loader text="Loading course details..." />;
+  if (error) return <ErrorScreen message={`Failed to load course: ${error.message}`} navigateTo="/courses" />;
 
+  
   return (
     <div className="container mt-5 mb-5">
       {/* Course Header */}
@@ -31,7 +33,7 @@ const CourseInfo = () => {
       {/* Course Details */}
       <div className="row mt-4">
         <div className="col-md-6">
-          <div className="card shadow-sm border-0 rounded">
+          <div className="card shadow-sm border-0 rounded h-100">
             <div className="card-body p-4">
               <h5 className="fw-bold">Course Level</h5>
               <p className="text-muted">{course.course.courseLevel}</p>
@@ -41,18 +43,22 @@ const CourseInfo = () => {
           </div>
         </div>
 
-        {/* Prerequisites */}
+        {/* Badges */}
         <div className="col-md-6">
-          <div className="card shadow-sm border-0 rounded">
-            <div className="card-body p-4">
-              <img src={badge.imageUrl} alt={badge.title} className="img-fluid mb-2" />
-              <h6 className="card-title">{badge.title}</h6>
+          <div className="card shadow-sm border-0 rounded h-100">
+            <div className="card-body p-4 text-center">
+              <img 
+                src={course?.course?.badges[0]?.imageUrl} // Ensure the first badge image URL is used
+                alt="Badge"
+                className="me-2"
+                style={{ width: "110px", height: "110px" }} // Make the badge bigger
+              />
+              <br></br>
+              <p className="text-muted">{course?.course?.badges[0]?.title}</p>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Video Preview */}
       <div className="card mt-4 shadow-sm border-0 rounded">
         <div className="card-body p-4 text-center">
           <h5 className="fw-bold mb-3">Course Preview</h5>

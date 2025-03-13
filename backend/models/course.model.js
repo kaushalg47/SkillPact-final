@@ -43,9 +43,14 @@ const courseSchema = new mongoose.Schema(
 			default: false,
 		},
 		badges: {
-			type: mongoose.Schema.ObjectId,
-			ref: "Badge",
-		},
+					type: [
+						{
+							type: mongoose.Schema.ObjectId,
+							ref: "Badge",
+						},
+					],
+					default: [],
+				},
 	},
 	{ timestamps: true }
 );
