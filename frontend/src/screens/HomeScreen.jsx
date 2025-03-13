@@ -12,8 +12,12 @@ const HomeScreen = () => {
   const jobs = jobData?.jobs || [];
   const allCourses = courseData?.courses || [];
   
-  const [filteredCourses, setFilteredCourses] = useState(allCourses);
+  const [filteredCourses, setFilteredCourses] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All');
+
+  useEffect(() => {
+    setFilteredCourses(allCourses);
+  }, [courseData]);
 
   const categories = ['All', 'Technology', 'Business', 'Design', 'Marketing', 'More'];
 
@@ -34,6 +38,7 @@ const HomeScreen = () => {
         </div>
       </section>
 
+       
       <Container fluid className='my-5'>
         <div className='text-center p-5 rounded' style={{ background: 'linear-gradient(to right, #1a1a1a, #333)', color: 'white' }}>
           <h3 className='fw-bold mb-3'>Exclusive Scholarship Opportunity</h3>
@@ -79,7 +84,11 @@ const HomeScreen = () => {
             </Col>
           ))}
         </Row>
+        <div className='text-center mt-4'>
+          <Button variant='primary' onClick={() => navigate('/courses')}>Know More</Button>
+        </div>
       </Container>
+     
       
       <Container className='my-5'>
         <h2 className='text-center text-dark fw-bold mb-4' style={{ fontSize: '2rem' }}>Featured Jobs</h2>
