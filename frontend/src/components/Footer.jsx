@@ -11,12 +11,21 @@ const Footer = () => {
           <p>Address: 123 Main St, Anytown, USA</p>
         </div>
         <div style={styles.quickLinks}>
+          <h4>For Companies</h4>
+          <ul style={{ listStyle: 'none', padding: 0 }}>
+            <li><a href="/" style={styles.link}>Home</a></li>
+            <li><a href="/" style={styles.link}>About</a></li>
+            <li><a href="/create-company" style={styles.link}>Register company</a></li>
+            <li><a href="/profile" style={styles.link}>profile</a></li>
+          </ul>
+        </div>
+        <div style={styles.quickLinks}>
           <h4>Quick Links</h4>
           <ul style={{ listStyle: 'none', padding: 0 }}>
-            <li><a href="#home" style={styles.link}>Home</a></li>
-            <li><a href="#about" style={styles.link}>About</a></li>
-            <li><a href="#services" style={styles.link}>Services</a></li>
-            <li><a href="#contact" style={styles.link}>Contact</a></li>
+            <li><a href="/" style={styles.link}>Home</a></li>
+            <li><a href="/" style={styles.link}>About</a></li>
+            <li><a href="/create-company" style={styles.link}>Register company</a></li>
+            <li><a href="/profile" style={styles.link}>profile</a></li>
           </ul>
         </div>
         

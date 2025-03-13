@@ -60,7 +60,7 @@ const JobDetailPage = () => {
       <div style={{ 
         display: 'flex', 
         flexDirection: windowWidth <= 1024 ? 'column' : 'row',
-        gap: '55px'
+        gap: '20px' // Reduced gap between left and right sections
       }}>
         {/* Left Section */}
         <div style={{ 
@@ -246,8 +246,8 @@ const JobDetailPage = () => {
                         src={badge.imageUrl} 
                         alt={badge.title} 
                         style={{ 
-                          width: '85px', 
-                          height: '75px', 
+                          width: '180px', 
+                          height: '170px', 
                           borderRadius: '10px',
                           objectFit: 'contain'
                         }} 
