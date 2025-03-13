@@ -4,16 +4,15 @@ import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button, Card as BootstrapCard } from 'react-bootstrap';
 import { useEffect, useRef, useState } from 'react';
 import Card from '../components/Card';
-import Loader from "../components/Loader";
-import ErrorScreen from "../screens/ErrorScreen";
 
 const HomeScreen = () => {
   const navigate = useNavigate();
   const { data: jobData, error: jobError, isLoading: jobLoading } = useGetJobsQuery();
-  const { data: courseData, isLoading: courseLoading, error: courseError } = useGetCoursesQuery();
-
+  const { data: courseData } = useGetCoursesQuery();
+  
   const jobs = jobData?.jobs || [];
   const allCourses = courseData?.courses || [];
+  
   const [filteredCourses, setFilteredCourses] = useState(allCourses);
   const [activeCategory, setActiveCategory] = useState('All');
 
@@ -21,16 +20,12 @@ const HomeScreen = () => {
 
   const filterCourses = (category) => {
     setActiveCategory(category);
-    setFilteredCourses(
-      category === 'All'
-        ? allCourses
-        : allCourses.filter(course => course.category === category.toLowerCase())
-    );
+    if (category === 'All') {
+      setFilteredCourses(allCourses);
+    } else {
+      setFilteredCourses(allCourses.filter(course => course.category === category));
+    }
   };
-
-  if (jobLoading || courseLoading) return <Loader text="Loading content..." />;
-  if (jobError) return <ErrorScreen message="Failed to load jobs." retry={() => window.location.reload()} />;
-  if (courseError) return <ErrorScreen message="Failed to load courses." retry={() => window.location.reload()} />;
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8f9fa' }}>
@@ -40,13 +35,22 @@ const HomeScreen = () => {
         </div>
       </section>
 
-      {/* Courses Section */}
+      <Container fluid className='my-5'>
+        <div className='text-center p-5 rounded' style={{ background: 'linear-gradient(to right, #1a1a1a, #333)', color: 'white' }}>
+          <h3 className='fw-bold mb-3'>Exclusive Scholarship Opportunity</h3>
+          <p className='fs-5'>Unlock a ₹50 Lakh scholarship pool available for students.</p>
+          <Button variant='light' size='lg' className='fw-bold' onClick={() => navigate('/scholarships')}>
+            Know More
+          </Button>
+        </div>
+      </Container>
+      
       <Container className='my-5'>
         <h2 className='text-center text-dark fw-bold mb-4' style={{ fontSize: '2rem' }}>Trending Courses</h2>
         <div className='d-flex justify-content-center gap-3 mb-4 flex-wrap'>
           {categories.map((category) => (
-            <Button
-              key={category}
+            <Button 
+              key={category} 
               variant={activeCategory === category ? 'dark' : 'outline-secondary'}
               onClick={() => filterCourses(category)}
             >
@@ -77,8 +81,7 @@ const HomeScreen = () => {
           ))}
         </Row>
       </Container>
-
-      {/* Jobs Section */}
+      
       <Container className='my-5'>
         <h2 className='text-center text-dark fw-bold mb-4' style={{ fontSize: '2rem' }}>Featured Jobs</h2>
         <Row className='d-flex flex-wrap justify-content-center'>
@@ -104,8 +107,7 @@ const HomeScreen = () => {
           ))}
         </Row>
       </Container>
-
-      {/* Footer */}
+      
       <footer className='text-center py-3' style={{ background: '#343a40', color: '#ffffff', fontFamily: 'Lora, serif', fontSize: '1.2rem' }}>
         @skilledity 2025
       </footer>
