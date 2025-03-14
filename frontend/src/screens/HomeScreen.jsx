@@ -12,7 +12,7 @@ const HomeScreen = () => {
   const jobs = jobData?.jobs || [];
   const allCourses = useMemo(() => courseData?.courses || [], [courseData]);
   
-  const [filteredCourses, setFilteredCourses] = useState([]);
+  const [filteredCourses, setFilteredCourses] = useState(allCourses);
   const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
@@ -23,32 +23,68 @@ const HomeScreen = () => {
 
   const filterCourses = (category) => {
     setActiveCategory(category);
-    if (category === 'All') {
-      setFilteredCourses(allCourses);
-    } else {
-      setFilteredCourses(allCourses.filter(course => course.category === category));
-    }
+    setFilteredCourses(category === 'All' ? allCourses : allCourses.filter(course => course.category === category));
   };
+
+  const renderCard = (item, type) => (
+    <Col key={item._id} xs={12} sm={6} md={4} lg={3} className='p-3'>
+      <BootstrapCard
+        className='shadow-sm border-0 p-3 text-center h-100'
+        style={{ transition: 'transform 0.3s ease-in-out', cursor: 'pointer' }}
+        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+        onClick={() => navigate(`/${type}/${item._id}`)}
+      >
+        <BootstrapCard.Body>
+          <h5 className='fw-semibold text-primary'>{item.title || item.courseTitle}</h5>
+          <p className='text-muted small'>{item.description || item.company?.name || 'No details provided'}</p>
+          <div className='d-flex justify-content-center gap-2 flex-wrap'>
+            {item.location && <span className='badge bg-light text-dark'>{item.location}</span>}
+            {item.duration && <span className='badge bg-light text-dark'>{item.duration}</span>}
+            {item.category && <span className='badge bg-light text-dark'>{item.category}</span>}
+          </div>
+        </BootstrapCard.Body>
+      </BootstrapCard>
+    </Col>
+  );
+
+  const renderSection = (title, items, type) => (
+    <Container className='my-5'>
+      <h2 className='text-center text-dark fw-bold mb-4' style={{ fontSize: '2rem' }}>{title}</h2>
+      <Row className='d-flex flex-wrap justify-content-center'>
+        {items.length ? items.map((item) => renderCard(item, type)) : <p className='text-center'>No {type} available</p>}
+      </Row>
+    </Container>
+  );
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8f9fa' }}>
-      <section>
-        <div className='bg-primary text-white text-center py-5'>
+      <section className='bg-primary text-white py-5 d-flex align-items-center justify-content-center' style={{ minHeight: '400px' }}>
+        <div>
           <h1 className='fw-bold display-4'>Explore Internships & Courses</h1>
+          <p className='fs-5 mt-3'>Find the best opportunities to enhance your career.</p>
+          <Button variant='light' size='lg' className='fw-bold mt-3' onClick={() => navigate('/explore')}>
+            Get Started
+          </Button>
         </div>
+        <img 
+          src='https://bootstrapmade.com/content/demo/iLanding/assets/img/illustration-1.webp' 
+          alt='Hero' 
+          className='img-fluid ms-5' 
+          style={{ maxHeight: '300px', borderRadius: '10px' }} 
+        />
       </section>
 
-       
       <Container fluid className='my-5'>
         <div className='text-center p-5 rounded' style={{ background: 'linear-gradient(to right, #1a1a1a, #333)', color: 'white' }}>
-          <h3 className='fw-bold mb-3'>Exclusive Scholarship Opportunity</h3>
-          <p className='fs-5'>Unlock a ₹50 Lakh scholarship pool available for students.</p>
+          <h3 className='fw-bold mb-3'>Exclusive ₹50 Lakh Scholarship Opportunity</h3>
+          <p className='fs-5'>Unlock a scholarship pool available for students.</p>
           <Button variant='light' size='lg' className='fw-bold' onClick={() => navigate('/scholarships')}>
             Know More
           </Button>
         </div>
       </Container>
-      
+
       <Container className='my-5'>
         <h2 className='text-center text-dark fw-bold mb-4' style={{ fontSize: '2rem' }}>Trending Courses</h2>
         <div className='d-flex justify-content-center gap-3 mb-4 flex-wrap'>
@@ -62,63 +98,20 @@ const HomeScreen = () => {
             </Button>
           ))}
         </div>
-        <Row className='d-flex flex-wrap justify-content-center'>
-          {filteredCourses.map((course) => (
-            <Col key={course._id} xs={12} sm={6} md={4} lg={3} className='p-3'>
-              <BootstrapCard
-                className='shadow-sm border-0 p-3 text-center h-100'
-                style={{ transition: 'transform 0.3s ease-in-out', cursor: 'pointer' }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                onClick={() => navigate(`/courses/${course._id}`)}
-              >
-                <BootstrapCard.Body>
-                  <h5 className='fw-semibold text-primary'>{course.courseTitle}</h5>
-                  <p className='text-muted small'>{course.description}</p>
-                  <div className='d-flex justify-content-center gap-2 flex-wrap'>
-                    <span className='badge bg-light text-dark'>Popular</span>
-                    <span className='badge bg-light text-dark'>Best Seller</span>
-                  </div>
-                </BootstrapCard.Body>
-              </BootstrapCard>
-            </Col>
-          ))}
-        </Row>
-        <div className='text-center mt-4'>
-          <Button variant='primary' onClick={() => navigate('/courses')}>Know More</Button>
+        {renderSection('Trending Courses', filteredCourses, 'courses')}
+      </Container>
+
+      {renderSection('Featured Jobs', jobs.slice(0, 8), 'job-info')}
+
+      <Container fluid className='my-5'>
+        <div className='text-center p-5 rounded' style={{ background: 'linear-gradient(to right, #1a1a1a, #333)', color: 'white' }}>
+          <h3 className='fw-bold mb-3'>Want to post jobs and hire skilled workforce?</h3>
+          <p className='fs-5'>Register your company soon!</p>
+          <Button variant='light' size='lg' className='fw-bold' onClick={() => navigate('/create-company')}>
+            Register
+          </Button>
         </div>
       </Container>
-     
-      
-      <Container className='my-5'>
-        <h2 className='text-center text-dark fw-bold mb-4' style={{ fontSize: '2rem' }}>Featured Jobs</h2>
-        <Row className='d-flex flex-wrap justify-content-center'>
-          {jobs.slice(0, 8).map((job) => (
-            <Col key={job._id} xs={12} sm={6} md={4} lg={3} className='p-3'>
-              <BootstrapCard
-                className='shadow-sm border-0 p-3 text-center h-100'
-                style={{ transition: 'transform 0.3s ease-in-out', cursor: 'pointer' }}
-                onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-                onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-                onClick={() => navigate(`/job-info/${job._id}`)}
-              >
-                <BootstrapCard.Body>
-                  <h5 className='fw-semibold text-primary'>{job.title}</h5>
-                  <p className='text-muted small'>{job.company?.name || 'Company Not Specified'}</p>
-                  <div className='d-flex justify-content-center gap-2 flex-wrap'>
-                    <span className='badge bg-light text-dark'>{job.location || 'Location Not Specified'}</span>
-                    <span className='badge bg-light text-dark'>{job.duration || 'Duration Not Specified'}</span>
-                  </div>
-                </BootstrapCard.Body>
-              </BootstrapCard>
-            </Col>
-          ))}
-        </Row>
-      </Container>
-      
-      <footer className='text-center py-3' style={{ background: '#343a40', color: '#ffffff', fontFamily: 'Lora, serif', fontSize: '1.2rem' }}>
-        @skilledity 2025
-      </footer>
     </div>
   );
 };

@@ -77,56 +77,33 @@ const JobDetailPage = () => {
             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
             borderRadius: '20px',
             padding: '20px',
-            overflowY: 'auto' // Add scroll if content exceeds height
-          }}>
-            <h2>{job.title}</h2>
-            <div style={{ marginTop: '15px' }}>
-              <h5>Category:</h5>
-              <p>{job.category}</p>
+             // Add scroll if content exceeds height
+                  }}>
+                  <h2>{job.title}</h2>
+                  <div style={{ marginTop: '10px' }}>
+                    <p>
+                    <strong>{job.company?.name}</strong> | {job.category} 
+                    </p>
+                  </div>
+                  <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+              <p>📅 {new Date(job.startsOn).toLocaleDateString()}</p>
+              <p>💰 ₹ {job.stipend}</p>
             </div>
-            <div style={{ marginTop: '15px' }}>
-              <h5>Company:</h5>
-              <p>{job.company?.name}</p>
+            <div style={{ marginTop: '10px' }}>
+              <p>📍 {job.location}</p>
             </div>
-            <div style={{ marginTop: '15px' }}>
-              <h5>Location:</h5>
-              <p>{job.location}</p>
+            <hr style={{ margin: '20px 0', border: '1px solid #ddd' }} />
+
+            <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+              <p><strong>Minimum qualifications:</strong> {job.minqualification}</p>
+              <p><strong>Position:</strong> {job.position}</p>
+              <p><strong>Duration:</strong> {job.duration}</p>
             </div>
+            <hr style={{ margin: '20px 0', border: '1px solid #ddd' }} />
+
             <div style={{ marginTop: '15px' }}>
-              <h5>Job Description:</h5>
+              <h5>Description:</h5>
               <p>{job.description}</p>
-            </div>
-            <div style={{ marginTop: '15px' }}>
-              <h5>Minimum Qualification:</h5>
-              <p>{job.minimumQualification}</p>
-            </div>
-            <div style={{ marginTop: '15px' }}>
-              <h5>Position:</h5>
-              <p>{job.position}</p>
-            </div>
-            <div style={{ marginTop: '15px' }}>
-              <h5>Duration:</h5>
-              <p>{job.duration}</p>
-            </div>
-            <div style={{ marginTop: '15px' }}>
-              <h5>Starts On:</h5>
-              <p>{job.startsOn}</p>
-            </div>
-            <div style={{ marginTop: '15px' }}>
-              <h5>Stipend:</h5>
-              <p>{job.stipend}</p>
-            </div>
-            <div style={{ marginTop: '15px' }}>
-              <h5>Requirements:</h5>
-              <ul>
-                {job.requirements?.length > 0 ? (
-                  job.requirements.map((requirement, index) => (
-                    <li key={index}>{requirement}</li>
-                  ))
-                ) : (
-                  <p>No specific requirements listed.</p>
-                )}
-              </ul>
             </div>
           </div>
           <div style={{ 
@@ -141,7 +118,7 @@ const JobDetailPage = () => {
             gap: '15px',
             textAlign: windowWidth <= 768 ? 'center' : 'left'
           }}>
-            <img 
+            {/* <img 
               src={job.companyLogo || '/placeholder-logo.png'} 
               alt="Company Logo" 
               style={{ 
@@ -150,10 +127,11 @@ const JobDetailPage = () => {
                 borderRadius: '50%', 
                 objectFit: 'cover' 
               }} 
-            />
+            /> */}
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <h3 style={{ fontSize: '22px', fontWeight: '600' }}>{job.company.name}</h3>
-              <p>{job.title}</p>
+              <p className='text-muted'>{job.company.website} | {job.company.location}</p>
+              <p>{job.company.description}</p>
             </div>
           </div>
         </div>
@@ -183,11 +161,11 @@ const JobDetailPage = () => {
               style={{
                 width: '210px',
                 height: '45px',
-                background: '#D9D9D9',
+                background: '#0000ff',
                 border: 'none',
                 borderRadius: '10px',
                 fontSize: '28px',
-                color: 'black',
+                color: 'white',
                 cursor: 'pointer',
                 marginTop: '7px',
               }} 
