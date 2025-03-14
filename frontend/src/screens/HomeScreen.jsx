@@ -2,7 +2,7 @@ import { useGetJobsQuery } from '../slices/jobsApiSlice';
 import { useGetCoursesQuery } from '../slices/courseApiSlice';
 import { useNavigate } from 'react-router-dom';
 import { Container, Row, Col, Button, Card as BootstrapCard } from 'react-bootstrap';
-import { useState } from 'react';
+import { useState,useEffect,useMemo } from 'react';
 
 const HomeScreen = () => {
   const navigate = useNavigate();
@@ -10,14 +10,14 @@ const HomeScreen = () => {
   const { data: courseData } = useGetCoursesQuery();
   
   const jobs = jobData?.jobs || [];
-  const allCourses = courseData?.courses || [];
+  const allCourses = useMemo(() => courseData?.courses || [], [courseData]);
   
   const [filteredCourses, setFilteredCourses] = useState([]);
   const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
     setFilteredCourses(allCourses);
-  }, [courseData]);
+  }, [allCourses]);
 
   const categories = ['All', 'Technology', 'Business', 'Design', 'Marketing', 'More'];
 
