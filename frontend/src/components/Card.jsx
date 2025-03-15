@@ -1,63 +1,127 @@
+import { useState } from 'react';
 
+const Card = ({ image, title, role, location, company, duration, startDate, onClick }) => {
+  const [isHovered, setIsHovered] = useState(false);
 
-const CardComponent = ({ image, title, role, location, company, onApply }) => {
   return (
-    <div style={styles.card}>
-      <img src={image} alt={`${title} image`} style={styles.image} />
-      <div style={styles.content}>
-        <h3 style={styles.title}>{title}</h3>
-        <p style={styles.text}><strong>Role:</strong> {role}</p>
-        <p style={styles.text}><strong>Location:</strong> {location}</p>
-        <p style={styles.text}><strong>Company:</strong> {company}</p>
+    <div
+      style={{
+        ...styles.card,
+        ...(isHovered ? hoverEffect.cardHover : {}),
+      }}
+      onClick={onClick}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+    >
+      <div style={styles.headerContainer}>
+        {/* <img src={image} alt={`${title} image`} style={styles.image} /> */}
+        <p style={styles.company}>{company}</p>
       </div>
-      <button style={styles.button} onClick={onApply}>
-        Apply
-      </button>
+      <h3 style={styles.title}>{title}</h3>
+      {role && <p style={styles.role}>Role: {role}</p>}
+      {duration && <p style={styles.duration}>Duration: {duration}</p>}
+      {location && <p style={styles.location}>Location: {location}</p>}
+      {startDate && <p style={styles.startDate}>Starts on: {startDate}</p>}
+      <p
+        style={{
+          ...styles.clickToApply,
+          ...(isHovered ? hoverEffect.clickToApplyHover : {}),
+        }}
+      >
+        Click to Apply
+      </p>
     </div>
   );
 };
 
 const styles = {
   card: {
-    border: '1px solid #ddd',
-    borderRadius: '8px',
-    overflow: 'hidden',
+    width: '300px',
+    height: 'auto',
+    position: 'relative',
+    borderRadius: '20px',
+    background: '#FFFFFF',
+    padding: '20px',
+    boxSizing: 'border-box',
+    cursor: 'pointer',
+    transition: 'all 0.3s ease',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-    maxWidth: '500px',
-    margin: '16px',
-    backgroundColor: '#fff',
+  },
+  headerContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px',
+    marginBottom: '16px',
   },
   image: {
-    width: '100%',
-    height: '150px',
-    objectFit: 'cover',
+    width: '50px',
+    height: '50px',
+    background: '#D9D9D9',
+    borderRadius: '8px',
   },
-  content: {
-    padding: '16px',
+  company: {
+    fontFamily: 'Poppins',
+    fontSize: '18px',
+    fontWeight: 400,
+    color: '#000000',
+    margin: 0,
   },
   title: {
-    fontSize: '1.25rem',
-    marginBottom: '8px',
-    color: '#333',
+    fontFamily: 'Poppins',
+    fontSize: '22px',
+    fontWeight: 800,
+    lineHeight: '26px',
+    color: '#0000FF',
+    margin: '0 0 16px 0',
   },
-  text: {
-    fontSize: '0.9rem',
-    marginBottom: '8px',
-    color: '#555',
+  role: {
+    fontFamily: 'Poppins',
+    fontSize: '16px',
+    fontWeight: 400,
+    color: '#000000',
+    margin: '8px 0',
   },
-  button: {
-    display: 'block',
-    width: 'calc(100% - 32px)',
-    margin: '16px',
-    padding: '10px',
-    fontSize: '1rem',
-    color: '#fff',
-    backgroundColor: '#007bff',
-    border: 'none',
-    borderRadius: '4px',
-    cursor: 'pointer',
-    textAlign: 'center',
+  duration: {
+    fontFamily: 'Poppins',
+    fontSize: '16px',
+    fontWeight: 400,
+    color: '#000000',
+    margin: '8px 0',
+  },
+  location: {
+    fontFamily: 'Poppins',
+    fontSize: '16px',
+    fontWeight: 400,
+    color: '#000000',
+    margin: '8px 0',
+  },
+  startDate: {
+    fontFamily: 'Poppins',
+    fontSize: '16px',
+    fontWeight: 400,
+    color: '#000000',
+    margin: '8px 0',
+  },
+  clickToApply: {
+    fontFamily: 'Poppins',
+    fontSize: '14px',
+    fontWeight: 400,
+    color: '#000000',
+    marginTop: '12px',
+    fontStyle: 'italic',
+    opacity: 0,
+    transition: 'opacity 0.3s ease',
   },
 };
 
-export default CardComponent;
+const hoverEffect = {
+  cardHover: {
+    boxShadow: '0 0 10px rgba(0, 0, 255, 0.1), 0 0 20px rgba(0, 0, 255, 0.2)',
+    transform: 'scale(1.05)',
+  },
+  clickToApplyHover: {
+    opacity: 1,
+  },
+};
+
+export default Card;

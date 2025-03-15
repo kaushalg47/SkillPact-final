@@ -1,89 +1,271 @@
-
-import { useParams, useNavigate } from 'react-router-dom';
-import { Button, Card, Spinner } from 'react-bootstrap';
-import { useGetJobByIdQuery } from '../slices/jobsApiSlice'; // Import the query hook
+import { useParams } from 'react-router-dom';
+import { Container } from 'react-bootstrap';
+import { useGetJobByIdQuery } from '../slices/jobsApiSlice';
+import { useApplyForJobMutation } from '../slices/applicationApiSlice';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+import { useState, useEffect } from 'react';
+import Loader from '../components/Loader';
+import ErrorScreen from './ErrorScreen';
 
 const JobDetailPage = () => {
-  const { jobId } = useParams(); // Get the jobId from the route parameters
-  const navigate = useNavigate(); // For navigation
-
-  // Fetch job data based on the jobId using the hook
-  const { data, error, isLoading } = useGetJobByIdQuery(jobId);
+  const { jobId } = useParams();
+  const { data, error, isLoading, refetch } = useGetJobByIdQuery(jobId);
+  const [applyForJob, { isLoading: isApplying }] = useApplyForJobMutation();
   const job = data?.job;
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
 
-  // Handle Apply button click (for example, navigate to the application page)
-  const handleApply = () => {
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const handleApply = async () => {
     if (job) {
-      navigate(`/apply/${jobId}`); // Navigate to the application page
+      try {
+        await applyForJob(jobId).unwrap();
+        toast.success("Successfully enrolled for this job!");
+      } catch (err) {
+        console.error("Application failed:", err);
+        toast.error("Failed to enroll. Please try again.");
+      }
     }
   };
 
-  // Display a loading spinner while fetching data
-  if (isLoading) {
-    return (
-      <div className="text-center my-5">
-        <Spinner animation="border" variant="primary" />
-      </div>
-    );
+  if (isLoading || isApplying) {
+    return <Loader />;
   }
 
-  // Display error message if something goes wrong
   if (error) {
     return (
-      <div className="alert alert-danger text-center my-5">
-        {error?.message || 'Failed to load job details'}
-      </div>
+      <ErrorScreen 
+        message={error?.data?.message || error.message || 'Failed to load job details'}
+        retryFunction={refetch}
+      />
     );
   }
 
-  // Ensure job exists before rendering the content
   if (!job) {
     return (
-      <div className="alert alert-warning text-center my-5">
-        No job details found.
-      </div>
+      <ErrorScreen 
+        message="Job details not found"
+        showRetry={false}
+      />
     );
-  } 
+  }
 
   return (
-    <div className="container mt-5">
-      <Card className="shadow-lg">
-        <Card.Header className="bg-primary text-white text-center">
-          <h2>{job.title}</h2>
-        </Card.Header>
-        <Card.Body>
-          <div className="mb-4">
-            <h5>Company:</h5>
-            <p>{job.company}</p>
+    <Container fluid style={{ maxWidth: '1728px', padding: '20px',backgroundColor: '#f8f9fa'}}>
+      <div style={{ 
+        display: 'flex', 
+        flexDirection: windowWidth <= 1024 ? 'column' : 'row',
+        gap: '20px' // Reduced gap between left and right sections
+      }}>
+        {/* Left Section */}
+        <div style={{ 
+          flex: windowWidth <= 1024 ? 'none' : 2,
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '40px', // Increased gap between job content and company info
+          width: windowWidth <= 1024 ? '100%' : 'auto'
+        }}>
+          {/* Job Description */}
+          <div style={{ 
+            width: '100%',
+            background: '#FFFFFF',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '20px',
+            padding: '20px',
+             // Add scroll if content exceeds height
+                  }}>
+                  <h2>{job.title}</h2>
+                  <div style={{ marginTop: '10px' }}>
+                    <p>
+                    <strong>{job.company?.name}</strong> | {job.category} 
+                    </p>
+                  </div>
+                  <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+              <p>📅 {new Date(job.startsOn).toLocaleDateString()}</p>
+              <p>💰 ₹ {job.stipend}</p>
+            </div>
+            <div style={{ marginTop: '10px' }}>
+              <p>📍 {job.location}</p>
+            </div>
+            <hr style={{ margin: '20px 0', border: '1px solid #ddd' }} />
+
+            <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
+              <p><strong>Minimum qualifications:</strong> {job.minqualification}</p>
+              <p><strong>Position:</strong> {job.position}</p>
+              <p><strong>Duration:</strong> {job.duration}</p>
+            </div>
+            <hr style={{ margin: '20px 0', border: '1px solid #ddd' }} />
+
+            <div style={{ marginTop: '15px' }}>
+              <h5>Description:</h5>
+              <p>{job.description}</p>
+            </div>
           </div>
-          <div className="mb-4">
-            <h5>Location:</h5>
-            <p>{job.location}</p>
+          <div style={{ 
+            width: '100%',
+            display: 'flex',
+            flexDirection: windowWidth <= 768 ? 'column' : 'row',
+            alignItems: 'center',
+            background: '#FFFFFF',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '20px',
+            padding: '15px',
+            gap: '15px',
+            textAlign: windowWidth <= 768 ? 'center' : 'left'
+          }}>
+            {/* <img 
+              src={job.companyLogo || '/placeholder-logo.png'} 
+              alt="Company Logo" 
+              style={{ 
+                width: '153px', 
+                height: '90px', 
+                borderRadius: '50%', 
+                objectFit: 'cover' 
+              }} 
+            /> */}
+            <div style={{ display: 'flex', flexDirection: 'column' }}>
+              <h3 style={{ fontSize: '22px', fontWeight: '600' }}>{job.company.name}</h3>
+              <p className='text-muted'>{job.company.website} | {job.company.location}</p>
+              <p>{job.company.description}</p>
+            </div>
           </div>
-          <div className="mb-4">
-            <h5>Job Description:</h5>
-            <p>{job.description}</p>
+        </div>
+
+        {/* Right Section */}
+        <div style={{ 
+          flex: windowWidth <= 1024 ? 'none' : 'none',
+          width: windowWidth <= 1024 ? '100%' : '320px', // Reduced width
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '20px'
+        }}>
+          {/* Enroll and Eligible Card */}
+          <div style={{ 
+            background: '#FFFFFF',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '20px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            position: 'relative',
+            minHeight: '200px'
+          }}>
+            <p style={{ fontSize: '25px', fontWeight: '350', marginTop: '2px' }}>Click here to apply</p>
+            <button 
+              style={{
+                width: '210px',
+                height: '45px',
+                background: '#0000ff',
+                border: 'none',
+                borderRadius: '10px',
+                fontSize: '28px',
+                color: 'white',
+                cursor: 'pointer',
+                marginTop: '7px',
+              }} 
+              onClick={handleApply} 
+              disabled={isApplying}
+            >
+              {isApplying ? "Applying..." : "Enroll"}
+            </button>
+            
+            <div style={{
+              width: '130px',
+              height: '30px',
+              background: '#B9E4C2',
+              fontSize: '12px',
+              fontWeight: 'bold',
+              color: '#106516',
+              padding: '8px 15px',
+              borderRadius: '10px',
+              textAlign: 'center',
+              marginTop: '20px',
+            }}>
+              Eligible ✅
+            </div>
           </div>
-          <div className="mb-4">
-            <h5>Requirements:</h5>
-            <ul>
-              {job.requirements?.length > 0 ? (
-                job.requirements.map((requirement, index) => (
-                  <li key={index}>{requirement}</li>
+
+          {/* Badges Card */}
+          <div style={{ 
+            background: '#FFFFFF',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            borderRadius: '20px',
+            padding: '20px',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            position: 'relative',
+            minHeight: '200px'
+          }}>
+            <h4 style={{ fontSize: '20px', fontWeight: '400', textAlign: 'center' }}>Required Badges:</h4>
+            <div style={{ 
+              display: 'flex', 
+              flexWrap: 'wrap', 
+              justifyContent: 'center', 
+              gap: '15px', 
+              marginTop: '10px' 
+            }}>
+              {job.badges && job.badges.length > 0 ? (
+                job.badges.map((badge) => (
+                  <div key={badge._id} style={{ 
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    width: '90px'
+                  }}>
+                    {badge.imageUrl ? (
+                      <img 
+                        src={badge.imageUrl} 
+                        alt={badge.title} 
+                        style={{ 
+                          width: '180px', 
+                          height: '170px', 
+                          borderRadius: '10px',
+                          objectFit: 'contain'
+                        }} 
+                      />
+                    ) : (
+                      <div style={{ 
+                        width: '90px', 
+                        height: '80px', 
+                        background: '#E6E6E6',
+                        borderRadius: '10px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '12px'
+                      }}>
+                        No Image
+                      </div>
+                    )}
+                    <p style={{ 
+                      fontSize: '12px', 
+                      textAlign: 'center',
+                      marginTop: '5px',
+                      fontWeight: '500'
+                    }}>
+                      {badge.title}
+                    </p>
+                  </div>
                 ))
               ) : (
-                <p>No specific requirements listed.</p>
+                <>
+                  <span style={{ width: '90px', height: '80px', background: '#E6E6E6', borderRadius: '10px' }}></span>
+                  <span style={{ width: '90px', height: '80px', background: '#E6E6E6', borderRadius: '10px' }}></span>
+                </>
               )}
-            </ul>
+            </div>
           </div>
-          <div className="text-center">
-            <Button variant="success" size="lg" onClick={handleApply}>
-              Apply Now
-            </Button>
-          </div>
-        </Card.Body>
-      </Card>
-    </div>
+        </div>
+      </div>
+      <ToastContainer position="top-right" />
+    </Container>
   );
 };
 

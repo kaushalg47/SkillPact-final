@@ -1,17 +1,18 @@
-import express from 'express';
+import express from "express";
 import {
-  registerCompany,
-  userCompany,
-  infoCompany,
-  updateCompany,
-} from '../controllers/companyController.js';
-import { protect } from '../middleware/authMiddleware.js';
+	infoCompany,
+	registerCompany,
+	updateCompany,
+	userCompany,
+} from "../controllers/companyController.js";
+import { protect } from "../middleware/authMiddleware.js";
+import approveCompany from "../middleware/companyApproveMiddleware.js";
 
 const router = express.Router();
 
-router.get('/reg-company',protect, registerCompany);
-router.route('/user-company',protect,userCompany)
-router.post('/info-company/:id', protect, infoCompany);
-router.post('/update-company',protect, updateCompany);
+router.get("/", protect, userCompany);
+router.post("/", protect, registerCompany);
+router.put("/:compId", protect, approveCompany, updateCompany);
+router.get("/:compId", infoCompany);
 
 export default router;
