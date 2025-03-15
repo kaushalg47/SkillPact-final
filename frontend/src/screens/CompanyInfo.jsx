@@ -111,68 +111,75 @@ const CompanyInfo = () => {
   }
 
   return (
-    <Form title="Company Information" onSubmit={handleSubmit}>
-      <FormGroup label="Company Name" required>
-        <FormInput
-          name="name"
-          value={formData.name}
-          onChange={handleChange}
-          placeholder="Enter company name"
-          required
-          readOnly={!isEditing}
-        />
-      </FormGroup>
-      
-      <FormGroup label="Website">
-        <FormInput
-          name="website"
-          value={formData.website}
-          onChange={handleChange}
-          placeholder="Enter company website"
-          readOnly={!isEditing}
-        />
-      </FormGroup>
-      
-      <FormGroup label="Location">
-        <FormInput
-          name="location"
-          value={formData.location}
-          onChange={handleChange}
-          placeholder="Enter company location"
-          readOnly={!isEditing}
-        />
-      </FormGroup>
-      
-      <FormGroup label="Description" fullWidth>
-        <FormTextarea
-          name="description"
-          value={formData.description}
-          onChange={handleChange}
-          placeholder="Enter company description"
-          readOnly={!isEditing}
-        />
-      </FormGroup>
-      
-      <FormActions>
-        <div>
-          {isEditing ? (
-            <>
-              <CancelButton onClick={handleCancel}>Cancel</CancelButton>
-              <SubmitButton>{isUpdating ? "Updating..." : "Save Changes"}</SubmitButton>
-            </>
-          ) : (
-            <EditButton onClick={() => setIsEditing(true)} />
-          )}
+    <>
+      {data.company.status === "pending" && (
+        <div style={{ color: "red", marginBottom: "1rem", backgroundColor: "#f8d7da", padding: "0.5rem", textAlign: "center" }}>
+          Company approval pending. Please wait for admin approval.
         </div>
+      )}
+      <Form title="Company Information" onSubmit={handleSubmit}>
+        <FormGroup label="Company Name" required>
+          <FormInput
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            placeholder="Enter company name"
+            required
+            readOnly={!isEditing}
+          />
+        </FormGroup>
         
-        {!isEditing && (
+        <FormGroup label="Website">
+          <FormInput
+            name="website"
+            value={formData.website}
+            onChange={handleChange}
+            placeholder="Enter company website"
+            readOnly={!isEditing}
+          />
+        </FormGroup>
+        
+        <FormGroup label="Location">
+          <FormInput
+            name="location"
+            value={formData.location}
+            onChange={handleChange}
+            placeholder="Enter company location"
+            readOnly={!isEditing}
+          />
+        </FormGroup>
+        
+        <FormGroup label="Description" fullWidth>
+          <FormTextarea
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            placeholder="Enter company description"
+            readOnly={!isEditing}
+          />
+        </FormGroup>
+        
+        <FormActions>
           <div>
-            <LinkButton to="/company-jobs">View Jobs</LinkButton>
-            <LinkButton to="/post-jobs">Post Jobs</LinkButton>
+            {isEditing ? (
+              <>
+                <CancelButton onClick={handleCancel}>Cancel</CancelButton>
+                <SubmitButton>{isUpdating ? "Updating..." : "Save Changes"}</SubmitButton>
+              </>
+            ) : (
+              <EditButton onClick={() => setIsEditing(true)} />
+            )}
           </div>
-        )}
-      </FormActions>
-    </Form>
+          
+          {!isEditing && (
+            <div>
+              <LinkButton to="/company-jobs">View Jobs</LinkButton>
+              <LinkButton to="/post-jobs">Post Jobs</LinkButton>
+            </div>
+          )}
+        </FormActions>
+      </Form>
+    </>
   );
 };
 

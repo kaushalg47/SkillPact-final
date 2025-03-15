@@ -1,5 +1,6 @@
 import { Navbar, Nav, Container, NavDropdown } from 'react-bootstrap';
-import { FaSignInAlt, FaSignOutAlt } from 'react-icons/fa';
+
+import { Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import { useSelector, useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -58,9 +59,7 @@ const Header = () => {
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
             <Nav className='ms-auto align-items-center' style={{ position: 'relative' }}>  {/* Added align-items-center */}
-              {userInfo ? (
-                <>
-                  <LinkContainer to='/jobs'>
+            <LinkContainer to='/jobs'>
                     <Nav.Link 
                       style={{
                         fontFamily: 'Inter',
@@ -88,6 +87,9 @@ const Header = () => {
                       Courses
                     </Nav.Link>
                   </LinkContainer>
+              {userInfo ? (
+                <>
+                  
                   <NavDropdown 
                     title={userInfo.name} 
                     id='username' 
@@ -116,12 +118,12 @@ const Header = () => {
                 <>
                   <LinkContainer to='/login'>
                     <Nav.Link>
-                      <FaSignInAlt /> Sign In
+                      <Button variant='primary'>Sign In</Button>
                     </Nav.Link>
                   </LinkContainer>
                   <LinkContainer to='/register'>
                     <Nav.Link>
-                      <FaSignOutAlt /> Sign Up
+                      Sign Up
                     </Nav.Link>
                   </LinkContainer>
                 </>

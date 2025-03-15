@@ -15,6 +15,18 @@ import badgeRoutes from "./routes/badgeRoutes.js";
 dotenv.config();
 const port = process.env.PORT || 8000;
 
+import cors from "cors";
+
+app.use(
+  cors({
+    origin: [],
+    credentials: true,
+  })
+);
+
+
+
+
 connectDB();
 
 const app = express();

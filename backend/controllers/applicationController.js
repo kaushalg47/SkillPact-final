@@ -117,7 +117,7 @@ const registeredApplicants = asyncHandler(async (req, res) => {
 		const jobId = req.params.id;
 		const application = await Application.find({ job: jobId }).sort({ createdAt: -1 }).populate({
 			path: "applicant",
-			select: "name email status",
+			select: "name email status badges",
 		});
 
 		if (!application) {

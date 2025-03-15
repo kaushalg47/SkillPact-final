@@ -1,5 +1,5 @@
 import express from "express";
-import { adminJobs, getJobs, infoJobs, postJobs, isEligible } from "../controllers/jobController.js";
+import { adminJobs, getJobs, infoJobs, postJobs, isEligible, deleteJob, toggleJobStatus } from "../controllers/jobController.js";
 import { protect } from "../middleware/authMiddleware.js";
 import approveCompany from "../middleware/companyApproveMiddleware.js";
 
@@ -10,6 +10,8 @@ router.get("/admin-jobs", protect, approveCompany, adminJobs);
 router.get("/", getJobs);
 router.get("/:jobId/eligibility", protect, isEligible);
 router.get("/:id", infoJobs);
+router.delete("/:id", deleteJob);
+router.put("/:id", toggleJobStatus);
 // Pending to be fixed
 
 router.post("/", protect, approveCompany, postJobs); // Protect the jobs.

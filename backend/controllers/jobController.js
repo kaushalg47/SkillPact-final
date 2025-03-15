@@ -68,6 +68,14 @@ const postJobs = asyncHandler(async (req, res) => {
 			});
 		}
 
+		const badgeIds = await Promise.all(
+      badges.map(async (badgeTitle) => {
+        const badge = await Badge.findOne({ title: badgeTitle });
+        if (!badge) throw new Error(`Badge "${badgeTitle}" not found`);
+        return badge._id;
+      })
+    );
+
 		if (!title || !description || !startsOn || !category || !stipend || !duration || !location || !position || !minqualification) {
 			return res.status(400).json({
 				message: "Something is missing",
@@ -88,7 +96,7 @@ const postJobs = asyncHandler(async (req, res) => {
 			if (badges && badges.length > 0) {
 				const badgeDocs = await Badge.find({ _id: { $in: badges } });
 				if (badgeDocs.length !== badges.length) {
-					return res.status(400).json({ message: "some badge" });
+					return res.status(400).json({ message: "selected badge not available" });
 				}
 			}
 		} catch (error) {
@@ -107,6 +115,7 @@ const postJobs = asyncHandler(async (req, res) => {
 			company, // Company is a required parameter in database
 			category,
 			startsOn,
+			badges: badgeIds,
 		});
 
 		job.save();
@@ -133,7 +142,6 @@ const infoJobs = asyncHandler(async (req, res) => {
 		})
 		.populate({
 			path: "company",
-			select: "name"
 		})
 		.populate({
 		  path: "badges",
@@ -165,7 +173,7 @@ const infoJobs = asyncHandler(async (req, res) => {
 const adminJobs = asyncHandler(async (req, res) => {
 	try {
 		const adminId = req.user._id;
-		const jobs = await Job.find({ createdby: adminId });
+		const jobs = await Job.find({ createdby: adminId }).populate({path: "badges", select: "title"});
 		if (!jobs) {
 			return res.status(404).json({
 				message: "Jobs not found.",
@@ -223,4 +231,100 @@ const isEligible = asyncHandler(async (req, res) => {
 	}
 });
 
-export { adminJobs, getJobs, infoJobs, isEligible, postJobs };
+
+
+// Toggle Job Active Status Controller
+const toggleJobStatus = asyncHandler(async (req, res) => {
+  try {
+    const jobId = req.params.id;
+		console.log(jobId);
+    const userId = req.user._id;
+		console.log(userId);
+
+    // Find the job by ID
+    const job = await Job.findById(jobId);
+
+    // Check if job exists
+    if (!job) {
+      return res.status(404).json({
+        message: "Job not found",
+        success: false,
+      });
+    } 
+
+    // Ensure the logged-in user is the creator of the job
+    if (job.createdby.toString() !== userId.toString()) {
+      return res.status(403).json({
+        message: "Unauthorized: Only the job creator can update this job",
+        success: false,
+      });
+    }
+
+    // Toggle the active status
+    job.active = !job.active;
+
+    // Save the updated job
+    await job.save();
+
+    return res.status(200).json({
+      message: `Job status updated to ${job.active ? "active" : "inactive"}`,
+      job,
+      success: true,
+    });
+  } catch (error) {
+    console.error(`Error updating job status: ${error.message}`);
+    res.status(500).json({
+      message: "Server error",
+      success: false,
+    });
+  }
+});
+
+
+
+
+// Delete Job Controller
+const deleteJob = asyncHandler(async (req, res) => {
+  try {
+    const id = req.params.id;
+    const userId = req.user._id;
+		console.log(id, userId);
+
+    // Find the job by ID
+    const job = await Job.findById(id);
+
+    // Check if job exists
+    if (!job) {
+      return res.status(404).json({
+        message: "Job not found",
+        success: false,
+      });
+    }
+
+    // Ensure the logged-in user is the creator of the job
+    if (job.createdby.toString() !== userId.toString()) {
+      return res.status(403).json({
+        message: "Unauthorized: Only the job creator can delete this job",
+        success: false,
+      });
+    }
+
+    // Delete the job
+    await job.deleteOne();
+
+    return res.status(200).json({
+      message: "Job deleted successfully",
+      success: true,
+    });
+  } catch (error) {
+    console.error(`Error deleting job: ${error.message}`);
+    res.status(500).json({
+      message: "Server error",
+      success: false,
+    });
+  }
+});
+
+
+
+export { adminJobs, getJobs, infoJobs, isEligible, postJobs, deleteJob, toggleJobStatus };

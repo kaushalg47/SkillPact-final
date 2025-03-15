@@ -8,6 +8,8 @@ const badgeSchema = new mongoose.Schema({
 			"Team Player",
 			"Innovative",
 			"Leadership",
+			"flutter",
+			"python"
 		],
 	},
 	imageUrl: {

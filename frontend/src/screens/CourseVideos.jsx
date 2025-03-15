@@ -33,12 +33,11 @@ const CourseVideos = () => {
       await fetch(`/api/course-progress/${courseId}/lecture/${lectureId}/view`, {
         method: 'POST',
       });
-      // Update progress after marking the lecture as viewed
       handleViewProgress();
     } catch (err) {
       console.error('Error updating progress:', err);
     }
-  }
+  };
 
   const handleViewProgress = async () => {
     try {
@@ -111,8 +110,9 @@ const CourseVideos = () => {
         {Array.isArray(lectures?.lectures) && lectures.lectures.map((video, index) => (
           <li 
             key={video._id} 
-            className={`list-group-item list-group-item-action ${index === currentVideo ? 'active' : ''} ${progress?.data?.progress.includes(video._id) ? 'text-muted' : ''}`} 
+            className={`list-group-item list-group-item-action ${index === currentVideo ? 'active' : ''} ${progress?.data?.progress.includes(video._id) ? 'bg-secondary text-light' : ''}`} 
             onClick={() => setCurrentVideo(index)}
+            style={{ cursor: 'pointer' }}
           >
             {video.lectureTitle}
           </li>
@@ -124,12 +124,13 @@ const CourseVideos = () => {
             <div className="modal-content">
               <div className="modal-body text-center">
                 <img 
-                  src={course?.course?.badges[0]?.imageUrl} // Ensure the first badge image URL is used
+                  src={course?.course?.badges[0]?.imageUrl} 
                   alt="Badge"
                   className="mb-3"
                   style={{ width: "100px", height: "100px" }}
                 />
                 <h4>Congrats on completing this course!</h4>
+                <button className="btn btn-primary mt-3" onClick={() => window.location.reload()}>Close</button>
               </div>
             </div>
           </div>

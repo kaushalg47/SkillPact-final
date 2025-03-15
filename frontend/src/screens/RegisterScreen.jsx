@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { useRegisterMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { toast } from 'react-toastify';
-import ErrorScreen from './ErrorScreen';
 
 const RegisterScreen = () => {
   const [name, setName] = useState('');
@@ -16,7 +15,7 @@ const RegisterScreen = () => {
   const [confirmPassword, setConfirmPassword] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [register, { isLoading, error }] = useRegisterMutation();
+  const [register, { isLoading }] = useRegisterMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -40,9 +39,6 @@ const RegisterScreen = () => {
     }
   };
 
-  if (error) {
-    return <ErrorScreen message="Registration failed. Please try again." navigateTo="/register" />;
-  }
 
   return (
     <FormContainer>
