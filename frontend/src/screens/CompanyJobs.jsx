@@ -2,7 +2,11 @@
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
-import { useAdminJobsQuery } from "../slices/jobsApiSlice";
+import { 
+  useAdminJobsQuery, 
+  useDeleteJobMutation, 
+  useToggleJobStatusMutation 
+} from "../slices/jobsApiSlice";
 import { toast } from "react-toastify";
 import Loader from "../components/Loader";
 import ErrorScreen from "../screens/ErrorScreen";
@@ -21,7 +25,10 @@ const CompanyJobs = () => {
   const [adminJobs, setAdminJobs] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
   const { userInfo: tempData } = useSelector((state) => state.auth);
-  const { data, isLoading, isError } = useAdminJobsQuery();
+
+  const { data, isLoading, isError, refetch } = useAdminJobsQuery();
+  const [deleteJob] = useDeleteJobMutation();
+  const [toggleJobStatus] = useToggleJobStatusMutation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -33,6 +40,30 @@ const CompanyJobs = () => {
       setAdminJobs(data.jobs);
     }
   }, [data]);
+
+  const handleDelete = async (id) => {
+    if (window.confirm("Are you sure you want to delete this job?")) {
+      try {
+        await deleteJob(id).unwrap();
+        toast.success("Job deleted successfully!");
+        refetch();
+      } catch (err) {
+        toast.error("Failed to delete job.");
+        console.error(err);
+      }
+    }
+  };
+
+  const handleToggleStatus = async (id) => {
+    try {
+      await toggleJobStatus(id).unwrap();
+      toast.success("Job status updated!");
+      refetch();
+    } catch (err) {
+      toast.error("Failed to toggle job status.");
+      console.error(err);
+    }
+  };
 
   const filteredJobs = adminJobs.filter((job) =>
     job.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -92,11 +123,10 @@ const CompanyJobs = () => {
                 <Card.Body className="d-flex justify-content-between align-items-center flex-md-row flex-column">
                   <div>
                     <h5 className="fw-bold mb-2">{job.title}</h5>
-                    <p className="text-muted mb-1">{job.company || "Unknown Company"}</p>
                     <p className="text-muted mb-2">{job.location || "Location not available"}</p>
                     <div className="d-flex gap-3 mb-2">
                       <small className="text-muted">🕒 {new Date(job.createdAt).toDateString()}</small>
-                      <small className="text-muted">⚡ Full-time</small>
+                      <small className="text-muted">👥 {job.applicants ? job.applicants.length : 0} Applicants</small>
                     </div>
                     <div>
                       {job.badges && job.badges.map((badge, index) => (
@@ -105,36 +135,41 @@ const CompanyJobs = () => {
                           bg="secondary" 
                           className="me-2"
                         >
-                          {badge}
+                          {badge.title}
                         </Badge>
                       ))}
                     </div>
                   </div>
-                  <Link 
-                    to={`/company-jobs/${job._id}`} 
-                    className="mt-3 mt-md-0 text-decoration-none"
-                  >
+
+                  {/* Buttons Section */}
+                  <div className="d-flex gap-3 mt-3 mt-md-0">
+                    <Link to={`/company-jobs/${job._id}`} className="text-decoration-none">
+                      <Button
+                        style={{
+                          background: "linear-gradient(to right, #ff7e5f, #feb47b)",
+                          border: "none",
+                          fontWeight: "600",
+                          transition: "all 0.3s ease"
+                        }}
+                      >
+                        View Applicants
+                      </Button>
+                    </Link>
+
                     <Button
-                      style={{
-                        background: "linear-gradient(to right, #ff7e5f, #feb47b)",
-                        border: "none",
-                        fontWeight: "600",
-                        transition: "all 0.3s ease"
-                      }}
-                      onMouseOver={(e) => {
-                        e.currentTarget.style.transform = "translateY(-2px)";
-                        e.currentTarget.style.boxShadow = "0 4px 12px rgba(255, 126, 95, 0.4)";
-                        e.currentTarget.style.background = "linear-gradient(to right, #ff6e4a, #ffa76b)";
-                      }}
-                      onMouseOut={(e) => {
-                        e.currentTarget.style.transform = "translateY(0)";
-                        e.currentTarget.style.boxShadow = "none";
-                        e.currentTarget.style.background = "linear-gradient(to right, #ff7e5f, #feb47b)";
-                      }}
+                      variant="danger"
+                      onClick={() => handleDelete(job._id)}
                     >
-                      View Applicants
+                      Delete
                     </Button>
-                  </Link>
+
+                    <Button
+                      variant={job.active ? "success" : "warning"}
+                      onClick={() => handleToggleStatus(job._id)}
+                    >
+                      {job.active ? "Deactivate" : "Activate"}
+                    </Button>
+                  </div>
                 </Card.Body>
               </Card>
             ))}

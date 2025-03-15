@@ -52,8 +52,9 @@ const JobScreen = () => {
 
   const filteredJobs = jobs.filter((job) =>
     (selectedCategories.length === 0 || selectedCategories.includes(job.category)) &&
-    job.title.toLowerCase().includes(filter.toLowerCase())
+    (job.title.toLowerCase().includes(filter.toLowerCase()) || job.company?.name.toLowerCase().includes(filter.toLowerCase()))
   );
+  
 
   const sortedJobs = [...filteredJobs].sort((a, b) => {
     if (sortOrder === 'latest') {

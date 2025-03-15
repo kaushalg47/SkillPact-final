@@ -7,14 +7,13 @@ import { useLoginMutation } from '../slices/usersApiSlice';
 import { setCredentials } from '../slices/authSlice';
 import { toast } from 'react-toastify';
 import Loader from '../components/Loader';
-import ErrorScreen from './ErrorScreen';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [login, { isLoading, error }] = useLoginMutation();
+  const [login, { isLoading }] = useLoginMutation();
   const { userInfo } = useSelector((state) => state.auth);
 
   useEffect(() => {
@@ -34,9 +33,7 @@ const LoginScreen = () => {
     }
   };
 
-  if (error) {
-    return <ErrorScreen message="Login failed. Please try again." navigateTo="/login" />;
-  }
+  
 
   return (
     <FormContainer>

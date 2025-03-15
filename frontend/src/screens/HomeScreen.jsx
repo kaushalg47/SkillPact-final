@@ -26,27 +26,34 @@ const HomeScreen = () => {
     setFilteredCourses(category === 'All' ? allCourses : allCourses.filter(course => course.category === category));
   };
 
-  const renderCard = (item, type) => (
-    <Col key={item._id} xs={12} sm={6} md={4} lg={3} className='p-3'>
-      <BootstrapCard
-        className='shadow-sm border-0 p-3 text-center h-100'
-        style={{ transition: 'transform 0.3s ease-in-out', cursor: 'pointer' }}
-        onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
-        onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
-        onClick={() => navigate(`/${type}/${item._id}`)}
-      >
-        <BootstrapCard.Body>
-          <h5 className='fw-semibold text-primary'>{item.title || item.courseTitle}</h5>
-          <p className='text-muted small'>{item.description || item.company?.name || 'No details provided'}</p>
-          <div className='d-flex justify-content-center gap-2 flex-wrap'>
-            {item.location && <span className='badge bg-light text-dark'>{item.location}</span>}
-            {item.duration && <span className='badge bg-light text-dark'>{item.duration}</span>}
-            {item.category && <span className='badge bg-light text-dark'>{item.category}</span>}
-          </div>
-        </BootstrapCard.Body>
-      </BootstrapCard>
-    </Col>
-  );
+  const renderCard = (item, type) => {
+    const truncateText = (text, maxLength) => {
+      if (text.length <= maxLength) return text;
+      return text.substring(0, maxLength) + '...';
+    };
+
+    return (
+      <Col key={item._id} xs={12} sm={6} md={4} lg={3} className='p-3'>
+        <BootstrapCard
+          className='shadow-sm border-0 p-3 text-center h-100'
+          style={{ transition: 'transform 0.3s ease-in-out', cursor: 'pointer' }}
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'}
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'}
+          onClick={() => navigate(`/${type}/${item._id}`)}
+        >
+          <BootstrapCard.Body>
+            <h5 className='fw-semibold text-primary'>{truncateText(item.title || item.courseTitle, 25)}</h5>
+            <p className='text-muted small'>{truncateText(item.description || item.company?.name || 'No details provided', 100)}</p>
+            <div className='d-flex justify-content-center gap-2 flex-wrap'>
+              {item.location && <span className='badge bg-light text-dark'>{item.location}</span>}
+              {item.duration && <span className='badge bg-light text-dark'>{item.duration}</span>}
+              {item.category && <span className='badge bg-light text-dark'>{item.category}</span>}
+            </div>
+          </BootstrapCard.Body>
+        </BootstrapCard>
+      </Col>
+    );
+  };
 
   const renderSection = (title, items, type) => (
     <Container className='my-5'>

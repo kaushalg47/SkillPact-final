@@ -3,17 +3,21 @@ import { Container } from 'react-bootstrap';
 import { useGetJobByIdQuery } from '../slices/jobsApiSlice';
 import { useApplyForJobMutation } from '../slices/applicationApiSlice';
 import { toast, ToastContainer } from 'react-toastify';
+import { useSelector} from 'react-redux';
 import 'react-toastify/dist/ReactToastify.css';
 import { useState, useEffect } from 'react';
 import Loader from '../components/Loader';
 import ErrorScreen from './ErrorScreen';
+import { FaMapMarkerAlt, FaBriefcase, FaGraduationCap } from "react-icons/fa";
 
 const JobDetailPage = () => {
+  const { userInfo } = useSelector((state) => state.auth);
   const { jobId } = useParams();
   const { data, error, isLoading, refetch } = useGetJobByIdQuery(jobId);
   const [applyForJob, { isLoading: isApplying }] = useApplyForJobMutation();
   const job = data?.job;
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -82,28 +86,41 @@ const JobDetailPage = () => {
                   <h2>{job.title}</h2>
                   <div style={{ marginTop: '10px' }}>
                     <p>
-                    <strong>{job.company?.name}</strong> | {job.category} 
+                      <strong>{job.company?.name}</strong> |  
+                      <span
+                        style={{
+                          padding: '4px 12px',
+                          borderRadius: '20px',
+                          backgroundColor: '#f0f0f0',
+                          display: 'inline-block',
+                          marginLeft: '5px',
+                        }}
+                      >
+                        {job.category}
+                      </span>
                     </p>
                   </div>
+
+
                   <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-              <p>📅 {new Date(job.startsOn).toLocaleDateString()}</p>
-              <p>💰 ₹ {job.stipend}</p>
+              <p><FaBriefcase color='blue'/> {job.position}</p>
+              <p><FaGraduationCap color='blue'/> {job.minqualification}</p>
             </div>
             <div style={{ marginTop: '10px' }}>
-              <p>📍 {job.location}</p>
+              <p><FaMapMarkerAlt /> {job.location}</p>
             </div>
             <hr style={{ margin: '20px 0', border: '1px solid #ddd' }} />
 
             <div style={{ marginTop: '10px', display: 'flex', gap: '10px' }}>
-              <p><strong>Minimum qualifications:</strong> {job.minqualification}</p>
-              <p><strong>Position:</strong> {job.position}</p>
+              <p><strong>Starts On:</strong> {new Date(job.startsOn).toLocaleDateString()}</p>
               <p><strong>Duration:</strong> {job.duration}</p>
+              <p><strong>Stipend:</strong> {job.stipend}</p>
             </div>
             <hr style={{ margin: '20px 0', border: '1px solid #ddd' }} />
 
             <div style={{ marginTop: '15px' }}>
               <h5>Description:</h5>
-              <p>{job.description}</p>
+              <p className="text-muted">{job.description}</p>
             </div>
           </div>
           <div style={{ 
@@ -130,8 +147,8 @@ const JobDetailPage = () => {
             /> */}
             <div style={{ display: 'flex', flexDirection: 'column' }}>
               <h3 style={{ fontSize: '22px', fontWeight: '600' }}>{job.company.name}</h3>
-              <p className='text-muted'>{job.company.website} | {job.company.location}</p>
-              <p>{job.company.description}</p>
+              <p><a href={job.company.website}>{job.company.website}</a> | <FaMapMarkerAlt /> {job.company.location}</p>
+              <p className='text-muted'>{job.company.description}</p>
             </div>
           </div>
         </div>
@@ -145,53 +162,63 @@ const JobDetailPage = () => {
           gap: '20px'
         }}>
           {/* Enroll and Eligible Card */}
-          <div style={{ 
-            background: '#FFFFFF',
-            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
-            borderRadius: '20px',
-            padding: '20px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            position: 'relative',
-            minHeight: '200px'
-          }}>
-            <p style={{ fontSize: '25px', fontWeight: '350', marginTop: '2px' }}>Click here to apply</p>
-            <button 
-              style={{
-                width: '210px',
-                height: '45px',
-                background: '#0000ff',
-                border: 'none',
-                borderRadius: '10px',
-                fontSize: '28px',
-                color: 'white',
-                cursor: 'pointer',
-                marginTop: '7px',
-              }} 
-              onClick={handleApply} 
-              disabled={isApplying}
-            >
-              {isApplying ? "Applying..." : "Enroll"}
-            </button>
-            
-            <div style={{
-              width: '130px',
-              height: '30px',
-              background: '#B9E4C2',
-              fontSize: '12px',
-              fontWeight: 'bold',
-              color: '#106516',
-              padding: '8px 15px',
-              borderRadius: '10px',
-              textAlign: 'center',
-              marginTop: '20px',
-            }}>
-              Eligible ✅
-            </div>
-          </div>
+                  <div style={{ 
+                  background: '#FFFFFF',
+                  boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+                  borderRadius: '20px',
+                  padding: '20px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  position: 'relative',
+                  minHeight: '200px'
+                  }}>
+                  {userInfo ? (
+                    <>
+                    <p style={{ fontSize: '20px', fontWeight: '400', textAlign: 'center' }}>Click here to apply</p>
+                    <button 
+                    style={{
+                    width: '210px',
+                    height: '45px',
+                    background: '#0000ff',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontSize: '28px',
+                    color: 'white',
+                    cursor: 'pointer',
+                    marginTop: '7px',
+                    }} 
+                    onClick={handleApply} 
+                    disabled={isApplying}
+                    >
+                    {isApplying ? "Applying..." : "Enroll"}
+                    </button>
+                    </>
+                  ) : (
+                    <>
+                    <p style={{ fontSize: '20px', fontWeight: '400', textAlign: 'center' }}>Login to apply</p>
+                    <button 
+                    style={{
+                    width: '210px',
+                    height: '45px',
+                    background: '#0000ff',
+                    border: 'none',
+                    borderRadius: '10px',
+                    fontSize: '28px',
+                    color: 'white',
+                    cursor: 'pointer',
+                    marginTop: '7px',
+                    }} 
+                    onClick={() => window.location.href = '/login'} 
+                    disabled={isApplying}
+                    >
+                    {"Login"}
+                    </button>
+                    </>
+                  )}
+                  </div>
 
-          {/* Badges Card */}
+                  {/* Badges Card */}
           <div style={{ 
             background: '#FFFFFF',
             boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
@@ -256,8 +283,7 @@ const JobDetailPage = () => {
                 ))
               ) : (
                 <>
-                  <span style={{ width: '90px', height: '80px', background: '#E6E6E6', borderRadius: '10px' }}></span>
-                  <span style={{ width: '90px', height: '80px', background: '#E6E6E6', borderRadius: '10px' }}></span>
+                  <span style={{}}><p>no badges required</p></span>
                 </>
               )}
             </div>
