@@ -17,12 +17,7 @@ const port = process.env.PORT || 8000;
 
 import cors from "cors";
 
-app.use(
-  cors({
-    origin: [],
-    credentials: true,
-  })
-);
+
 
 
 
@@ -30,6 +25,13 @@ app.use(
 connectDB();
 
 const app = express();
+
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://skill-pact-final.vercel.app/"],
+    credentials: true,
+  })
+);
 
 // Extra DEV MIDDLEWARE FOR API TESTING
 app.use((req, res, next) => {
