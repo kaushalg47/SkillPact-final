@@ -28,7 +28,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://skill-pact-final.vercel.app/"],
+    origin: ["http://localhost:3000", "https://skill-pact-final.vercel.app/", "https://skillpact.onrender.com"],
     credentials: true,
   })
 );
