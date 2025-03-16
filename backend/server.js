@@ -28,8 +28,9 @@ const app = express();
 
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://skill-pact-final.vercel.app/", "https://skillpact.onrender.com"],
-    credentials: true,
+    origin: "https://skill-pact-final.vercel.app",
+    methods:"GET,POST,DELETE,PUT,PATCH",	  
+    credentials: true
   })
 );
 
@@ -39,7 +40,10 @@ app.use((req, res, next) => {
 	next();
 });
 
+
+
 app.use(express.json());
+app.options("*", cors());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
