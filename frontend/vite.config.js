@@ -10,7 +10,7 @@ export default defineConfig({
         target: "https://skillpact.onrender.com",
         changeOrigin: true,
         secure: false, // In case of SSL issues (optional)
-        rewrite: (path) => path.replace(/^\/api/, ""), // Ensure paths are clean
+        rewrite: (path) => path.replace(/^\/api/, "/api"), // Ensure paths are clean
       },
     },
   },
