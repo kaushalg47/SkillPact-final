@@ -28,7 +28,8 @@ app.use(
   cors({
     origin: "https://skill-pact-final.vercel.app",
     methods: ["GET", "POST", "DELETE", "PUT", "PATCH"],
-    credentials: true, // Allows cookies/sessions
+    credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"]// Allows cookies/sessions
   })
 );
 
