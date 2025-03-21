@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Form, Button } from 'react-bootstrap';
+import { Form, Button, InputGroup } from 'react-bootstrap';
 import { useDispatch, useSelector } from 'react-redux';
 import FormContainer from '../components/FormContainer';
 import { toast } from 'react-toastify';
@@ -11,6 +11,8 @@ import ErrorScreen from './ErrorScreen';
 const ProfileScreen = () => {
   const [email, setEmail] = useState('');
   const [name, setName] = useState('');
+  const [phone, setPhone] = useState('');
+  const [resume, setResume] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const dispatch = useDispatch();
@@ -20,7 +22,9 @@ const ProfileScreen = () => {
   useEffect(() => {
     setName(userInfo.name);
     setEmail(userInfo.email);
-  }, [userInfo.email, userInfo.name]);
+    setPhone(userInfo.phone);
+    setResume(userInfo.resume);
+  }, [userInfo.email, userInfo.name, userInfo.phone, userInfo.resume]);
 
   const submitHandler = async (e) => {
     e.preventDefault();
@@ -32,7 +36,9 @@ const ProfileScreen = () => {
           _id: userInfo._id,
           name,
           email,
+          phone,
           password,
+          resume
         }).unwrap();
         console.log(res);
         dispatch(setCredentials(res));
@@ -61,6 +67,24 @@ const ProfileScreen = () => {
           ></Form.Control>
         </Form.Group>
 
+        <Form.Group className="my-2" controlId="phone">
+          <Form.Label>Phone Number</Form.Label>
+          <InputGroup>
+            <InputGroup.Text>+91</InputGroup.Text>
+            <Form.Control
+              type="tel"
+              placeholder="Enter phone number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              pattern="[0-9]{10}"
+              isInvalid={phone && !/^\d{10}$/.test(phone)}
+            />
+            <Form.Control.Feedback type="invalid">
+              Please enter a valid 10-digit phone number.
+            </Form.Control.Feedback>
+          </InputGroup>
+        </Form.Group>
+
         <Form.Group className='my-2' controlId='email'>
           <Form.Label>Email Address</Form.Label>
           <Form.Control
@@ -68,6 +92,16 @@ const ProfileScreen = () => {
             placeholder='Enter email'
             value={email}
             onChange={(e) => setEmail(e.target.value)}
+          ></Form.Control>
+        </Form.Group>
+
+        <Form.Group className='my-2' controlId='resume'>
+          <Form.Label>Resume Link</Form.Label>
+          <Form.Control
+            type='text'
+            placeholder='Enter Resume Link'
+            value={resume}
+            onChange={(e) => setResume(e.target.value)}
           ></Form.Control>
         </Form.Group>
 

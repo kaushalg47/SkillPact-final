@@ -47,15 +47,21 @@ const Header = () => {
               style={{
                 height: '45px',
                 marginLeft: '36px',
-                fontFamily: 'Inter',
-                fontWeight: '800',
-                fontSize: '35px',
-                lineHeight: '42.36px',
-                color: '#0000FF'
+                display: 'flex',
+                alignItems: 'center'
               }}>
-              <p className='text-bold color-blue'>SkillPact</p>
+              <img 
+                src='https://res.cloudinary.com/dxrwo0s8o/image/upload/v1742322499/skillpact-logo_igw28i.jpg' 
+                alt='SkillPact Logo'
+                style={{
+                  height: '35px',
+                  width: 'auto',
+                  objectFit: 'contain'
+                }}
+              />
             </Navbar.Brand>
           </LinkContainer>
+
           <Navbar.Toggle aria-controls='basic-navbar-nav' />
           <Navbar.Collapse id='basic-navbar-nav'>
             <Nav className='ms-auto align-items-center' style={{ position: 'relative' }}>  {/* Added align-items-center */}
@@ -90,29 +96,37 @@ const Header = () => {
               {userInfo ? (
                 <>
                   
-                  <NavDropdown 
-                    title={userInfo.name} 
-                    id='username' 
-                    style={{
-                      fontFamily: 'Inter',
-                      fontStyle: 'normal',
-                      fontWeight: '400',
-                      fontSize: '20px',
-                      lineHeight: '34px',
-                      color: '#000000',
-                      marginRight: '20px'  // Using margin instead of absolute positioning
-                    }}>
-                    
-                    <LinkContainer to='/profile'>
+                  <NavDropdown
+                    title={
+                      <span
+                        style={{
+                          fontFamily: "Poppins",
+                          fontStyle: "normal",
+                          fontWeight: "400",
+                          fontSize: "20px",
+                          lineHeight: "34px",
+                          color: "#007BFF", // Blue color works now!
+                          marginRight: "2px",
+                          cursor: "pointer",
+                          textDecoration: "none",
+                        }}
+                      >
+                        {userInfo.name}
+                      </span>
+                    }
+                    id="username"
+                  >
+                    <LinkContainer to="/profile">
                       <NavDropdown.Item>Profile</NavDropdown.Item>
                     </LinkContainer>
                     {userInfo.company && (
-                      <LinkContainer to='/company-info'>
+                      <LinkContainer to="/company-info">
                         <NavDropdown.Item>Manage Company</NavDropdown.Item>
                       </LinkContainer>
-                    )}  
+                    )}
                     <NavDropdown.Item onClick={logoutHandler}>Logout</NavDropdown.Item>
                   </NavDropdown>
+
                 </>
               ) : (
                 <>

@@ -1,7 +1,7 @@
 import { useGetJobsQuery } from '../slices/jobsApiSlice';
 import { useGetCoursesQuery } from '../slices/courseApiSlice';
 import { useNavigate } from 'react-router-dom';
-import { Container, Row, Col, Button, Card as BootstrapCard } from 'react-bootstrap';
+import { Container, Row, Col, Button, Card as BootstrapCard, Carousel, Card } from 'react-bootstrap';
 import { useState,useEffect,useMemo } from 'react';
 
 const HomeScreen = () => {
@@ -66,11 +66,11 @@ const HomeScreen = () => {
 
   return (
     <div style={{ fontFamily: 'Poppins, sans-serif', backgroundColor: '#f8f9fa' }}>
-      <section className='bg-primary text-white py-5 d-flex align-items-center justify-content-center' style={{ minHeight: '400px' }}>
+      <section className='bg-white text-primary py-5 d-flex align-items-center justify-content-center' style={{ minHeight: '400px' }}>
         <div>
           <h1 className='fw-bold display-4'>Explore Internships & Courses</h1>
-          <p className='fs-5 mt-3'>Find the best opportunities to enhance your career.</p>
-          <Button variant='light' size='lg' className='fw-bold mt-3' onClick={() => navigate('/explore')}>
+          <p className='fs-5 mt-3 text-black'>Find the best opportunities to enhance your career.</p>
+          <Button variant='light' size='lg' className='fw-bold mt-3 bg-primary text-white' onClick={() => navigate('/')}>
             Get Started
           </Button>
         </div>
@@ -82,16 +82,19 @@ const HomeScreen = () => {
         />
       </section>
 
-      <Container fluid className='my-5'>
-        <div className='text-center p-5 rounded' style={{ background: 'linear-gradient(to right, #1a1a1a, #333)', color: 'white' }}>
+      {/* <Container fluid className='my-5'>
+        <div className='text-center p-5 rounded' style={{ background: 'linear-gradient(to right,rgb(66, 63, 165), #333)', color: 'white' }}>
           <h3 className='fw-bold mb-3'>Exclusive ₹50 Lakh Scholarship Opportunity</h3>
           <p className='fs-5'>Unlock a scholarship pool available for students.</p>
           <Button variant='light' size='lg' className='fw-bold' onClick={() => navigate('/scholarships')}>
             Know More
           </Button>
         </div>
-      </Container>
+      </Container> */}
 
+      
+
+      {renderSection('Featured Jobs', jobs.slice(0, 8), 'job-info')}
       <Container className='my-5'>
         <h2 className='text-center text-dark fw-bold mb-4' style={{ fontSize: '2rem' }}>Trending Courses</h2>
         <div className='d-flex justify-content-center gap-3 mb-4 flex-wrap'>
@@ -105,13 +108,31 @@ const HomeScreen = () => {
             </Button>
           ))}
         </div>
-        {renderSection('Trending Courses', filteredCourses, 'courses')}
+        {renderSection('', filteredCourses, 'courses')}
       </Container>
 
-      {renderSection('Featured Jobs', jobs.slice(0, 8), 'job-info')}
+      <Container className="my-5">
+        <h2 className="text-center fw-bold mb-4">What Our Users Say</h2>
+        <Carousel fade className="shadow-sm">
+          {[
+            { quote: "Best platform for internships!", user: "John Doe" },
+            { quote: "Helped me land my first job!", user: "Jane Smith" },
+            { quote: "Courses are high quality.", user: "Chris Johnson" }
+          ].map((testimonial, index) => (
+            <Carousel.Item key={index}>
+              <Card className="text-center border-0">
+                <Card.Body>
+                  <p className="text-muted fs-5 fst-italic">{testimonial.quote}</p>
+                  <h6 className="fw-bold">- {testimonial.user}</h6>
+                </Card.Body>
+              </Card>
+            </Carousel.Item>
+          ))}
+        </Carousel>
+      </Container>
 
       <Container fluid className='my-5'>
-        <div className='text-center p-5 rounded' style={{ background: 'linear-gradient(to right, #1a1a1a, #333)', color: 'white' }}>
+        <div className='text-center p-5 rounded' style={{ background: 'linear-gradient(to right,rgb(81, 104, 194), #333)', color: 'white' }}>
           <h3 className='fw-bold mb-3'>Want to post jobs and hire skilled workforce?</h3>
           <p className='fs-5'>Register your company soon!</p>
           <Button variant='light' size='lg' className='fw-bold' onClick={() => navigate('/create-company')}>
@@ -119,6 +140,7 @@ const HomeScreen = () => {
           </Button>
         </div>
       </Container>
+      
     </div>
   );
 };

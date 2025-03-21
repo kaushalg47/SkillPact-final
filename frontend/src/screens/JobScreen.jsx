@@ -103,23 +103,26 @@ const JobScreen = () => {
 
         <div className="jobs-grid">
           {currentJobs.length > 0 ? (
-            currentJobs.map((job) => (
-              <Card
-                key={job._id}
-                className="job-card-custom"
-                title={job.title}
-                role={job.position || 'Role Not Specified'}
-                location={job.location || 'Location Not Specified'}
-                company={job.company?.name || 'Company Not Specified'}
-                duration={job.duration || 'Duration Not Specified'}
-                startsOn={job.startsOn || 'Start Date Not Specified'}
-                onClick={() => navigate(`/job-info/${job._id}`)}
-              />
-            ))
+            currentJobs
+              .filter((job) => job.active) // Ensure only active jobs are shown
+              .map((job) => (
+                <Card
+                  key={job._id}
+                  className="job-card-custom"
+                  title={job.title}
+                  role={job.position || "Role Not Specified"}
+                  location={job.location || "Location Not Specified"}
+                  company={job.company?.name || "Company Not Specified"}
+                  duration={job.duration || "Duration Not Specified"}
+                  startsOn={job.startsOn || "Start Date Not Specified"}
+                  onClick={() => navigate(`/job-info/${job._id}`)}
+                />
+              ))
           ) : (
             <div className="no-jobs-message">No job records found.</div>
           )}
-        </div>
+        </div>;
+
 
         {totalPages > 1 && (
           <div className="d-flex justify-content-center mt-4">

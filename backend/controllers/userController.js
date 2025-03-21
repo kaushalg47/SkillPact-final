@@ -17,6 +17,8 @@ const authUser = asyncHandler(async (req, res) => {
 			_id: user._id,
 			name: user.name,
 			email: user.email,
+			phone: user.phone,
+			resume: user.resume,
 			company: user.company,
 		});
 	} else {
@@ -29,7 +31,7 @@ const authUser = asyncHandler(async (req, res) => {
 // @route   POST /api/users
 // @access  Public
 const registerUser = asyncHandler(async (req, res) => {
-	const { name, email, password } = req.body;
+	const { name, email, password, phone } = req.body;
 
 	const userExists = await User.findOne({ email });
 
@@ -42,6 +44,7 @@ const registerUser = asyncHandler(async (req, res) => {
 		name,
 		email,
 		password,
+		phone,
 	});
 
 	if (user) {
@@ -51,6 +54,7 @@ const registerUser = asyncHandler(async (req, res) => {
 			_id: user._id,
 			name: user.name,
 			email: user.email,
+			phone: user.phone,
 		});
 	} else {
 		res.status(400);
@@ -73,7 +77,7 @@ const logoutUser = (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private
 const getUserProfile = asyncHandler(async (req, res) => {
-	const user = await User.findById(req.user._id).populate("badges");
+	const user = await User.findById(req.user._id).populate("badges").populate({path:"company", select: "name"});
 
 	if (user) {
 		res.json({
@@ -81,6 +85,7 @@ const getUserProfile = asyncHandler(async (req, res) => {
 			name: user.name,
 			email: user.email,
 			badges: user.badges,
+			resume: user.resume,
 			company: user.company,
 		});
 	} else {
@@ -119,6 +124,8 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 	if (user) {
 		user.name = req.body.name || user.name;
 		user.email = req.body.email || user.email;
+		user.phone = req.body.phone || user.phone;
+		user.resume = req.body.resume || user.resume;
 
 		if (req.body.password) {
 			user.password = req.body.password;
@@ -129,7 +136,9 @@ const updateUserProfile = asyncHandler(async (req, res) => {
 		res.json({
 			_id: updatedUser._id,
 			name: updatedUser.name,
+			phone: updatedUser.phone,
 			email: updatedUser.email,
+			resume: updatedUser.resume,
 		});
 	} else {
 		res.status(404);

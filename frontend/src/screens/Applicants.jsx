@@ -135,11 +135,11 @@ const Applicants = () => {
                     </Row>
                   )}
 
-                  {data.resume && (
+                  {data.applicant.resume && (
                     <Row className="mb-2">
                       <Col xs={12} md={3} className="fw-medium text-muted">Resume:</Col>
                       <Col xs={12} md={9}>
-                        <a href={data.resume} target="_blank" rel="noopener noreferrer" className="text-primary fw-medium text-decoration-none">
+                        <a href={data.applicant.resume} target="_blank" rel="noopener noreferrer" className="text-primary fw-medium text-decoration-none">
                           View Resume
                         </a>
                       </Col>

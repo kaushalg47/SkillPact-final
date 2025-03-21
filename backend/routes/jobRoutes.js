@@ -10,8 +10,8 @@ router.get("/admin-jobs", protect, approveCompany, adminJobs);
 router.get("/", getJobs);
 router.get("/:jobId/eligibility", protect, isEligible);
 router.get("/:id", infoJobs);
-router.delete("/:id", deleteJob);
-router.put("/:id", toggleJobStatus);
+router.delete("/:id", protect, deleteJob);
+router.put("/:id", protect, toggleJobStatus);
 // Pending to be fixed
 
 router.post("/", protect, approveCompany, postJobs); // Protect the jobs.

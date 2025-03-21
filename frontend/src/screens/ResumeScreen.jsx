@@ -5,6 +5,7 @@ import { useGetUserApplicationsQuery } from "../slices/applicationApiSlice";
 import { useGetUserProfileQuery } from "../slices/usersApiSlice";
 import { Link } from "react-router-dom";
 import Loader from '../components/Loader';
+import { Badge } from "react-bootstrap";
 import ErrorScreen from './ErrorScreen';
 import { Copy } from "lucide-react";
 const ResumeScreen = () => {
@@ -24,7 +25,7 @@ const ResumeScreen = () => {
 	const { data: purchasedCourses, error: purchasedCoursesError, isLoading: purchasedCoursesLoading } = useGetAllPurchasedCoursesQuery();
 
 	const displayLinkCode = `/profile/${userInfo?.name}`;
-	const linkCode = `http://localhost:3000/profile/${userInfo?._id}`;
+	const linkCode = `https://skillpact.co.in/profile/${userInfo?._id}`;
   const [copied, setCopied] = useState(false);
 
   const copyToClipboard = () => {
@@ -68,13 +69,32 @@ const ResumeScreen = () => {
 			</div>
 		);
 
+		const getStatusVariant = (status) => {
+			switch (status) {
+				case "pending":
+					return "warning";
+				case "accepted":
+					return "success";
+				case "rejected":
+					return "danger";
+				default:
+					return "secondary";
+			}
+		};
+
 	return (
 		<div className="container py-4">
+			{!userInfo?.resume && (
+				<div className="mb-4 alert alert-danger text-center" role="alert">
+					Please update your resume through Edit Profile
+				</div>
+			)}
+
 			<div className="row mb-4">
 				<div className="col-md-4">
 					<div className="card shadow-sm h-100">
 						<div className="card-body">
-							<h4 className="card-title">{name}</h4>
+							<h4 className="card-title text-primary">{name}</h4>
 							<p className="text-muted">{userInfo?.email || "No bio available"}</p>
 							<center>
 								<div className="d-flex align-items-center justify-content-center">
@@ -176,8 +196,14 @@ const ResumeScreen = () => {
 								<div className="card shadow-sm">
 									<div className="card-body">
 										<h6 className="card-title">{application.job?.title || "N/A"}</h6>
-										<p className="text-muted small">Company: {application.job?.company || "N/A"}</p>
-										<p className="text-muted small">Status: {application.status}</p>
+										<p className="text-muted small">Company: {application.job?.company.name || "N/A"}</p>
+										<p className="text-muted small">
+											Status:{" "}
+											<Badge bg={getStatusVariant(application.status)}>
+												{application.status}
+											</Badge>
+										</p>
+
 									</div>
 								</div>
 							</div>

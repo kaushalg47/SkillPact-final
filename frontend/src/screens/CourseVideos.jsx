@@ -114,7 +114,7 @@ const CourseVideos = () => {
             onClick={() => setCurrentVideo(index)}
             style={{ cursor: 'pointer' }}
           >
-            {video.lectureTitle}
+            {video.lectureTitle} {progress?.data?.progress.includes(video._id) && <span className="text-success">✅</span>}
           </li>
         ))}
       </ul>

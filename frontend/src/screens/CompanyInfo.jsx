@@ -2,22 +2,22 @@ import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { 
-  useGetUserCompanyInfoQuery, 
-  useUpdateCompanyMutation 
+import {
+  useGetUserCompanyInfoQuery,
+  useUpdateCompanyMutation,
 } from "../slices/companyApiSlice";
-import Form, { 
-  FormGroup, 
-  FormInput, 
-  FormTextarea, 
-  FormActions, 
+import Form, {
+  FormGroup,
+  FormInput,
+  FormTextarea,
+  FormActions,
   SubmitButton,
   EditButton,
   CancelButton,
-  LinkButton
 } from "../components/Form";
 import Loader from "../components/Loader";
 import ErrorScreen from "../screens/ErrorScreen";
+
 const CompanyInfo = () => {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState({
@@ -29,12 +29,14 @@ const CompanyInfo = () => {
 
   let { userInfo: tempData } = useSelector((state) => state.auth);
   const navigate = useNavigate();
-  
-  const { data, isLoading, refetch } = useGetUserCompanyInfoQuery(tempData?._id, { 
-    skip: !tempData 
-  });
-  
-  const [updateCompany, { isLoading: isUpdating }] = useUpdateCompanyMutation();
+
+  const { data, isLoading, refetch } = useGetUserCompanyInfoQuery(
+    tempData?._id,
+    { skip: !tempData }
+  );
+
+  const [updateCompany, { isLoading: isUpdating }] =
+    useUpdateCompanyMutation();
 
   // Check authentication
   useEffect(() => {
@@ -63,32 +65,31 @@ const CompanyInfo = () => {
     });
   };
 
-	const handleSubmit = async (e) => {
-		e.preventDefault();
-	
-		if (!data || !data.company || !data.company._id) {
-		toast.error("Company information is missing.");
-		console.error("Error: Missing company ID", data);
-		return;
-		}
-	
-		try {
-		console.log("Updating company with ID:", data.company._id);
-	
-		await updateCompany({
-			compId: data.company._id,
-			data: { companyInfo: formData },
-		}).unwrap();
-	
-		toast.success("Company information updated successfully");
-		setIsEditing(false);
-		refetch(); // Refresh the data after update
-		} catch (err) {
-		console.error("Update error:", err);
-		toast.error(err?.data?.message || err.error);
-		}
-	};
-  
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    if (!data || !data.company || !data.company._id) {
+      toast.error("Company information is missing.");
+      console.error("Error: Missing company ID", data);
+      return;
+    }
+
+    try {
+      console.log("Updating company with ID:", data.company._id);
+
+      await updateCompany({
+        compId: data.company._id,
+        data: { companyInfo: formData },
+      }).unwrap();
+
+      toast.success("Company information updated successfully");
+      setIsEditing(false);
+      refetch(); // Refresh the data after update
+    } catch (err) {
+      console.error("Update error:", err);
+      toast.error(err?.data?.message || err.error);
+    }
+  };
 
   const handleCancel = () => {
     if (data && data.company) {
@@ -107,13 +108,26 @@ const CompanyInfo = () => {
   }
 
   if (!data || !data.company) {
-    return <ErrorScreen message="Company profile not found or not yet created." navigateTo="/company-register" />;
+    return (
+      <ErrorScreen
+        message="Company profile not found or not yet created."
+        navigateTo="/company-register"
+      />
+    );
   }
 
   return (
     <>
       {data.company.status === "pending" && (
-        <div style={{ color: "red", marginBottom: "1rem", backgroundColor: "#f8d7da", padding: "0.5rem", textAlign: "center" }}>
+        <div
+          style={{
+            color: "red",
+            marginBottom: "1rem",
+            backgroundColor: "#f8d7da",
+            padding: "0.5rem",
+            textAlign: "center",
+          }}
+        >
           Company approval pending. Please wait for admin approval.
         </div>
       )}
@@ -128,7 +142,7 @@ const CompanyInfo = () => {
             readOnly={!isEditing}
           />
         </FormGroup>
-        
+
         <FormGroup label="Website">
           <FormInput
             name="website"
@@ -138,7 +152,7 @@ const CompanyInfo = () => {
             readOnly={!isEditing}
           />
         </FormGroup>
-        
+
         <FormGroup label="Location">
           <FormInput
             name="location"
@@ -148,7 +162,7 @@ const CompanyInfo = () => {
             readOnly={!isEditing}
           />
         </FormGroup>
-        
+
         <FormGroup label="Description" fullWidth>
           <FormTextarea
             name="description"
@@ -158,7 +172,7 @@ const CompanyInfo = () => {
             readOnly={!isEditing}
           />
         </FormGroup>
-        
+
         <FormActions>
           <div>
             {isEditing ? (
@@ -170,11 +184,24 @@ const CompanyInfo = () => {
               <EditButton onClick={() => setIsEditing(true)} />
             )}
           </div>
-          
+
+          {/* Buttons now styled to match 'Edit Company' */}
           {!isEditing && (
             <div>
-              <LinkButton to="/company-jobs">View Jobs</LinkButton>
-              <LinkButton to="/post-jobs">Post Jobs</LinkButton>
+              <button
+                className="btn btn-primary mx-2 px-4 py-2 fw-bold"
+                onClick={() => navigate("/company-jobs")}
+                style={{ minWidth: "150px" }}
+              >
+                View Jobs
+              </button>
+              <button
+                className="btn btn-primary mx-2 px-4 py-2 fw-bold"
+                onClick={() => navigate("/post-jobs")}
+                style={{ minWidth: "150px" }}
+              >
+                Post Jobs
+              </button>
             </div>
           )}
         </FormActions>

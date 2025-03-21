@@ -126,7 +126,7 @@ const CompanyJobs = () => {
                     <p className="text-muted mb-2">{job.location || "Location not available"}</p>
                     <div className="d-flex gap-3 mb-2">
                       <small className="text-muted">🕒 {new Date(job.createdAt).toDateString()}</small>
-                      <small className="text-muted">👥 {job.applicants ? job.applicants.length : 0} Applicants</small>
+                      {/* <small className="text-muted">👥 {job.applicants ? job.applicants.length : 0} Applicants</small> */}
                     </div>
                     <div>
                       {job.badges && job.badges.map((badge, index) => (

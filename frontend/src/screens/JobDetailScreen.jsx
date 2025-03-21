@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Container } from 'react-bootstrap';
 import { useGetJobByIdQuery } from '../slices/jobsApiSlice';
 import { useApplyForJobMutation } from '../slices/applicationApiSlice';
@@ -16,6 +16,7 @@ const JobDetailPage = () => {
   const { data, error, isLoading, refetch } = useGetJobByIdQuery(jobId);
   const [applyForJob, { isLoading: isApplying }] = useApplyForJobMutation();
   const job = data?.job;
+  const navigate = useNavigate();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   
 
@@ -209,7 +210,7 @@ const JobDetailPage = () => {
                     cursor: 'pointer',
                     marginTop: '7px',
                     }} 
-                    onClick={() => window.location.href = '/login'} 
+                    onClick={() => navigate('/login')}
                     disabled={isApplying}
                     >
                     {"Login"}

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Form, Button, Row, Col } from 'react-bootstrap';
+import { Form, Button, Row, Col, InputGroup } from 'react-bootstrap';
 import FormContainer from '../components/FormContainer';
 import Loader from '../components/Loader';
 import { Link, useNavigate } from 'react-router-dom';
@@ -11,6 +11,7 @@ import { toast } from 'react-toastify';
 const RegisterScreen = () => {
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const dispatch = useDispatch();
@@ -30,7 +31,7 @@ const RegisterScreen = () => {
       toast.error('Passwords do not match');
     } else {
       try {
-        const res = await register({ name, email, password }).unwrap();
+        const res = await register({ name, email, password, phone }).unwrap();
         dispatch(setCredentials({ ...res }));
         navigate('/');
       } catch (err) {
@@ -52,6 +53,24 @@ const RegisterScreen = () => {
             value={name}
             onChange={(e) => setName(e.target.value)}
           ></Form.Control>
+        </Form.Group>
+
+        <Form.Group className="my-2" controlId="phone">
+          <Form.Label>Phone Number</Form.Label>
+          <InputGroup>
+            <InputGroup.Text>+91</InputGroup.Text>
+            <Form.Control
+              type="tel"
+              placeholder="Enter phone number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              pattern="[0-9]{10}"
+              isInvalid={phone && !/^\d{10}$/.test(phone)}
+            />
+            <Form.Control.Feedback type="invalid">
+              Please enter a valid 10-digit phone number.
+            </Form.Control.Feedback>
+          </InputGroup>
         </Form.Group>
 
         <Form.Group className='my-2' controlId='email'>
