@@ -148,12 +148,19 @@ const statusUpdateApplication = asyncHandler(async (req, res) => {
 		}
 
 		// find the application by application id
-		const application = await Application.findOne({ _id: applicationId });
+		const application = await Application.findOne({ _id: applicationId }).populate("job");
 		if (!application) {
 			return res.status(404).json({
 				message: "Application not found.",
 				success: false,
 			});
+		}
+
+		if (application.job.createdby.toString() !== req.user._id.toString()) {
+			res.status(401).json({
+				message: "Unauthorized",
+				success: false,
+			})
 		}
 
 		// update the status
