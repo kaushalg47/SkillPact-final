@@ -14,9 +14,15 @@ import {
 	togglePublishCourse,
 } from "../controllers/course.controller.js";
 import { protect } from "../middleware/authMiddleware.js";
+import { isCourseOwner } from "../middleware/authorization.middleware.js";
 import { courseExists } from "../middleware/courseExists.middleware.js";
 import { lectureExists } from "../middleware/lectureExists.middleware.js";
-import { validateCourse, validateLecture, validateCourseUpdate, validateLectureUpdate } from "../middleware/schemaValidationMiddleware.js";
+import {
+	validateCourse,
+	validateCourseUpdate,
+	validateLecture,
+	validateLectureUpdate,
+} from "../middleware/schemaValidationMiddleware.js";
 import upload from "../utils/multer.js";
 
 const router = express.Router();
@@ -35,28 +41,50 @@ router.get("/published-courses", getPublishedCourse);
 router.get("/", protect, getCreatorCourses);
 
 // Route to edit a course by its ID with an uploaded thumbnail
-router.put("/:courseId", protect, courseExists, validateCourseUpdate, upload.single("courseThumbnail"), editCourse);
+router.put(
+	"/:courseId",
+	protect,
+	courseExists,
+	validateCourseUpdate,
+	isCourseOwner,
+	upload.single("courseThumbnail"),
+	editCourse
+);
 
 // Route to get a course by its ID
 router.get("/:courseId", protect, courseExists, getCourseById);
 
 // Route to toggle the publication status of a course
-router.patch("/:courseId", protect, courseExists, togglePublishCourse);
+router.patch("/:courseId", protect, courseExists, isCourseOwner, togglePublishCourse);
 
 // Route to create a new lecture for a specific course
-router.post("/:courseId/lecture", protect, courseExists, validateLecture, createLecture);
+router.post("/:courseId/lecture", protect, courseExists, isCourseOwner, validateLecture, createLecture);
 
 // Route to get lectures for a specific course
 router.get("/:courseId/lecture", protect, courseExists, getCourseLecture);
 
 // Route to edit a specific lecture by its ID
-router.put("/:courseId/lecture/:lectureId", protect, lectureExists, validateLectureUpdate, editLecture);
+router.put(
+	"/:courseId/lecture/:lectureId",
+	protect,
+	courseExists,
+	lectureExists,
+	validateLectureUpdate,
+	isCourseOwner,
+	editLecture
+);
 
 // Route to remove a specific lecture by its ID
-router.delete("/:courseId/lecture/:lectureId", protect, lectureExists, removeLecture);
+router.delete(
+	"/:courseId/lecture/:lectureId",
+	protect,
+	courseExists,
+	lectureExists,
+	isCourseOwner,
+	removeLecture
+);
 
 // Route to get a specific lecture by its ID
 router.get("/:courseId/lecture/:lectureId", protect, lectureExists, getLectureById);
-
 
 export default router;

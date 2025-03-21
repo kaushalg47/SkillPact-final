@@ -9,12 +9,21 @@ import { protect } from "../middleware/authMiddleware.js";
 import isCompanyAccepted from "../middleware/companyApproveMiddleware.js";
 import { companyExists } from "../middleware/companyExists.middleware.js";
 import { validateCompany, validateCompanyUpdate } from "../middleware/schemaValidationMiddleware.js";
+import { isCompanyOwner } from "../middleware/authorization.middleware.js";
 
 const router = express.Router();
 
 router.get("/", protect, companyExists, userCompany);
 router.post("/", protect, validateCompany, registerCompany);
-router.put("/:compId", protect, validateCompanyUpdate, companyExists, isCompanyAccepted, updateCompany);
+router.put(
+	"/:compId",
+	protect,
+	validateCompanyUpdate,
+	companyExists,
+	isCompanyOwner,
+	isCompanyAccepted,
+	updateCompany
+);
 router.get("/:compId", companyExists, infoCompany);
 
 export default router;

@@ -61,12 +61,10 @@ const applyForJob = asyncHandler(async (req, res) => {
 const userApplications = asyncHandler(async (req, res) => {
 	try {
 		const userId = req.params.userId;
-		const application = await Application.find({ applicant: userId })
-			.sort({ createdAt: -1 })
-			.populate({
-				path: "job",
-				select: "title category duration",
-			});
+		const application = await Application.find({ applicant: userId }).sort({ createdAt: -1 }).populate({
+			path: "job",
+			select: "title category duration",
+		});
 
 		return res.status(200).json({
 			application,
@@ -124,10 +122,19 @@ const statusUpdateApplication = asyncHandler(async (req, res) => {
 		}
 
 		// find the application by application id
-		const application = await Application.findOne({ _id: applicationId });
+		const application = await Application.findOne({ _id: applicationId }).populate("job");
+
 		if (!application) {
 			return res.status(404).json({
 				message: "Application not found.",
+				success: false,
+			});
+		}
+
+		// check if the user is the creator of the job for authorization
+		if (application.job.createdby.toString() !== req.user._id.toString()) {
+			return res.status(401).json({
+				message: "You are not authorized to update the status of this application",
 				success: false,
 			});
 		}
