@@ -18,7 +18,7 @@ router.post("/register", validateUser, registerUser);
 router.post("/auth", authUser);
 router.post("/logout", logoutUser);
 router
-	.route("/profile/:userId")
+	.route("/profile")
 	.get(protect, userExists, getUserProfile)
 	.put(protect, validateUserUpdate, userExists, isAccountOwner, updateUserProfile);
 router.get("/profile/:userId", userExists, getUserProfileById);

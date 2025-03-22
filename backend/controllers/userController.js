@@ -86,7 +86,7 @@ const logoutUser = (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private
 const getUserProfile = expressAsyncHandler(async (req, res) => {
-	const user = await res.locals.user.populate("badges").populate({path:"company", select: "name"});;
+	const user = await User.findById(req.user._id).populate("badges").populate({path:"company", select: "name"});;
 
 	if (user) {
 		res.json({
