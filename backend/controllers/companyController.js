@@ -150,6 +150,15 @@ const updateCompany = asyncHandler(async (req, res) => {
 			});
 		}
 
+		const isOwner = company.userId.toString() == req.user._id.toString();
+
+		if (!isOwner) {
+			return res.status(401).json({
+				message: "Unauthorized",
+				success: false,
+			});
+		}
+
 		if (req.user._id.toString() !== company.userId.toString()) {
 			return res.status(403).json({
 				message: "Cannot update the company, Unauthorized",
