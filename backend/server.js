@@ -5,13 +5,14 @@ import path from "path";
 import connectDB from "./config/db.js";
 import { errorHandler, notFound } from "./middleware/errorMiddleware.js";
 import applicationRoutes from "./routes/applicationRoutes.js";
+import badgeRoutes from "./routes/badgeRoutes.js";
 import companyRoutes from "./routes/companyRoutes.js";
 import courseRoutes from "./routes/course.route.js";
 import courseProgress from "./routes/courseProgress.route.js";
 import jobRoutes from "./routes/jobRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
+import notificationRoutes from "./routes/notification.routes.js";
 import coursePurchaseRoutes from "./routes/purchaseCourse.route.js";
-import badgeRoutes from "./routes/badgeRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 dotenv.config();
 const port = process.env.PORT || 8000;
 
@@ -38,6 +39,7 @@ app.use("/api/courses", courseRoutes);
 app.use("/api/progress/course", courseProgress);
 app.use("/api/course-purchase", coursePurchaseRoutes);
 app.use("/api/badges", badgeRoutes);
+app.use("/api/notifications", notificationRoutes);
 
 if (process.env.NODE_ENV === "production") {
 	const __dirname = path.resolve();
