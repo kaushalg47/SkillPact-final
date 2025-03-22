@@ -41,13 +41,13 @@ const Footer = () => {
 
 const styles = {
   footer: {
-    backgroundColor: '#000000',
-    color: '#fff',
+    backgroundColor: '#FFFFFF',
+    color: '#5271ff',
     padding: '40px 0',
     bottom: 0,
     width: '100%',
     textAlign: 'center',
-    boxShadow: '0 -4px 10px rgba(0,0,0,0.3)',
+    boxShadow: '0 -4px 5px rgba(0,0,0,0.3)',
   },
   container: {
     display: 'flex',
@@ -66,7 +66,7 @@ const styles = {
     maxWidth: '400px',
   },
   heading: {
-    color: '#4DA8DA',
+    color: '#5271ff',
     fontSize: '1.2rem',
     marginBottom: '10px',
   },
@@ -75,16 +75,16 @@ const styles = {
     padding: 0,
   },
   link: {
-    color: '#B9E3F3',
+    color: '#000000',
     textDecoration: 'none',
     fontSize: '1rem',
     lineHeight: '1.8',
   },
   copyright: {
-    borderTop: '1px solid #4DA8DA',
+    borderTop: '1px solid #000000',
     paddingTop: '10px',
     marginTop: '20px',
-    color: '#B9E3F3',
+    color: '#000000',
     fontSize: '0.9rem',
   },
 };

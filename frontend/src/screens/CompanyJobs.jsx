@@ -10,8 +10,9 @@ import {
 import { toast } from "react-toastify";
 import Loader from "../components/Loader";
 import ErrorScreen from "../screens/ErrorScreen";
-import { Container, Row, Col, Form, Card, Badge, Button } from "react-bootstrap";
+import { Container, Row, Col, Form, Card, Button, Modal } from "react-bootstrap";
 
+// Check Authentication
 const checkAuthentication = (tempData, navigate) => {
   if (!tempData) {
     toast.error("Login Required");
@@ -24,6 +25,9 @@ const checkAuthentication = (tempData, navigate) => {
 const CompanyJobs = () => {
   const [adminJobs, setAdminJobs] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
+  const [showModal, setShowModal] = useState(false);
+  const [jobToDelete, setJobToDelete] = useState(null);
+
   const { userInfo: tempData } = useSelector((state) => state.auth);
 
   const { data, isLoading, isError, refetch } = useAdminJobsQuery();
@@ -41,15 +45,18 @@ const CompanyJobs = () => {
     }
   }, [data]);
 
-  const handleDelete = async (id) => {
-    if (window.confirm("Are you sure you want to delete this job?")) {
+  const handleDelete = async () => {
+    if (jobToDelete) {
       try {
-        await deleteJob(id).unwrap();
+        await deleteJob(jobToDelete).unwrap();
         toast.success("Job deleted successfully!");
         refetch();
       } catch (err) {
         toast.error("Failed to delete job.");
         console.error(err);
+      } finally {
+        setShowModal(false);
+        setJobToDelete(null);
       }
     }
   };
@@ -126,18 +133,7 @@ const CompanyJobs = () => {
                     <p className="text-muted mb-2">{job.location || "Location not available"}</p>
                     <div className="d-flex gap-3 mb-2">
                       <small className="text-muted">🕒 {new Date(job.createdAt).toDateString()}</small>
-                      {/* <small className="text-muted">👥 {job.applicants ? job.applicants.length : 0} Applicants</small> */}
-                    </div>
-                    <div>
-                      {job.badges && job.badges.map((badge, index) => (
-                        <Badge 
-                          key={index} 
-                          bg="secondary" 
-                          className="me-2"
-                        >
-                          {badge.title}
-                        </Badge>
-                      ))}
+                      <small className="text-muted">👥 {job.applicants ? job.applicants.length : 0} Applicants</small>
                     </div>
                   </div>
 
@@ -158,7 +154,10 @@ const CompanyJobs = () => {
 
                     <Button
                       variant="danger"
-                      onClick={() => handleDelete(job._id)}
+                      onClick={() => {
+                        setJobToDelete(job._id);
+                        setShowModal(true);
+                      }}
                     >
                       Delete
                     </Button>
@@ -177,19 +176,21 @@ const CompanyJobs = () => {
         </Col>
       </Row>
 
-      {filteredJobs.length === 0 && searchTerm && (
-        <Row className="mt-5">
-          <Col xs={12} className="text-center">
-            <p className="text-muted">No jobs matching "{searchTerm}" found</p>
-            <Button 
-              variant="outline-secondary"
-              onClick={() => setSearchTerm("")}
-            >
-              Clear Search
-            </Button>
-          </Col>
-        </Row>
-      )}
+      {/* Delete Confirmation Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm Deletion</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this job?</Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={() => setShowModal(false)}>
+            Cancel
+          </Button>
+          <Button variant="danger" onClick={handleDelete}>
+            Delete
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </Container>
   );
 };

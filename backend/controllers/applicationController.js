@@ -96,6 +96,11 @@ const userApplications = asyncHandler(async (req, res) => {
 					path: "title",
 					options: { sort: { createdAt: -1 } },
 				},
+				populate: {
+					path: "company",
+					select: "name",
+					options: { sort: { createdAt: -1 } },
+				},
 			});
 		if (!application) {
 			return res.status(404).json({
@@ -173,7 +178,7 @@ const statusUpdateApplication = asyncHandler(async (req, res) => {
 		await application.save();
 		await addNotification(
 			application.applicant,
-			`Your application for ${application.job.title} has been ${status.toLowerCase()}`
+			`Your application for ${application.job.title} position has been ${status.toLowerCase()}`
 		);
 
 		return res.status(200).json({

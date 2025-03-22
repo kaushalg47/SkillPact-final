@@ -175,7 +175,8 @@ const adminJobs = asyncHandler(async (req, res) => {
 		const adminId = req.user._id;
 		const jobs = await Job.find({ createdby: adminId })
 		.populate({path: "badges", select: "title"})
-		.populate({path: "company"});
+		.populate({path: "company"})
+		.populate({path: "application"});
 		if (!jobs) {
 			return res.status(404).json({
 				message: "Jobs not found.",

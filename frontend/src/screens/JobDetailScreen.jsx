@@ -9,6 +9,7 @@ import { useState, useEffect } from 'react';
 import Loader from '../components/Loader';
 import ErrorScreen from './ErrorScreen';
 import { FaMapMarkerAlt, FaBriefcase, FaGraduationCap } from "react-icons/fa";
+import { Button, Modal } from "react-bootstrap";
 
 const JobDetailPage = () => {
   const { userInfo } = useSelector((state) => state.auth);
@@ -18,6 +19,7 @@ const JobDetailPage = () => {
   const job = data?.job;
   const navigate = useNavigate();
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [showConfirm, setShowConfirm] = useState(false);
   
 
   useEffect(() => {
@@ -30,6 +32,7 @@ const JobDetailPage = () => {
     if (job) {
       try {
         await applyForJob(jobId).unwrap();
+        setShowConfirm(false);
         toast.success("Successfully enrolled for this job!");
       } catch (err) {
         console.error("Application failed:", err);
@@ -177,23 +180,36 @@ const JobDetailPage = () => {
                   {userInfo ? (
                     <>
                     <p style={{ fontSize: '20px', fontWeight: '400', textAlign: 'center' }}>Click here to apply</p>
-                    <button 
-                    style={{
-                    width: '210px',
-                    height: '45px',
-                    background: '#0000ff',
-                    border: 'none',
-                    borderRadius: '10px',
-                    fontSize: '28px',
-                    color: 'white',
-                    cursor: 'pointer',
-                    marginTop: '7px',
-                    }} 
-                    onClick={handleApply} 
-                    disabled={isApplying}
+                    <button
+                      onClick={() => setShowConfirm(true)}
+                      style={{
+                        width: '210px',
+                        height: '45px',
+                        background: '#0000ff',
+                        border: 'none',
+                        borderRadius: '10px',
+                        fontSize: '28px',
+                        color: 'white',
+                        cursor: 'pointer',
+                        marginTop: '7px',
+                      }}
                     >
-                    {isApplying ? "Applying..." : "Enroll"}
+                      Apply Now
                     </button>
+                    <Modal show={showConfirm} onHide={() => setShowConfirm(false)} centered>
+                      <Modal.Header closeButton>
+                        <Modal.Title>Confirm Application</Modal.Title>
+                      </Modal.Header>
+                      <Modal.Body>Are you sure you want to apply for this job?</Modal.Body>
+                      <Modal.Footer>
+                        <Button variant="secondary" onClick={() => setShowConfirm(false)}>
+                          Cancel
+                        </Button>
+                        <Button variant="success" onClick={handleApply}>
+                          Yes, Apply!
+                        </Button>
+                      </Modal.Footer>
+                    </Modal>
                     </>
                   ) : (
                     <>

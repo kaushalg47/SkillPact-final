@@ -14,6 +14,7 @@ const HomeScreen = () => {
   
   const [filteredCourses, setFilteredCourses] = useState(allCourses);
   const [activeCategory, setActiveCategory] = useState('All');
+  const activeJobs = jobs.filter((job) => job.active);
 
   useEffect(() => {
     setFilteredCourses(allCourses);
@@ -70,7 +71,7 @@ const HomeScreen = () => {
         <div>
           <h1 className='fw-bold display-4'>Explore Internships & Courses</h1>
           <p className='fs-5 mt-3 text-black'>Find the best opportunities to enhance your career.</p>
-          <Button variant='light' size='lg' className='fw-bold mt-3 bg-primary text-white' onClick={() => navigate('/')}>
+          <Button variant='light' size='lg' className='fw-bold mt-3 bg-primary text-white' onClick={() => navigate('/jobs')}>
             Get Started
           </Button>
         </div>
@@ -94,7 +95,8 @@ const HomeScreen = () => {
 
       
 
-      {renderSection('Featured Jobs', jobs.slice(0, 8), 'job-info')}
+      {activeJobs.length > 0 && renderSection('Featured Jobs', activeJobs.slice(0, 8), 'job-info')}
+
       <Container className='my-5'>
         <h2 className='text-center text-dark fw-bold mb-4' style={{ fontSize: '2rem' }}>Trending Courses</h2>
         <div className='d-flex justify-content-center gap-3 mb-4 flex-wrap'>

@@ -71,7 +71,7 @@ const styles = {
     fontSize: '22px',
     fontWeight: 800,
     lineHeight: '26px',
-    color: '#0000FF',
+    color: '#5271ff',
     margin: '0 0 16px 0',
   },
   role: {

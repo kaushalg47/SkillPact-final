@@ -29,6 +29,7 @@ import CourseInfo from './screens/CourseInfoScreen.jsx';
 import CourseVideos from './screens/CourseVideos.jsx';
 import CompanyRegisterScreen from "../src/screens/CompanyRegisterScreen.jsx";
 import PublicResumeScreen from './screens/PublicResumeScreen.jsx';
+import NotificationsScreen from './screens/Notification.jsx';
 const router = createBrowserRouter(
   createRoutesFromElements(
     <Route path='/' element={<App />}>
@@ -52,6 +53,7 @@ const router = createBrowserRouter(
       <Route path='/company-jobs' element={<CompanyJobs/>}/>
       <Route path='/company-jobs/:jobId' element={<Applicants/>}/>
       <Route path='/post-jobs' element={<PostJobs/>}/>
+      <Route path='/notifications' element={<NotificationsScreen/>}/>
     </Route>
   )
 );

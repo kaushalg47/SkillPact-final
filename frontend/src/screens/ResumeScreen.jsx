@@ -24,7 +24,7 @@ const ResumeScreen = () => {
 
 	const { data: purchasedCourses, error: purchasedCoursesError, isLoading: purchasedCoursesLoading } = useGetAllPurchasedCoursesQuery();
 
-	const displayLinkCode = `/profile/${userInfo?.name}`;
+	const displayLinkCode = `/public-profile-url`;
 	const linkCode = `https://skillpact.co.in/profile/${userInfo?._id}`;
   const [copied, setCopied] = useState(false);
 
