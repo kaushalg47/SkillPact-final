@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import Application from "./applicationModel.js";
 
 const jobSchema = new mongoose.Schema(
 	{
@@ -74,6 +75,12 @@ const jobSchema = new mongoose.Schema(
 	},
 	{ timestamps: true }
 );
+
+// Handle deleteOne()
+jobSchema.pre("deleteOne", { document: true, query: false }, async function (next) {
+    await Application.deleteMany({ job: this._id });
+    next();
+});
 
 const Job = mongoose.model("Job", jobSchema);
 
