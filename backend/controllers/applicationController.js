@@ -125,7 +125,7 @@ const statusUpdateApplication = asyncHandler(async (req, res) => {
 		// find the application by application id
 		const application = await Application.findOne({ _id: applicationId }).populate({
 			path: "job",
-			select: "title",
+			select: "title createdby",
 		});
 
 		if (!application) {
