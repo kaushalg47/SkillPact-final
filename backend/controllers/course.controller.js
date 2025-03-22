@@ -147,6 +147,16 @@ export const editCourse = async (req, res) => {
 				message: "Course not found!",
 			});
 		}
+
+		const isOwner = course.creator.toString() == req.user._id.toString();
+    
+		if (!isOwner) {
+			return res.status(401).json({
+				message: "Unauthorized",
+				success: false,
+			});
+		}
+
 		let courseThumbnail;
 		if (thumbnail) {
 			if (course.courseThumbnail) {
@@ -218,11 +228,27 @@ export const createLecture = async (req, res) => {
 				message: "details are missing",
 			});
 		}
+		
+		const course = await Course.findById(courseId);
+
+		if (!course) {
+			return res.status(404).json({
+				message: "Course not found",
+			});
+		}
+
+		const isOwner = course.creator.toString() == req.user._id.toString();
+
+		if (!isOwner) {
+			return res.status(401).json({
+				message: "Unauthorized",
+				success: false,
+			});
+		}
 
 		// create lecture
 		const lecture = await Lecture.create({ lectureTitle, videoUrl });
 
-		const course = await Course.findById(courseId);
 		if (course) {
 			course.lectures.push(lecture._id);
 			await course.save();
@@ -360,6 +386,18 @@ export const togglePublishCourse = async (req, res) => {
 				message: "Course not found!",
 			});
 		}
+
+		console.log(course);
+
+		const isOwner = course.creator.toString() == req.user._id.toString();
+		console.log(course.creator.toString(), req.user._id.toString());
+		if (!isOwner) {
+			return res.status(401).json({
+				message: "Unauthorized",
+				success: false,
+			});
+		}
+
 		// publish status based on the query parameter
 		course.isPublished = publish === "true";
 		await course.save();
