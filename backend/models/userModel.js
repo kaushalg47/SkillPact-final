@@ -11,11 +11,20 @@ const userSchema = new mongoose.Schema(
 			minlength: [2, "Name must be at least 2 characters"],
 			maxlength: [100, "Name cannot exceed 100 characters"],
 		},
+		phone: {
+			type: String,
+			required: true,
+			trim: true,
+		},
 		email: {
 			type: String,
 			required: true,
 			unique: true,
 			trim: true,
+		},
+		resume: {
+			type: String,
+			default: "",
 		},
 		password: {
 			type: String,

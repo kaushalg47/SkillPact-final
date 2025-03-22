@@ -46,6 +46,10 @@ const jobSchema = new mongoose.Schema(
 			trim: true,
 			min: 0,
 		},
+		active: {
+			type: Boolean,
+			default: true,
+		},
 		createdby: {
 			type: mongoose.Schema.ObjectId,
 			ref: "User",

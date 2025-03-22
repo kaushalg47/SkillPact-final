@@ -69,11 +69,14 @@ const userValidationSchema = Joi.object({
 	name: Joi.string().required().max(100).min(2),
 	email: Joi.string().email().required(),
 	password: Joi.string().required().min(6),
+	phone: Joi.string().required(),
 })
 
 const userUpdateValidationSchema = Joi.object({
 	name: Joi.string().max(100).min(2),
 	password: Joi.string().min(6),
+	phone: Joi.string(),
+	resume: Joi.string(),
 })
 
 const companyValidationSchema = Joi.object({

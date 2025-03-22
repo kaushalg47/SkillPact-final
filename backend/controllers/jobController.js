@@ -1,6 +1,6 @@
 import expressAsyncHandler from "express-async-handler";
-import Job from "../models/jobModel.js";
 import mongoose from "mongoose";
+import Job from "../models/jobModel.js";
 import { badgesExist, uniqueBadges } from "../utils/badgesFunctions.js";
 
 // @desc    Fetch all jobs related to a keyword
@@ -67,7 +67,7 @@ const postJobs = expressAsyncHandler(async (req, res) => {
 				message: "Invalid badge id",
 			});
 		}
-		
+
 		// Remove duplicate badges
 		badges = uniqueBadges(badges);
 
@@ -77,8 +77,8 @@ const postJobs = expressAsyncHandler(async (req, res) => {
 				success: false,
 				message: "Maximum 10 badges allowed",
 			});
-		};
-		
+		}
+
 		// Check if all badges exist in the database
 		const allBadgesExist = await badgesExist(badges);
 		if (!allBadgesExist) {
@@ -125,7 +125,17 @@ const postJobs = expressAsyncHandler(async (req, res) => {
 // @access  Public
 const infoJobs = expressAsyncHandler(async (req, res) => {
 	try {
-		const job = await res.locals.job.populate("application badges");
+		const job = await res.locals.job
+			.populate({
+				path: "application",
+			})
+			.populate({
+				path: "company",
+			})
+			.populate({
+				path: "badges",
+				select: "title imageUrl",
+			});
 
 		return res.status(200).json({ job, success: true });
 	} catch (error) {
@@ -143,7 +153,10 @@ const infoJobs = expressAsyncHandler(async (req, res) => {
 const adminJobs = expressAsyncHandler(async (req, res) => {
 	try {
 		const adminId = req.user._id;
-		const jobs = await Job.find({ createdby: adminId });
+		const jobs = await Job.find({ createdby: adminId })
+			.populate({ path: "badges", select: "title" })
+			.populate({ path: "company" });
+
 		if (!jobs) {
 			return res.status(404).json({
 				message: "Jobs not found.",
@@ -182,8 +195,52 @@ const isEligible = expressAsyncHandler(async (req, res) => {
 			message: "Server error occurred",
 			success: false,
 		});
-
 	}
 });
 
-export { adminJobs, getJobs, infoJobs, postJobs, isEligible };
+const toggleJobStatus = expressAsyncHandler(async (req, res) => {
+	try {
+		const job = res.locals.job;
+
+		// Toggle the active status
+		job.active = !job.active;
+
+		// Save the updated job
+		await job.save();
+
+		return res.status(200).json({
+			message: `Job status updated to ${job.active ? "active" : "inactive"}`,
+			job,
+			success: true,
+		});
+	} catch (error) {
+		console.error(`Error updating job status: ${error.message}`);
+		res.status(500).json({
+			message: "Failed to update job status",
+			success: false,
+		});
+	}
+});
+
+// Delete Job Controller
+const deleteJob = expressAsyncHandler(async (req, res) => {
+	try {
+		const job = res.locals.job;
+
+		// Delete the job
+		await job.deleteOne();
+
+		return res.status(200).json({
+			message: "Job deleted successfully",
+			success: true,
+		});
+	} catch (error) {
+		console.error(`Error deleting job: ${error.message}`);
+		res.status(500).json({
+			message: "Failed to delete job",
+			success: false,
+		});
+	}
+});
+
+export { adminJobs, deleteJob, getJobs, infoJobs, isEligible, postJobs, toggleJobStatus };

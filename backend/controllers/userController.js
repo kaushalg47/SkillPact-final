@@ -17,6 +17,8 @@ const authUser = expressAsyncHandler(async (req, res) => {
 			_id: user._id,
 			name: user.name,
 			email: user.email,
+			phone: user.phone,
+			resume: user.resume,
 			success: true,
 		});
 	} else {
@@ -31,7 +33,7 @@ const authUser = expressAsyncHandler(async (req, res) => {
 // @route   POST /api/users
 // @access  Public
 const registerUser = expressAsyncHandler(async (req, res) => {
-	const { name, password, email } = req.body;
+	const { name, password, email, phone } = req.body;
 	const userExists = await User.exists({ email });
 	
 	if (userExists) {
@@ -45,6 +47,7 @@ const registerUser = expressAsyncHandler(async (req, res) => {
 		name,
 		email,
 		password,
+		phone,
 	});
 
 	if (user) {
@@ -55,6 +58,7 @@ const registerUser = expressAsyncHandler(async (req, res) => {
 			_id: user._id,
 			name: user.name,
 			email: user.email,
+			phone: user.phone,
 		});
 	} else {
 		res.status(400).json({
@@ -82,7 +86,7 @@ const logoutUser = (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private
 const getUserProfile = expressAsyncHandler(async (req, res) => {
-	const user = await res.locals.user.populate("badges");
+	const user = await res.locals.user.populate("badges").populate({path:"company", select: "name"});;
 
 	if (user) {
 		res.json({
@@ -90,6 +94,7 @@ const getUserProfile = expressAsyncHandler(async (req, res) => {
 			name: user.name,
 			email: user.email,
 			badges: user.badges,
+			resume: user.resume,
 			company: user.company,
 		});
 	} else {
@@ -129,17 +134,21 @@ const getUserProfileById = expressAsyncHandler(async (req, res) => {
 const updateUserProfile = expressAsyncHandler(async (req, res) => {
 	const user = res.locals.user;
 
-	const { name, password } = req.body;
+	const { name, password, phone, resume } = req.body;
 
 	if (name) user.name = name;
 	if (password) user.password = password;
+	if (phone) user.phone = phone;
+	if (resume) user.resume = resume;
 
 	const updatedUser = await user.save();
 
 	res.json({
 		_id: updatedUser._id,
 		name: updatedUser.name,
+		phone: updatedUser.phone,
 		email: updatedUser.email,
+		resume: updatedUser.resume,
 	});
 });
 

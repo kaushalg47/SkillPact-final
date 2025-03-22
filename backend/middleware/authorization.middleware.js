@@ -13,6 +13,19 @@ export const isCompanyOwner = expressAsyncHandler(async (req, res, next) => {
 	return next();
 });
 
+export const isJobOwner = expressAsyncHandler(async (req, res, next) => {
+	const isOwner = res.locals.job.createdby.toString() == req.user._id.toString();
+
+	if (!isOwner) {
+		return res.status(401).json({
+			message: "Unauthorized",
+			success: false,
+		});
+	}
+
+	return next();
+});
+
 export const isAccountOwner = expressAsyncHandler(async (req, res, next) => {
 	const isOwner = req.user._id.toString() == res.locals.user._id.toString();
 
@@ -28,7 +41,7 @@ export const isAccountOwner = expressAsyncHandler(async (req, res, next) => {
 
 export const isCourseOwner = expressAsyncHandler(async (req, res, next) => {
 	const isOwner = res.locals.course.creator.toString() == req.user._id.toString();
-    
+
 	if (!isOwner) {
 		return res.status(401).json({
 			message: "Unauthorized",
