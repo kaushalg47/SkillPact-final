@@ -11,6 +11,7 @@ import courseProgress from "./routes/courseProgress.route.js";
 import jobRoutes from "./routes/jobRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import coursePurchaseRoutes from "./routes/purchaseCourse.route.js";
+import notificationRoutes from "./routes/notification.routes.js";
 import badgeRoutes from "./routes/badgeRoutes.js";
 import cors from "cors";
 
@@ -41,6 +42,7 @@ app.use(cookieParser());
 
 // ✅ API Routes
 app.use("/api/users", userRoutes);
+app.use("/api/notifications", notificationRoutes);
 app.use("/api/jobs", jobRoutes);
 app.use("/api/apply", applicationRoutes);
 app.use("/api/company", companyRoutes);

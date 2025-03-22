@@ -149,7 +149,10 @@ const statusUpdateApplication = asyncHandler(async (req, res) => {
 		}
 
 		// find the application by application id
-		const application = await Application.findOne({ _id: applicationId });
+		const application = await Application.findOne({ _id: applicationId }).populate({
+			path: "job",
+			select: "title",
+		});
 		if (!application) {
 			return res.status(404).json({
 				message: "Application not found.",
