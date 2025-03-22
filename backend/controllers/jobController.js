@@ -125,17 +125,11 @@ const postJobs = expressAsyncHandler(async (req, res) => {
 // @access  Public
 const infoJobs = expressAsyncHandler(async (req, res) => {
 	try {
-		const job = await res.locals.job
-			.populate({
-				path: "application",
-			})
-			.populate({
-				path: "company",
-			})
-			.populate({
-				path: "badges",
-				select: "title imageUrl",
-			});
+		const job = await res.locals.job.populate([
+			{ path: "application" },
+			{ path: "company" },
+			{ path: "badges", select: "title imageUrl" }
+		]);
 
 		return res.status(200).json({ job, success: true });
 	} catch (error) {

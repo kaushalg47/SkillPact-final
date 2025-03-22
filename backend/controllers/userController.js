@@ -35,7 +35,7 @@ const authUser = expressAsyncHandler(async (req, res) => {
 const registerUser = expressAsyncHandler(async (req, res) => {
 	const { name, password, email, phone } = req.body;
 	const userExists = await User.exists({ email });
-	
+
 	if (userExists) {
 		return res.status(400).json({
 			message: "User already exists",
@@ -86,7 +86,7 @@ const logoutUser = (req, res) => {
 // @route   GET /api/users/profile
 // @access  Private
 const getUserProfile = expressAsyncHandler(async (req, res) => {
-	const user = await User.findById(req.user._id).populate("badges").populate({path:"company", select: "name"});;
+	const user = await res.locals.user.populate([{ path: "badges" }, { path: "company", select: "name" }]);
 
 	if (user) {
 		res.json({
