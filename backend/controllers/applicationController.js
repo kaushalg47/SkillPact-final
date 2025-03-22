@@ -1,5 +1,6 @@
 import asyncHandler from "express-async-handler";
 import Application from "../models/applicationModel.js";
+import { addNotification } from "../utils/notificationFunctions.js";
 
 //apply for jobs
 const applyForJob = asyncHandler(async (req, res) => {
@@ -142,6 +143,10 @@ const statusUpdateApplication = asyncHandler(async (req, res) => {
 		// update the status
 		application.status = status.toLowerCase();
 		await application.save();
+		await addNotification(
+			application.applicant,
+			`Your application for ${application.job.title} has been ${status.toLowerCase()}`
+		);
 
 		return res.status(200).json({
 			message: `Status updated successfully to ${status.toLowerCase()}.`,
