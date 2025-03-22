@@ -2,6 +2,7 @@ import asyncHandler from "express-async-handler";
 import Application from "../models/applicationModel.js";
 import Job from "../models/jobModel.js";
 import User from "../models/userModel.js";
+import { addNotification } from "../utils/notificationFunctions.js";
 
 //apply for jobs
 const applyApplication = asyncHandler(async (req, res) => {
@@ -66,7 +67,7 @@ const applyApplication = asyncHandler(async (req, res) => {
 
 		// Add the new application to the job's application array
 		job.application.push(newApplication._id);
-		
+
 		await job.save();
 
 		return res.status(201).json({
@@ -159,6 +160,10 @@ const statusUpdateApplication = asyncHandler(async (req, res) => {
 		// update the status
 		application.status = status.toLowerCase();
 		await application.save();
+		await addNotification(
+			application.applicant,
+			`Your application for ${application.job.title} has been ${status.toLowerCase()}`
+		);
 
 		return res.status(200).json({
 			message: "Status updated successfully.",
